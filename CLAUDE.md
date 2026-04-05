@@ -29,6 +29,8 @@ All framework code lives under `net.davidrobles.axon`.
 
 Never add Claude as a co-author or contributor in commit messages.
 
+After every change, always check whether anything in `README.md` or `CLAUDE.md` needs to be updated to reflect the change.
+
 ## Key Conventions
 
 - Module dependencies: `examples` → `gridworld` → `core`, `util`
