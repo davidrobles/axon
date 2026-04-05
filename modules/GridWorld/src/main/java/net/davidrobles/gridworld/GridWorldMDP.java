@@ -1,7 +1,7 @@
 package net.davidrobles.gridworld;
 
 import java.util.*;
-import net.davidrobles.rl.MDP;
+import net.davidrobles.axon.MDP;
 
 /** A Grid World Markov Decision Process. */
 public class GridWorldMDP implements MDP<GWState, GWAction> {

@@ -1,16 +1,17 @@
-package net.davidrobles.gridworld;
+package net.davidrobles.axon;
 
 import java.util.Random;
+import net.davidrobles.gridworld.GWAction;
+import net.davidrobles.gridworld.GWState;
+import net.davidrobles.gridworld.GridWorldEnv;
+import net.davidrobles.gridworld.GridWorldMDP;
 import net.davidrobles.gridworld.view.GWVView;
 import net.davidrobles.gridworld.view.GWViewQValues;
-import net.davidrobles.axon.RLLoop;
-import net.davidrobles.axon.agents.QLearning;
-import net.davidrobles.axon.agents.SARSA;
-import net.davidrobles.axon.agents.SARSALambda;
+import net.davidrobles.axon.agents.*;
+import net.davidrobles.axon.planning.*;
 import net.davidrobles.axon.policies.EpsilonGreedy;
 import net.davidrobles.axon.policies.RandomPolicy;
-import net.davidrobles.axon.prediction.TD0;
-import net.davidrobles.axon.prediction.TDLambda;
+import net.davidrobles.axon.prediction.*;
 import net.davidrobles.axon.valuefunctions.TabularQFunction;
 import net.davidrobles.axon.valuefunctions.TabularVFunction;
 import net.davidrobles.util.DRFrame;
@@ -18,15 +19,39 @@ import net.davidrobles.util.DRFrame;
 public class GWRun {
     private static final Random RNG = new Random();
 
+    private static void policyIteration() {
+        double theta = 0.01;
+        double gamma = 0.99;
+        GridWorldMDP mdp = new GridWorldMDP(25, 25, RNG);
+        GridWorldEnv env = new GridWorldEnv(mdp, RNG);
+        GWVView view = new GWVView(mdp, 20, 20, env);
+        new DRFrame(view);
+        PolicyIteration<GWState, GWAction> learner = new PolicyIteration<>(mdp, theta, gamma);
+        learner.addVFunctionObserver(view);
+        learner.solve();
+    }
+
+    private static void valueIteration() {
+        double theta = 0.1;
+        double gamma = 0.99;
+        GridWorldMDP mdp = new GridWorldMDP(25, 25, RNG);
+        GridWorldEnv env = new GridWorldEnv(mdp, RNG);
+        GWVView view = new GWVView(mdp, 20, 20, env);
+        new DRFrame(view);
+        ValueIteration<GWState, GWAction> learner = new ValueIteration<>(mdp, theta, gamma);
+        learner.addVFunctionObserver(view);
+        learner.solve();
+    }
+
     private static void tabularTD0() {
         double alpha = 0.01;
         double gamma = 0.99;
-        int numEpisodes = 500;
-        GridWorldMDP mdp = new GridWorldMDP(50, 50, RNG);
+        int numEpisodes = 5000;
+        GridWorldMDP mdp = new GridWorldMDP(20, 20, RNG);
         GridWorldEnv env = new GridWorldEnv(mdp, RNG);
         TabularVFunction<GWState> vTable = new TabularVFunction<>(alpha);
         RandomPolicy<GWState, GWAction> policy = new RandomPolicy<>(RNG);
-        GWVView view = new GWVView(mdp, 10, 10, env);
+        GWVView view = new GWVView(mdp, 20, 20, env);
         new DRFrame(view, "TD(0)");
         TD0<GWState, GWAction> agent = new TD0<>(vTable, policy, gamma);
         agent.addVFunctionObserver(view);
@@ -101,8 +126,10 @@ public class GWRun {
     public static void main(String[] args) {
         //        tabularTD0();
         tabularSARSA();
+        //        valueIteration();
         //        tabularQLearning();
         //        tabularTDLambda();
         //        tabularSARSALambda();
+        //        policyIteration();
     }
 }

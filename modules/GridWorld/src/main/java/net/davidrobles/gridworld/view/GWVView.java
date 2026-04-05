@@ -5,8 +5,8 @@ import java.awt.*;
 import net.davidrobles.gridworld.GWState;
 import net.davidrobles.gridworld.GridWorldEnv;
 import net.davidrobles.gridworld.GridWorldMDP;
-import net.davidrobles.rl.valuefunctions.VFunction;
-import net.davidrobles.rl.valuefunctions.VFunctionObserver;
+import net.davidrobles.axon.valuefunctions.VFunction;
+import net.davidrobles.axon.valuefunctions.VFunctionObserver;
 
 public class GWVView extends GridWorldView implements VFunctionObserver<GWState> {
     private VFunction<GWState> vFunction;

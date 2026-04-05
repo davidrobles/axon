@@ -3,8 +3,8 @@ package net.davidrobles.gridworld;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import net.davidrobles.rl.Environment;
-import net.davidrobles.rl.StepResult;
+import net.davidrobles.axon.Environment;
+import net.davidrobles.axon.StepResult;
 
 public class GridWorldEnv implements Environment<GWState, GWAction> {
     private GridWorldMDP mdp;
