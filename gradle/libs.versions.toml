@@ -1,0 +1,7 @@
+[versions]
+junit = "4.13.2"
+hamcrest = "2.2"
+
+[libraries]
+junit = { module = "junit:junit", version.ref = "junit" }
+hamcrest-core = { module = "org.hamcrest:hamcrest-core", version.ref = "hamcrest" }
