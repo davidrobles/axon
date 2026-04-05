@@ -1,13 +1,13 @@
 rootProject.name = "axon"
 
 include(
-    ":ReinforcementLearning",
-    ":GridWorld",
-    ":GridWorldPlay",
-    ":Utils",
+    ":core",
+    ":gridworld",
+    ":examples",
+    ":util",
 )
 
-project(":ReinforcementLearning").projectDir = file("modules/ReinforcementLearning")
-project(":GridWorld").projectDir = file("modules/GridWorld")
-project(":GridWorldPlay").projectDir = file("modules/GridWorldPlay")
-project(":Utils").projectDir = file("modules/Utils")
+project(":core").projectDir = file("modules/core")
+project(":gridworld").projectDir = file("modules/gridworld")
+project(":examples").projectDir = file("modules/examples")
+project(":util").projectDir = file("modules/util")
