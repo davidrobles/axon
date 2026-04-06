@@ -16,7 +16,7 @@ Java 21 is required.
 ```
 modules/
   core/        # RL framework — interfaces, algorithms, policies, value functions
-  gridworld/   # GridWorld domain with visualization
+  envs/        # Environment implementations (e.g. GridWorld) with visualization
   examples/    # Runnable examples combining planning and learning
   util/        # Swing GUI utilities
 ```
@@ -33,7 +33,7 @@ After every change, always check whether anything in `README.md` or `CLAUDE.md` 
 
 ## Key Conventions
 
-- Module dependencies: `examples` → `gridworld` → `core`, `util`
+- Module dependencies: `examples` → `envs` → `core`, `util`
 - Algorithms are generic over `<S, A>` (state, action) — no domain-specific code in `core`
 - Value functions are injected into agents and policies; agents do not own the training loop — `RLLoop` does
 - Planning algorithms use `MDP<S, A>`; model-free algorithms use `Environment<S, A>`

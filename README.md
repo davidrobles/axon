@@ -7,7 +7,7 @@ A tabular reinforcement learning framework in Java. Implements classic model-fre
 | Module | Description |
 |--------|-------------|
 | `core` | Core framework — interfaces, algorithms, policies, value functions |
-| `gridworld` | GridWorld domain with visualization |
+| `envs` | Environment implementations (e.g. GridWorld) with visualization |
 | `examples` | Runnable examples combining planning and learning |
 | `util` | Swing GUI utilities |
 

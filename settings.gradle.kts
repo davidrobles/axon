@@ -2,12 +2,12 @@ rootProject.name = "axon"
 
 include(
     ":core",
-    ":gridworld",
+    ":envs",
     ":examples",
     ":util",
 )
 
 project(":core").projectDir = file("modules/core")
-project(":gridworld").projectDir = file("modules/gridworld")
+project(":envs").projectDir = file("modules/envs")
 project(":examples").projectDir = file("modules/examples")
 project(":util").projectDir = file("modules/util")
