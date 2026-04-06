@@ -127,4 +127,52 @@ public class EpsilonGreedyTest {
         policy.onEpisodeEnd(0);
         assertEquals(0.9, policy.getEpsilon(), EPS);
     }
+
+    // -------------------------------------------------------------------------
+    // logProbability: π(greedy) = ε/n + (1-ε)/numTied, π(non-greedy) = ε/n
+    // -------------------------------------------------------------------------
+
+    @Test
+    public void logProbabilityGreedyActionHigherThanNonGreedy() {
+        EpsilonGreedy<String, String> policy = new EpsilonGreedy<>(q, 0.1, new Random(0));
+        // a1 is greedy (Q=5.0 > Q=1.0)
+        double logGreedy = policy.logProbability("s0", "a1", List.of("a0", "a1"));
+        double logNonGreedy = policy.logProbability("s0", "a0", List.of("a0", "a1"));
+        assertTrue(logGreedy > logNonGreedy);
+    }
+
+    @Test
+    public void logProbabilitiesSumToOne() {
+        EpsilonGreedy<String, String> policy = new EpsilonGreedy<>(q, 0.2, new Random(0));
+        List<String> actions = List.of("a0", "a1");
+        double sum = 0.0;
+        for (String a : actions) {
+            sum += Math.exp(policy.logProbability("s0", a, actions));
+        }
+        assertEquals(1.0, sum, EPS);
+    }
+
+    @Test
+    public void logProbabilityEpsilonZeroGreedyGetsAllMass() {
+        EpsilonGreedy<String, String> policy = new EpsilonGreedy<>(q, 0.0, new Random(0));
+        // ε=0 → greedy (a1) gets prob=1.0, so log(1.0)=0.0
+        assertEquals(0.0, policy.logProbability("s0", "a1", List.of("a0", "a1")), EPS);
+    }
+
+    @Test
+    public void logProbabilityEpsilonOneIsUniform() {
+        EpsilonGreedy<String, String> policy = new EpsilonGreedy<>(q, 1.0, new Random(0));
+        // ε=1 → uniform: each action gets 1/n = 0.5
+        assertEquals(Math.log(0.5), policy.logProbability("s0", "a0", List.of("a0", "a1")), EPS);
+        assertEquals(Math.log(0.5), policy.logProbability("s0", "a1", List.of("a0", "a1")), EPS);
+    }
+
+    @Test
+    public void logProbabilityTiedActionsShareGreedyMass() {
+        // All Q-values equal → all actions tied → uniform distribution regardless of ε
+        TabularQFunction<String, String> uniform = new TabularQFunction<>(0.5);
+        EpsilonGreedy<String, String> policy = new EpsilonGreedy<>(uniform, 0.0, new Random(0));
+        List<String> actions = List.of("a0", "a1", "a2");
+        assertEquals(Math.log(1.0 / 3.0), policy.logProbability("s0", "a0", actions), EPS);
+    }
 }

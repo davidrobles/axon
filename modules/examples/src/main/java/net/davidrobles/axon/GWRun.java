@@ -105,6 +105,22 @@ public class GWRun {
         RLLoop.run(env, agent, policy, numEpisodes);
     }
 
+    private static void tabularExpectedSARSA() {
+        double alpha = 0.1;
+        double gamma = 0.99;
+        int numEpisodes = 100;
+        GridWorldMDP mdp = new GridWorldMDP(20, 20, RNG);
+        GridWorldEnv env = new GridWorldEnv(mdp, RNG);
+        TabularQFunction<GWState, GWAction> qTable = new TabularQFunction<>(alpha);
+        EpsilonGreedy<GWState, GWAction> policy = new EpsilonGreedy<>(qTable, 0.1, RNG);
+        GWViewQValues view = new GWViewQValues(mdp, 20, 20, env);
+        view.setGridEnabled(true);
+        new DRFrame(view, "Expected SARSA");
+        ExpectedSARSA<GWState, GWAction> agent = new ExpectedSARSA<>(qTable, policy, gamma);
+        agent.addQFunctionObserver(view);
+        RLLoop.run(env, agent, policy, numEpisodes);
+    }
+
     private static void tabularSARSA() {
         double alpha = 0.1;
         double gamma = 0.99;
@@ -159,6 +175,7 @@ public class GWRun {
         //        tabularMCControl();
         //        tabularTD0();
         tabularSARSA();
+        //        tabularExpectedSARSA();
         //        valueIteration();
         //        tabularQLearning();
         //        tabularTDLambda();

@@ -25,7 +25,7 @@ import net.davidrobles.axon.valuefunctions.QFunction;
  * @param <S> the type of the states
  * @param <A> the type of the actions
  */
-public class EpsilonGreedy<S, A> implements Policy<S, A> {
+public class EpsilonGreedy<S, A> implements StochasticPolicy<S, A> {
     private double epsilon;
     private final double epsilonStart;
     private final double epsilonEnd;
@@ -98,6 +98,41 @@ public class EpsilonGreedy<S, A> implements Policy<S, A> {
     @Override
     public void setTrainingMode(boolean training) {
         this.training = training;
+    }
+
+    /**
+     * Returns the log-probability of selecting {@code action} under the ε-greedy distribution.
+     *
+     * <p>Each action gets a base probability of ε/|A|. The (1-ε) greedy mass is split evenly among
+     * all actions tied for the highest Q-value.
+     *
+     * @param state the current state
+     * @param action the action whose probability is queried
+     * @param actions the full list of available actions
+     * @return log π(action | state)
+     */
+    @Override
+    public double logProbability(S state, A action, List<A> actions) {
+        int n = actions.size();
+        double baseProb = epsilon / n;
+
+        double maxQ = Double.NEGATIVE_INFINITY;
+        for (A a : actions) {
+            double q = qFunc.getValue(state, a);
+            if (q > maxQ) maxQ = q;
+        }
+
+        int numGreedy = 0;
+        for (A a : actions) {
+            if (qFunc.getValue(state, a) == maxQ) numGreedy++;
+        }
+
+        double prob =
+                qFunc.getValue(state, action) == maxQ
+                        ? baseProb + (1.0 - epsilon) / numGreedy
+                        : baseProb;
+
+        return Math.log(prob);
     }
 
     public double getEpsilon() {
