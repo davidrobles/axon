@@ -3,12 +3,14 @@ package net.davidrobles.axon;
 import java.util.List;
 
 /**
- * An agent that evaluates a fixed policy by estimating a value function, but does not learn to act.
+ * Base interface for <em>prediction</em> algorithms — agents that estimate the value of a fixed
+ * policy without improving it. Action selection is delegated entirely to an external policy; the
+ * algorithm only updates its value estimates from observed transitions.
  *
- * <p>Evaluators observe transitions and update their value estimates, but delegate action selection
- * entirely to an external policy. The {@link #observe} method is the primary hook; {@link
- * Agent#update} is provided as a default that ignores the action and next-action arguments, which
- * are irrelevant for prediction algorithms.
+ * <p>The {@link #observe} method is the primary hook; {@link Agent#update} is provided as a
+ * default that ignores the action and next-action arguments, which are irrelevant for prediction.
+ *
+ * <p>For <em>control</em> (learning to act by improving a policy), see {@link Agent}.
  *
  * @param <S> the type of the states
  * @param <A> the type of the actions
