@@ -1,10 +1,10 @@
-package net.davidrobles.gridworld.view;
+package net.davidrobles.axon.gridworld.view;
 
 import edu.mines.jtk.awt.ColorMap;
 import java.awt.*;
-import net.davidrobles.gridworld.GWState;
-import net.davidrobles.gridworld.GridWorldEnv;
-import net.davidrobles.gridworld.GridWorldMDP;
+import net.davidrobles.axon.gridworld.GWState;
+import net.davidrobles.axon.gridworld.GridWorldEnv;
+import net.davidrobles.axon.gridworld.GridWorldMDP;
 import net.davidrobles.axon.valuefunctions.VFunction;
 import net.davidrobles.axon.valuefunctions.VFunctionObserver;
 

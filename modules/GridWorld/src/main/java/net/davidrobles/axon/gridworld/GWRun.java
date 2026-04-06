@@ -1,8 +1,8 @@
-package net.davidrobles.gridworld;
+package net.davidrobles.axon.gridworld;
 
 import java.util.Random;
-import net.davidrobles.gridworld.view.GWVView;
-import net.davidrobles.gridworld.view.GWViewQValues;
+import net.davidrobles.axon.gridworld.view.GWVView;
+import net.davidrobles.axon.gridworld.view.GWViewQValues;
 import net.davidrobles.axon.RLLoop;
 import net.davidrobles.axon.agents.QLearning;
 import net.davidrobles.axon.agents.SARSA;
@@ -13,7 +13,7 @@ import net.davidrobles.axon.prediction.TD0;
 import net.davidrobles.axon.prediction.TDLambda;
 import net.davidrobles.axon.valuefunctions.TabularQFunction;
 import net.davidrobles.axon.valuefunctions.TabularVFunction;
-import net.davidrobles.util.DRFrame;
+import net.davidrobles.axon.util.DRFrame;
 
 public class GWRun {
     private static final Random RNG = new Random();

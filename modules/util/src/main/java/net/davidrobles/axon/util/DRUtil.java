@@ -1,4 +1,4 @@
-package net.davidrobles.util;
+package net.davidrobles.axon.util;
 
 import java.awt.*;
 import javax.swing.*;

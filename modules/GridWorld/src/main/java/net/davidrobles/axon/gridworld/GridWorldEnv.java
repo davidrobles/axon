@@ -1,4 +1,4 @@
-package net.davidrobles.gridworld;
+package net.davidrobles.axon.gridworld;
 
 import java.util.List;
 import java.util.Map;

@@ -1,12 +1,12 @@
 package net.davidrobles.axon;
 
 import java.util.Random;
-import net.davidrobles.gridworld.GWAction;
-import net.davidrobles.gridworld.GWState;
-import net.davidrobles.gridworld.GridWorldEnv;
-import net.davidrobles.gridworld.GridWorldMDP;
-import net.davidrobles.gridworld.view.GWVView;
-import net.davidrobles.gridworld.view.GWViewQValues;
+import net.davidrobles.axon.gridworld.GWAction;
+import net.davidrobles.axon.gridworld.GWState;
+import net.davidrobles.axon.gridworld.GridWorldEnv;
+import net.davidrobles.axon.gridworld.GridWorldMDP;
+import net.davidrobles.axon.gridworld.view.GWVView;
+import net.davidrobles.axon.gridworld.view.GWViewQValues;
 import net.davidrobles.axon.agents.*;
 import net.davidrobles.axon.planning.*;
 import net.davidrobles.axon.policies.EpsilonGreedy;
@@ -14,7 +14,7 @@ import net.davidrobles.axon.policies.RandomPolicy;
 import net.davidrobles.axon.prediction.*;
 import net.davidrobles.axon.valuefunctions.TabularQFunction;
 import net.davidrobles.axon.valuefunctions.TabularVFunction;
-import net.davidrobles.util.DRFrame;
+import net.davidrobles.axon.util.DRFrame;
 
 public class GWRun {
     private static final Random RNG = new Random();

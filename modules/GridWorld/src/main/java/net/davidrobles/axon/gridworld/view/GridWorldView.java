@@ -1,13 +1,13 @@
-package net.davidrobles.gridworld.view;
+package net.davidrobles.axon.gridworld.view;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import javax.swing.*;
-import net.davidrobles.gridworld.GWState;
-import net.davidrobles.gridworld.GridWorldEnv;
-import net.davidrobles.gridworld.GridWorldMDP;
+import net.davidrobles.axon.gridworld.GWState;
+import net.davidrobles.axon.gridworld.GridWorldEnv;
+import net.davidrobles.axon.gridworld.GridWorldMDP;
 
 public abstract class GridWorldView extends JPanel implements MouseMotionListener, MouseListener {
     protected GridWorldMDP gw;
