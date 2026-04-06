@@ -43,6 +43,37 @@ public class GWRun {
         learner.solve();
     }
 
+    private static void tabularMCPrediction() {
+        double alpha = 0.01;
+        double gamma = 0.99;
+        int numEpisodes = 2000;
+        GridWorldMDP mdp = new GridWorldMDP(20, 20, RNG);
+        GridWorldEnv env = new GridWorldEnv(mdp, RNG);
+        TabularVFunction<GWState> vTable = new TabularVFunction<>(alpha);
+        RandomPolicy<GWState, GWAction> policy = new RandomPolicy<>(RNG);
+        GWVView view = new GWVView(mdp, 20, 20, env);
+        new DRFrame(view, "MC Prediction");
+        MCPrediction<GWState, GWAction> agent = new MCPrediction<>(vTable, policy, gamma);
+        agent.addVFunctionObserver(view);
+        RLLoop.run(env, agent, policy, numEpisodes);
+    }
+
+    private static void tabularMCControl() {
+        double alpha = 0.01;
+        double gamma = 0.99;
+        int numEpisodes = 2000;
+        GridWorldMDP mdp = new GridWorldMDP(20, 20, RNG);
+        GridWorldEnv env = new GridWorldEnv(mdp, RNG);
+        TabularQFunction<GWState, GWAction> qTable = new TabularQFunction<>(alpha);
+        EpsilonGreedy<GWState, GWAction> policy = new EpsilonGreedy<>(qTable, 0.1, RNG);
+        GWViewQValues view = new GWViewQValues(mdp, 20, 20, env);
+        view.setGridEnabled(true);
+        new DRFrame(view, "MC Control");
+        MCControl<GWState, GWAction> agent = new MCControl<>(qTable, policy, gamma);
+        agent.addQFunctionObserver(view);
+        RLLoop.run(env, agent, policy, numEpisodes);
+    }
+
     private static void tabularTD0() {
         double alpha = 0.01;
         double gamma = 0.99;
@@ -124,6 +155,8 @@ public class GWRun {
     }
 
     public static void main(String[] args) {
+        //        tabularMCPrediction();
+        //        tabularMCControl();
         //        tabularTD0();
         tabularSARSA();
         //        valueIteration();
