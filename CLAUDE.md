@@ -23,7 +23,7 @@ modules/
 
 ## Package
 
-All framework code lives under `net.davidrobles.axon`.
+All framework code lives under `net.davidrobles.axon`. Environments live under `net.davidrobles.axon.envs.<name>` (e.g. `envs.gridworld`).
 
 ## Git
 

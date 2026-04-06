@@ -1,4 +1,4 @@
-package net.davidrobles.axon.gridworld;
+package net.davidrobles.axon.envs.gridworld;
 
 import java.util.*;
 import net.davidrobles.axon.MDP;

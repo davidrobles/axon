@@ -1,4 +1,4 @@
-package net.davidrobles.axon.gridworld;
+package net.davidrobles.axon.envs.gridworld;
 
 public enum GWAction {
     UP,

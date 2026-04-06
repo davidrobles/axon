@@ -1,12 +1,12 @@
 package net.davidrobles.axon;
 
 import java.util.Random;
-import net.davidrobles.axon.gridworld.GWAction;
-import net.davidrobles.axon.gridworld.GWState;
-import net.davidrobles.axon.gridworld.GridWorldEnv;
-import net.davidrobles.axon.gridworld.GridWorldMDP;
-import net.davidrobles.axon.gridworld.view.GWVView;
-import net.davidrobles.axon.gridworld.view.GWViewQValues;
+import net.davidrobles.axon.envs.gridworld.GWAction;
+import net.davidrobles.axon.envs.gridworld.GWState;
+import net.davidrobles.axon.envs.gridworld.GridWorldEnv;
+import net.davidrobles.axon.envs.gridworld.GridWorldMDP;
+import net.davidrobles.axon.envs.gridworld.view.GWVView;
+import net.davidrobles.axon.envs.gridworld.view.GWViewQValues;
 import net.davidrobles.axon.agents.*;
 import net.davidrobles.axon.planning.*;
 import net.davidrobles.axon.policies.EpsilonGreedy;
