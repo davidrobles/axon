@@ -8,6 +8,7 @@ import net.davidrobles.axon.envs.gridworld.GridWorldMDP;
 import net.davidrobles.axon.envs.gridworld.view.GWVView;
 import net.davidrobles.axon.envs.gridworld.view.GWViewQValues;
 import net.davidrobles.axon.agents.*;
+import net.davidrobles.axon.prediction.NStepTD;
 import net.davidrobles.axon.planning.*;
 import net.davidrobles.axon.policies.EpsilonGreedy;
 import net.davidrobles.axon.policies.RandomPolicy;
@@ -105,6 +106,39 @@ public class GWRun {
         RLLoop.run(env, agent, policy, numEpisodes);
     }
 
+    private static void tabularNStepTD() {
+        double alpha = 0.01;
+        double gamma = 0.99;
+        int n = 5;
+        int numEpisodes = 1000;
+        GridWorldMDP mdp = new GridWorldMDP(20, 20, RNG);
+        GridWorldEnv env = new GridWorldEnv(mdp, RNG);
+        TabularVFunction<GWState> vTable = new TabularVFunction<>(alpha);
+        RandomPolicy<GWState, GWAction> policy = new RandomPolicy<>(RNG);
+        GWVView view = new GWVView(mdp, 20, 20, env);
+        new DRFrame(view, "n-step TD (n=" + n + ")");
+        NStepTD<GWState, GWAction> agent = new NStepTD<>(vTable, policy, n, gamma);
+        agent.addVFunctionObserver(view);
+        RLLoop.run(env, agent, policy, numEpisodes);
+    }
+
+    private static void tabularNStepSARSA() {
+        double alpha = 0.1;
+        double gamma = 0.99;
+        int n = 5;
+        int numEpisodes = 200;
+        GridWorldMDP mdp = new GridWorldMDP(20, 20, RNG);
+        GridWorldEnv env = new GridWorldEnv(mdp, RNG);
+        TabularQFunction<GWState, GWAction> qTable = new TabularQFunction<>(alpha);
+        EpsilonGreedy<GWState, GWAction> policy = new EpsilonGreedy<>(qTable, 0.1, RNG);
+        GWViewQValues view = new GWViewQValues(mdp, 20, 20, env);
+        view.setGridEnabled(true);
+        new DRFrame(view, "n-step SARSA (n=" + n + ")");
+        NStepSARSA<GWState, GWAction> agent = new NStepSARSA<>(qTable, policy, n, gamma);
+        agent.addQFunctionObserver(view);
+        RLLoop.run(env, agent, policy, numEpisodes);
+    }
+
     private static void tabularExpectedSARSA() {
         double alpha = 0.1;
         double gamma = 0.99;
@@ -173,6 +207,8 @@ public class GWRun {
     public static void main(String[] args) {
         //        tabularMCPrediction();
         //        tabularMCControl();
+        //        tabularNStepTD();
+        //        tabularNStepSARSA();
         //        tabularTD0();
         tabularSARSA();
         //        tabularExpectedSARSA();
