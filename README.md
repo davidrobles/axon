@@ -23,6 +23,9 @@ A tabular reinforcement learning framework in Java. Implements classic model-fre
 
 **Model-Based**
 - Dyna-Q (Q-Learning + learned model + planning)
+
+**Experience Replay**
+- Q-Learning with experience replay (fixed-capacity circular buffer, random mini-batch sampling)
 - Value Iteration
 - Policy Iteration
 
