@@ -167,43 +167,41 @@ public class ReplayQLearningTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void gammaBelowZeroIsRejected() {
-        new ReplayQLearning<>(table, new GreedyPolicy<>(table), -0.1,
-                new ReplayBuffer<>(10), 4, new Random(0));
+        new ReplayQLearning<>(
+                table, new GreedyPolicy<>(table), -0.1, new ReplayBuffer<>(10), 4, new Random(0));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void gammaAboveOneIsRejected() {
-        new ReplayQLearning<>(table, new GreedyPolicy<>(table), 1.1,
-                new ReplayBuffer<>(10), 4, new Random(0));
+        new ReplayQLearning<>(
+                table, new GreedyPolicy<>(table), 1.1, new ReplayBuffer<>(10), 4, new Random(0));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void batchSizeZeroIsRejected() {
-        new ReplayQLearning<>(table, new GreedyPolicy<>(table), 0.9,
-                new ReplayBuffer<>(10), 0, new Random(0));
+        new ReplayQLearning<>(
+                table, new GreedyPolicy<>(table), 0.9, new ReplayBuffer<>(10), 0, new Random(0));
     }
 
     @Test(expected = NullPointerException.class)
     public void nullTableIsRejected() {
-        new ReplayQLearning<>(null, new GreedyPolicy<>(table), 0.9,
-                new ReplayBuffer<>(10), 4, new Random(0));
+        new ReplayQLearning<>(
+                null, new GreedyPolicy<>(table), 0.9, new ReplayBuffer<>(10), 4, new Random(0));
     }
 
     @Test(expected = NullPointerException.class)
     public void nullPolicyIsRejected() {
-        new ReplayQLearning<>(table, null, 0.9,
-                new ReplayBuffer<>(10), 4, new Random(0));
+        new ReplayQLearning<>(table, null, 0.9, new ReplayBuffer<>(10), 4, new Random(0));
     }
 
     @Test(expected = NullPointerException.class)
     public void nullBufferIsRejected() {
-        new ReplayQLearning<>(table, new GreedyPolicy<>(table), 0.9,
-                null, 4, new Random(0));
+        new ReplayQLearning<>(table, new GreedyPolicy<>(table), 0.9, null, 4, new Random(0));
     }
 
     @Test(expected = NullPointerException.class)
     public void nullRngIsRejected() {
-        new ReplayQLearning<>(table, new GreedyPolicy<>(table), 0.9,
-                new ReplayBuffer<>(10), 4, null);
+        new ReplayQLearning<>(
+                table, new GreedyPolicy<>(table), 0.9, new ReplayBuffer<>(10), 4, null);
     }
 }

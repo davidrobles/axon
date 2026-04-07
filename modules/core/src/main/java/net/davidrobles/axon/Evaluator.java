@@ -7,8 +7,8 @@ import java.util.List;
  * policy without improving it. Action selection is delegated entirely to an external policy; the
  * algorithm only updates its value estimates from observed transitions.
  *
- * <p>The {@link #observe} method is the primary hook; {@link Agent#update} is provided as a
- * default that ignores the action and next-action arguments, which are irrelevant for prediction.
+ * <p>The {@link #observe} method is the primary hook; {@link Agent#update} is provided as a default
+ * that ignores the action and next-action arguments, which are irrelevant for prediction.
  *
  * <p>For <em>control</em> (learning to act by improving a policy), see {@link Agent}.
  *

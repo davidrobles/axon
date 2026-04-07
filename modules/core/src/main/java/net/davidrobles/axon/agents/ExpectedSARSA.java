@@ -33,10 +33,12 @@ public class ExpectedSARSA<S, A> implements ObservableQAgent<S, A> {
     /**
      * @param table the Q-function to update (shared with the behavior policy); owns the learning
      *     rate
-     * @param policy the stochastic behavior policy used for action selection and probability queries
+     * @param policy the stochastic behavior policy used for action selection and probability
+     *     queries
      * @param gamma discount factor
      */
-    public ExpectedSARSA(TrainableQFunction<S, A> table, StochasticPolicy<S, A> policy, double gamma) {
+    public ExpectedSARSA(
+            TrainableQFunction<S, A> table, StochasticPolicy<S, A> policy, double gamma) {
         if (gamma < 0 || gamma > 1) throw new IllegalArgumentException("gamma must be in [0, 1]");
         this.table = Objects.requireNonNull(table, "table must not be null");
         this.policy = Objects.requireNonNull(policy, "policy must not be null");
@@ -54,7 +56,9 @@ public class ExpectedSARSA<S, A> implements ObservableQAgent<S, A> {
 
         if (!result.done() && !nextActions.isEmpty()) {
             for (A nextAction : nextActions) {
-                double prob = Math.exp(policy.logProbability(result.nextState(), nextAction, nextActions));
+                double prob =
+                        Math.exp(
+                                policy.logProbability(result.nextState(), nextAction, nextActions));
                 expectedNextQ += prob * table.getValue(result.nextState(), nextAction);
             }
         }

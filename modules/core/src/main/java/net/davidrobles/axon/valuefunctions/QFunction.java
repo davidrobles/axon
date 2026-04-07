@@ -6,7 +6,8 @@ package net.davidrobles.axon.valuefunctions;
  * <p>Estimates the expected cumulative discounted return from a given state after taking a given
  * action and then following a fixed policy π (Q^π) or the optimal policy (Q*). Used by control
  * algorithms such as Q-Learning and SARSA, and by policies such as {@link
- * net.davidrobles.axon.policies.GreedyPolicy} and {@link net.davidrobles.axon.policies.EpsilonGreedy}.
+ * net.davidrobles.axon.policies.GreedyPolicy} and {@link
+ * net.davidrobles.axon.policies.EpsilonGreedy}.
  *
  * @param <S> the type of the states
  * @param <A> the type of the actions

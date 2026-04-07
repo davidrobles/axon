@@ -22,8 +22,8 @@ import net.davidrobles.axon.valuefunctions.TrainableQFunction;
  *
  * <p>Setting n=1 recovers SARSA; as n→∞ the return approaches Monte Carlo control.
  *
- * <p>Transitions are buffered internally. Updates to Q(s_t, a_t) are applied n steps after the
- * pair is first encountered, or at episode end for pairs within the last n steps.
+ * <p>Transitions are buffered internally. Updates to Q(s_t, a_t) are applied n steps after the pair
+ * is first encountered, or at episode end for pairs within the last n steps.
  *
  * @param <S> the type of the states
  * @param <A> the type of the actions

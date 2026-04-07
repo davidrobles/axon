@@ -11,8 +11,8 @@ import java.util.Set;
 import net.davidrobles.axon.ObservableQAgent;
 import net.davidrobles.axon.StepResult;
 import net.davidrobles.axon.policies.Policy;
-import net.davidrobles.axon.valuefunctions.QPair;
 import net.davidrobles.axon.valuefunctions.QFunctionObserver;
+import net.davidrobles.axon.valuefunctions.QPair;
 import net.davidrobles.axon.valuefunctions.TrainableQFunction;
 
 /**
@@ -28,8 +28,8 @@ import net.davidrobles.axon.valuefunctions.TrainableQFunction;
  *       observed (s, a) pairs uniformly at random and replaying their stored transitions.
  * </ol>
  *
- * <p>The model assumes deterministic transitions — the latest observed outcome for each (s, a)
- * pair is stored and reused during planning.
+ * <p>The model assumes deterministic transitions — the latest observed outcome for each (s, a) pair
+ * is stored and reused during planning.
  *
  * @param <S> the type of the states
  * @param <A> the type of the actions
