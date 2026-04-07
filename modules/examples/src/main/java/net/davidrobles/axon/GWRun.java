@@ -1,22 +1,23 @@
 package net.davidrobles.axon;
 
 import java.util.Random;
+import net.davidrobles.axon.agents.*;
 import net.davidrobles.axon.envs.gridworld.GWAction;
 import net.davidrobles.axon.envs.gridworld.GWState;
 import net.davidrobles.axon.envs.gridworld.GridWorldEnv;
 import net.davidrobles.axon.envs.gridworld.GridWorldMDP;
 import net.davidrobles.axon.envs.gridworld.view.GWVView;
 import net.davidrobles.axon.envs.gridworld.view.GWViewQValues;
-import net.davidrobles.axon.agents.*;
-import net.davidrobles.axon.prediction.NStepTD;
-import net.davidrobles.axon.ReplayBuffer;
 import net.davidrobles.axon.planning.*;
 import net.davidrobles.axon.policies.EpsilonGreedy;
 import net.davidrobles.axon.policies.RandomPolicy;
+import net.davidrobles.axon.policies.SoftmaxPolicy;
+import net.davidrobles.axon.policies.UCBPolicy;
 import net.davidrobles.axon.prediction.*;
+import net.davidrobles.axon.prediction.NStepTD;
+import net.davidrobles.axon.util.DRFrame;
 import net.davidrobles.axon.valuefunctions.TabularQFunction;
 import net.davidrobles.axon.valuefunctions.TabularVFunction;
-import net.davidrobles.axon.util.DRFrame;
 
 public class GWRun {
     private static final Random RNG = new Random();
@@ -121,7 +122,8 @@ public class GWRun {
         view.setGridEnabled(true);
         new DRFrame(view, "Q-Learning + Replay (batch=" + batchSize + ")");
         ReplayQLearning<GWState, GWAction> agent =
-                new ReplayQLearning<>(qTable, policy, gamma, new ReplayBuffer<>(bufferCapacity), batchSize, RNG);
+                new ReplayQLearning<>(
+                        qTable, policy, gamma, new ReplayBuffer<>(bufferCapacity), batchSize, RNG);
         agent.addQFunctionObserver(view);
         RLLoop.run(env, agent, policy, numEpisodes);
     }
@@ -224,6 +226,40 @@ public class GWRun {
         RLLoop.run(env, agent, policy, numEpisodes);
     }
 
+    private static void tabularUCB() {
+        double alpha = 0.1;
+        double gamma = 0.99;
+        double c = 1.0;
+        int numEpisodes = 300;
+        GridWorldMDP mdp = new GridWorldMDP(20, 20, RNG);
+        GridWorldEnv env = new GridWorldEnv(mdp, RNG);
+        TabularQFunction<GWState, GWAction> qTable = new TabularQFunction<>(alpha);
+        UCBPolicy<GWState, GWAction> policy = new UCBPolicy<>(qTable, c);
+        GWViewQValues view = new GWViewQValues(mdp, 20, 20, env);
+        view.setGridEnabled(true);
+        new DRFrame(view, "UCB (c=" + c + ")");
+        QLearning<GWState, GWAction> agent = new QLearning<>(qTable, policy, gamma);
+        agent.addQFunctionObserver(view);
+        RLLoop.run(env, agent, policy, numEpisodes);
+    }
+
+    private static void tabularSoftmax() {
+        double alpha = 0.1;
+        double gamma = 0.99;
+        double temperature = 0.5;
+        int numEpisodes = 300;
+        GridWorldMDP mdp = new GridWorldMDP(20, 20, RNG);
+        GridWorldEnv env = new GridWorldEnv(mdp, RNG);
+        TabularQFunction<GWState, GWAction> qTable = new TabularQFunction<>(alpha);
+        SoftmaxPolicy<GWState, GWAction> policy = new SoftmaxPolicy<>(qTable, temperature, RNG);
+        GWViewQValues view = new GWViewQValues(mdp, 20, 20, env);
+        view.setGridEnabled(true);
+        new DRFrame(view, "Softmax (τ=" + temperature + ")");
+        QLearning<GWState, GWAction> agent = new QLearning<>(qTable, policy, gamma);
+        agent.addQFunctionObserver(view);
+        RLLoop.run(env, agent, policy, numEpisodes);
+    }
+
     private static void tabularSARSALambda() {
         double alpha = 0.1;
         double gamma = 0.99;
@@ -256,5 +292,7 @@ public class GWRun {
         //        tabularTDLambda();
         //        tabularSARSALambda();
         //        policyIteration();
+        //        tabularUCB();
+        //        tabularSoftmax();
     }
 }

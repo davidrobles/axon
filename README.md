@@ -26,6 +26,12 @@ A tabular reinforcement learning framework in Java. Implements classic model-fre
 
 **Experience Replay**
 - Q-Learning with experience replay (fixed-capacity circular buffer, random mini-batch sampling)
+
+**Exploration**
+- UCB (Upper Confidence Bound / UCB1)
+- Softmax (Boltzmann exploration)
+
+**Planning**
 - Value Iteration
 - Policy Iteration
 
@@ -68,6 +74,8 @@ Handles reset → select → step → update for each episode.
 |--------|----------|
 | `GreedyPolicy` | Always selects the highest Q-value action |
 | `EpsilonGreedy` | ε-random exploration; supports linear ε decay |
+| `UCBPolicy` | UCB1 bonus: Q(s,a) + c·√(ln N(s) / N(s,a)) |
+| `SoftmaxPolicy` | Boltzmann sampling with temperature τ |
 | `RandomPolicy` | Uniform random selection |
 | `TabularPolicy` | Deterministic state→action map (used by planners) |
 
