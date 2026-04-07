@@ -21,15 +21,17 @@ A tabular reinforcement learning framework in Java. Implements classic model-fre
 - n-step SARSA
 - SARSA(λ) with eligibility traces
 
+**Model-Based**
+- Dyna-Q (Q-Learning + learned model + planning)
+- Value Iteration
+- Policy Iteration
+
 **Prediction**
 - Monte Carlo Prediction (first-visit)
 - n-step TD
 - TD(0)
 - TD(λ) with eligibility traces
 
-**Planning (model-based)**
-- Value Iteration
-- Policy Iteration
 
 ## Core Concepts
 

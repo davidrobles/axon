@@ -4,6 +4,7 @@ import java.util.Random;
 import net.davidrobles.axon.envs.gridworld.view.GWVView;
 import net.davidrobles.axon.envs.gridworld.view.GWViewQValues;
 import net.davidrobles.axon.RLLoop;
+import net.davidrobles.axon.agents.DynaQ;
 import net.davidrobles.axon.agents.ExpectedSARSA;
 import net.davidrobles.axon.agents.MCControl;
 import net.davidrobles.axon.agents.NStepSARSA;
@@ -103,6 +104,23 @@ public class GWRun {
         RLLoop.run(env, agent, policy, numEpisodes);
     }
 
+    private static void tabularDynaQ() {
+        double alpha = 0.1;
+        double gamma = 0.99;
+        int planningSteps = 50;
+        int numEpisodes = 50;
+        GridWorldMDP mdp = new GridWorldMDP(20, 20, RNG);
+        GridWorldEnv env = new GridWorldEnv(mdp, RNG);
+        TabularQFunction<GWState, GWAction> qTable = new TabularQFunction<>(alpha);
+        EpsilonGreedy<GWState, GWAction> policy = new EpsilonGreedy<>(qTable, 0.1, RNG);
+        GWViewQValues view = new GWViewQValues(mdp, 20, 20, env);
+        view.setGridEnabled(true);
+        new DRFrame(view, "Dyna-Q (n=" + planningSteps + ")");
+        DynaQ<GWState, GWAction> agent = new DynaQ<>(qTable, policy, gamma, planningSteps, RNG);
+        agent.addQFunctionObserver(view);
+        RLLoop.run(env, agent, policy, numEpisodes);
+    }
+
     private static void tabularTD0() {
         double alpha = 0.01;
         double gamma = 0.99;
@@ -188,6 +206,7 @@ public class GWRun {
         //        tabularMCControl();
         //        tabularNStepTD();
         //        tabularNStepSARSA();
+        //        tabularDynaQ();
         //        tabularTD0();
         tabularSARSA();
         //        tabularExpectedSARSA();

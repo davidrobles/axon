@@ -106,6 +106,23 @@ public class GWRun {
         RLLoop.run(env, agent, policy, numEpisodes);
     }
 
+    private static void tabularDynaQ() {
+        double alpha = 0.1;
+        double gamma = 0.99;
+        int planningSteps = 50;
+        int numEpisodes = 50;
+        GridWorldMDP mdp = new GridWorldMDP(20, 20, RNG);
+        GridWorldEnv env = new GridWorldEnv(mdp, RNG);
+        TabularQFunction<GWState, GWAction> qTable = new TabularQFunction<>(alpha);
+        EpsilonGreedy<GWState, GWAction> policy = new EpsilonGreedy<>(qTable, 0.1, RNG);
+        GWViewQValues view = new GWViewQValues(mdp, 20, 20, env);
+        view.setGridEnabled(true);
+        new DRFrame(view, "Dyna-Q (n=" + planningSteps + ")");
+        DynaQ<GWState, GWAction> agent = new DynaQ<>(qTable, policy, gamma, planningSteps, RNG);
+        agent.addQFunctionObserver(view);
+        RLLoop.run(env, agent, policy, numEpisodes);
+    }
+
     private static void tabularNStepTD() {
         double alpha = 0.01;
         double gamma = 0.99;
@@ -207,6 +224,7 @@ public class GWRun {
     public static void main(String[] args) {
         //        tabularMCPrediction();
         //        tabularMCControl();
+        //        tabularDynaQ();
         //        tabularNStepTD();
         //        tabularNStepSARSA();
         //        tabularTD0();
