@@ -31,6 +31,8 @@ Never add Claude as a co-author or contributor in commit messages.
 
 After every change, always check whether anything in `README.md` or `CLAUDE.md` needs to be updated to reflect the change.
 
+Never commit changes without explicit confirmation from the user. After making changes, present them for review and wait for the user to say to commit before running any `git commit` command.
+
 ## Key Conventions
 
 - Module dependencies: `examples` → `envs` → `core`, `util`
