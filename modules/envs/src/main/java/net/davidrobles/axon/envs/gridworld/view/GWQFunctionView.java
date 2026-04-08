@@ -9,10 +9,10 @@ import net.davidrobles.axon.envs.gridworld.GridWorldMDP;
 import net.davidrobles.axon.valuefunctions.QFunction;
 import net.davidrobles.axon.valuefunctions.QFunctionObserver;
 
-public class GWViewQValues extends GridWorldView implements QFunctionObserver<GWState, GWAction> {
+public class GWQFunctionView extends GridWorldView implements QFunctionObserver<GWState, GWAction> {
     private QFunction<GWState, GWAction> qFunction;
 
-    public GWViewQValues(
+    public GWQFunctionView(
             GridWorldMDP gridWorld, int cellWidth, int cellHeight, GridWorldEnv environment) {
         super(gridWorld, cellWidth, cellHeight, environment);
     }

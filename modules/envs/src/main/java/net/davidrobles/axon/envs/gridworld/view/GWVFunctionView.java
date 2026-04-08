@@ -8,10 +8,11 @@ import net.davidrobles.axon.envs.gridworld.GridWorldMDP;
 import net.davidrobles.axon.valuefunctions.VFunction;
 import net.davidrobles.axon.valuefunctions.VFunctionObserver;
 
-public class GWVView extends GridWorldView implements VFunctionObserver<GWState> {
+public class GWVFunctionView extends GridWorldView implements VFunctionObserver<GWState> {
     private VFunction<GWState> vFunction;
 
-    public GWVView(GridWorldMDP gridWorld, int cellWidth, int cellHeight, GridWorldEnv env) {
+    public GWVFunctionView(
+            GridWorldMDP gridWorld, int cellWidth, int cellHeight, GridWorldEnv env) {
         super(gridWorld, cellWidth, cellHeight, env);
     }
 
