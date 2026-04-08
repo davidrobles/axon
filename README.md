@@ -16,6 +16,7 @@ A tabular reinforcement learning framework in Java. Implements classic model-fre
 **Model-Free Control**
 - Monte Carlo Control (on-policy, first-visit)
 - Q-Learning (off-policy)
+- Double Q-Learning (van Hasselt, 2010)
 - SARSA (on-policy)
 - Expected SARSA (on-policy, lower variance)
 - n-step SARSA

@@ -3,6 +3,7 @@ package net.davidrobles.axon.envs.gridworld;
 import java.util.Random;
 import net.davidrobles.axon.RLLoop;
 import net.davidrobles.axon.ReplayBuffer;
+import net.davidrobles.axon.agents.DoubleQLearning;
 import net.davidrobles.axon.agents.DynaQ;
 import net.davidrobles.axon.agents.ExpectedSARSA;
 import net.davidrobles.axon.agents.MCControl;
@@ -242,6 +243,27 @@ public class GWRun {
         RLLoop.run(env, agent, policy, numEpisodes);
     }
 
+    private static void tabularDoubleQLearning() {
+        double alpha = 0.1;
+        double gamma = 0.99;
+        int numEpisodes = 300;
+        GridWorldMDP mdp = new GridWorldMDP(20, 20, RNG);
+        GridWorldEnv env = new GridWorldEnv(mdp, RNG);
+        TabularQFunction<GWState, GWAction> qA = new TabularQFunction<>(alpha);
+        TabularQFunction<GWState, GWAction> qB = new TabularQFunction<>(alpha);
+        // Behavior policy acts on the average of both tables
+        EpsilonGreedy<GWState, GWAction> policy =
+                new EpsilonGreedy<>(
+                        (s, a) -> (qA.getValue(s, a) + qB.getValue(s, a)) / 2.0, 0.1, RNG);
+        GWViewQValues view = new GWViewQValues(mdp, 20, 20, env);
+        view.setGridEnabled(true);
+        new DRFrame(view, "Double Q-Learning");
+        DoubleQLearning<GWState, GWAction> agent =
+                new DoubleQLearning<>(qA, qB, policy, gamma, RNG);
+        agent.addQFunctionObserver(view);
+        RLLoop.run(env, agent, policy, numEpisodes);
+    }
+
     private static void tabularSARSALambda() {
         double alpha = 0.1;
         double gamma = 0.99;
@@ -269,6 +291,7 @@ public class GWRun {
         //        tabularTD0();
         //        tabularUCB();
         //        tabularSoftmax();
+        //        tabularDoubleQLearning();
         tabularSARSA();
         //        tabularExpectedSARSA();
         //        tabularQLearning();
