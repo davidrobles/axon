@@ -27,7 +27,7 @@ import net.davidrobles.axon.valuefunctions.TrainableQFunction;
  * @param <S> the type of the states
  * @param <A> the type of the actions
  */
-public class ReplayQLearning<S, A> implements ObservableQAgent<S, A> {
+public class QLearningWithReplay<S, A> implements ObservableQAgent<S, A> {
     private final Policy<S, A> policy;
     private final double gamma;
     private final int batchSize;
@@ -45,7 +45,7 @@ public class ReplayQLearning<S, A> implements ObservableQAgent<S, A> {
      * @param batchSize number of transitions to sample per update; must be >= 1
      * @param rng random number generator used for sampling the mini-batch
      */
-    public ReplayQLearning(
+    public QLearningWithReplay(
             TrainableQFunction<S, A> table,
             Policy<S, A> policy,
             double gamma,

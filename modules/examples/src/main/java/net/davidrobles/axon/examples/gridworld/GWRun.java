@@ -110,7 +110,7 @@ public class GWRun {
         RLLoop.run(env, agent, policy, numEpisodes);
     }
 
-    private static void tabularReplayQLearning() {
+    private static void tabularQLearningWithReplay() {
         double alpha = 0.1;
         double gamma = 0.99;
         int bufferCapacity = 5000;
@@ -123,8 +123,8 @@ public class GWRun {
         GWQFunctionView view = new GWQFunctionView(mdp, 20, 20, env);
         view.setGridEnabled(true);
         new AppFrame(view, "Q-Learning + Replay (batch=" + batchSize + ")");
-        ReplayQLearning<GWState, GWAction> agent =
-                new ReplayQLearning<>(
+        QLearningWithReplay<GWState, GWAction> agent =
+                new QLearningWithReplay<>(
                         qTable, policy, gamma, new ReplayBuffer<>(bufferCapacity), batchSize, RNG);
         agent.addQFunctionObserver(view);
         RLLoop.run(env, agent, policy, numEpisodes);
@@ -302,7 +302,7 @@ public class GWRun {
     public static void main(String[] args) {
         //        tabularMCPrediction();
         //        tabularMCControl();
-        //        tabularReplayQLearning();
+        //        tabularQLearningWithReplay();
         //        tabularDynaQ();
         //        tabularNStepTD();
         //        tabularNStepSARSA();
