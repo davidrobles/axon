@@ -2,7 +2,6 @@ package net.davidrobles.axon.planning;
 
 import java.util.*;
 import net.davidrobles.axon.MDP;
-import net.davidrobles.axon.MDPUtil;
 import net.davidrobles.axon.policies.Policy;
 import net.davidrobles.axon.policies.TabularPolicy;
 import net.davidrobles.axon.valuefunctions.TabularVFunction;
@@ -39,7 +38,9 @@ public class PolicyIteration<S, A> implements Planner<S, A> {
 
             for (S state : mdp.getStates()) {
                 double oldValue = table.getValue(state);
-                Set<S> nextStates = MDPUtil.getNextStates(mdp, state);
+                Set<S> nextStates = new HashSet<>();
+                for (A a : mdp.getActions(state))
+                    nextStates.addAll(mdp.getTransitions(state, a).keySet());
                 A action = policy.getAction(state);
                 double newValue = 0;
 
