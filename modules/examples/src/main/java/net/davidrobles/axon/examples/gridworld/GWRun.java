@@ -17,7 +17,7 @@ import net.davidrobles.axon.policies.SoftmaxPolicy;
 import net.davidrobles.axon.policies.UCBPolicy;
 import net.davidrobles.axon.prediction.*;
 import net.davidrobles.axon.prediction.NStepTD;
-import net.davidrobles.axon.util.DRFrame;
+import net.davidrobles.axon.util.AppFrame;
 import net.davidrobles.axon.valuefunctions.TabularQFunction;
 import net.davidrobles.axon.valuefunctions.TabularVFunction;
 
@@ -30,7 +30,7 @@ public class GWRun {
         GridWorldMDP mdp = new GridWorldMDP(25, 25, RNG);
         GridWorldEnv env = new GridWorldEnv(mdp, RNG);
         GWVView view = new GWVView(mdp, 20, 20, env);
-        new DRFrame(view);
+        new AppFrame(view);
         PolicyIteration<GWState, GWAction> learner = new PolicyIteration<>(mdp, theta, gamma);
         learner.addVFunctionObserver(view);
         learner.solve();
@@ -42,7 +42,7 @@ public class GWRun {
         GridWorldMDP mdp = new GridWorldMDP(25, 25, RNG);
         GridWorldEnv env = new GridWorldEnv(mdp, RNG);
         GWVView view = new GWVView(mdp, 20, 20, env);
-        new DRFrame(view);
+        new AppFrame(view);
         ValueIteration<GWState, GWAction> learner = new ValueIteration<>(mdp, theta, gamma);
         learner.addVFunctionObserver(view);
         learner.solve();
@@ -57,7 +57,7 @@ public class GWRun {
         TabularVFunction<GWState> vTable = new TabularVFunction<>(alpha);
         RandomPolicy<GWState, GWAction> policy = new RandomPolicy<>(RNG);
         GWVView view = new GWVView(mdp, 20, 20, env);
-        new DRFrame(view, "MC Prediction");
+        new AppFrame(view, "MC Prediction");
         MCPrediction<GWState, GWAction> agent = new MCPrediction<>(vTable, policy, gamma);
         agent.addVFunctionObserver(view);
         RLLoop.run(env, agent, policy, numEpisodes);
@@ -73,7 +73,7 @@ public class GWRun {
         EpsilonGreedy<GWState, GWAction> policy = new EpsilonGreedy<>(qTable, 0.1, RNG);
         GWViewQValues view = new GWViewQValues(mdp, 20, 20, env);
         view.setGridEnabled(true);
-        new DRFrame(view, "MC Control");
+        new AppFrame(view, "MC Control");
         MCControl<GWState, GWAction> agent = new MCControl<>(qTable, policy, gamma);
         agent.addQFunctionObserver(view);
         RLLoop.run(env, agent, policy, numEpisodes);
@@ -88,7 +88,7 @@ public class GWRun {
         TabularVFunction<GWState> vTable = new TabularVFunction<>(alpha);
         RandomPolicy<GWState, GWAction> policy = new RandomPolicy<>(RNG);
         GWVView view = new GWVView(mdp, 20, 20, env);
-        new DRFrame(view, "TD(0)");
+        new AppFrame(view, "TD(0)");
         TD0<GWState, GWAction> agent = new TD0<>(vTable, policy, gamma);
         agent.addVFunctionObserver(view);
         RLLoop.run(env, agent, policy, numEpisodes);
@@ -104,7 +104,7 @@ public class GWRun {
         TabularVFunction<GWState> vTable = new TabularVFunction<>(alpha);
         RandomPolicy<GWState, GWAction> policy = new RandomPolicy<>(RNG);
         GWVView view = new GWVView(mdp, 20, 20, env);
-        new DRFrame(view, "TD(λ)");
+        new AppFrame(view, "TD(λ)");
         TDLambda<GWState, GWAction> agent = new TDLambda<>(vTable, policy, gamma, lambda);
         agent.addVFunctionObserver(view);
         RLLoop.run(env, agent, policy, numEpisodes);
@@ -122,7 +122,7 @@ public class GWRun {
         EpsilonGreedy<GWState, GWAction> policy = new EpsilonGreedy<>(qTable, 0.1, RNG);
         GWViewQValues view = new GWViewQValues(mdp, 20, 20, env);
         view.setGridEnabled(true);
-        new DRFrame(view, "Q-Learning + Replay (batch=" + batchSize + ")");
+        new AppFrame(view, "Q-Learning + Replay (batch=" + batchSize + ")");
         ReplayQLearning<GWState, GWAction> agent =
                 new ReplayQLearning<>(
                         qTable, policy, gamma, new ReplayBuffer<>(bufferCapacity), batchSize, RNG);
@@ -141,7 +141,7 @@ public class GWRun {
         EpsilonGreedy<GWState, GWAction> policy = new EpsilonGreedy<>(qTable, 0.1, RNG);
         GWViewQValues view = new GWViewQValues(mdp, 20, 20, env);
         view.setGridEnabled(true);
-        new DRFrame(view, "Dyna-Q (n=" + planningSteps + ")");
+        new AppFrame(view, "Dyna-Q (n=" + planningSteps + ")");
         DynaQ<GWState, GWAction> agent = new DynaQ<>(qTable, policy, gamma, planningSteps, RNG);
         agent.addQFunctionObserver(view);
         RLLoop.run(env, agent, policy, numEpisodes);
@@ -157,7 +157,7 @@ public class GWRun {
         TabularVFunction<GWState> vTable = new TabularVFunction<>(alpha);
         RandomPolicy<GWState, GWAction> policy = new RandomPolicy<>(RNG);
         GWVView view = new GWVView(mdp, 20, 20, env);
-        new DRFrame(view, "n-step TD (n=" + n + ")");
+        new AppFrame(view, "n-step TD (n=" + n + ")");
         NStepTD<GWState, GWAction> agent = new NStepTD<>(vTable, policy, n, gamma);
         agent.addVFunctionObserver(view);
         RLLoop.run(env, agent, policy, numEpisodes);
@@ -174,7 +174,7 @@ public class GWRun {
         EpsilonGreedy<GWState, GWAction> policy = new EpsilonGreedy<>(qTable, 0.1, RNG);
         GWViewQValues view = new GWViewQValues(mdp, 20, 20, env);
         view.setGridEnabled(true);
-        new DRFrame(view, "n-step SARSA (n=" + n + ")");
+        new AppFrame(view, "n-step SARSA (n=" + n + ")");
         NStepSARSA<GWState, GWAction> agent = new NStepSARSA<>(qTable, policy, n, gamma);
         agent.addQFunctionObserver(view);
         RLLoop.run(env, agent, policy, numEpisodes);
@@ -190,7 +190,7 @@ public class GWRun {
         EpsilonGreedy<GWState, GWAction> policy = new EpsilonGreedy<>(qTable, 0.1, RNG);
         GWViewQValues view = new GWViewQValues(mdp, 20, 20, env);
         view.setGridEnabled(true);
-        new DRFrame(view, "Expected SARSA");
+        new AppFrame(view, "Expected SARSA");
         ExpectedSARSA<GWState, GWAction> agent = new ExpectedSARSA<>(qTable, policy, gamma);
         agent.addQFunctionObserver(view);
         RLLoop.run(env, agent, policy, numEpisodes);
@@ -206,7 +206,7 @@ public class GWRun {
         RandomPolicy<GWState, GWAction> policy = new RandomPolicy<>(RNG);
         GWViewQValues view = new GWViewQValues(mdp, 20, 20, env);
         view.setGridEnabled(true);
-        new DRFrame(view, "SARSA");
+        new AppFrame(view, "SARSA");
         SARSA<GWState, GWAction> agent = new SARSA<>(qTable, policy, gamma);
         agent.addQFunctionObserver(view);
         RLLoop.run(env, agent, policy, numEpisodes);
@@ -222,7 +222,7 @@ public class GWRun {
         EpsilonGreedy<GWState, GWAction> policy = new EpsilonGreedy<>(qTable, 0.1, RNG);
         GWViewQValues view = new GWViewQValues(mdp, 20, 20, env);
         view.setGridEnabled(true);
-        new DRFrame(view, "Q-Learning");
+        new AppFrame(view, "Q-Learning");
         QLearning<GWState, GWAction> agent = new QLearning<>(qTable, policy, gamma);
         agent.addQFunctionObserver(view);
         RLLoop.run(env, agent, policy, numEpisodes);
@@ -239,7 +239,7 @@ public class GWRun {
         UCBPolicy<GWState, GWAction> policy = new UCBPolicy<>(qTable, c);
         GWViewQValues view = new GWViewQValues(mdp, 20, 20, env);
         view.setGridEnabled(true);
-        new DRFrame(view, "UCB (c=" + c + ")");
+        new AppFrame(view, "UCB (c=" + c + ")");
         QLearning<GWState, GWAction> agent = new QLearning<>(qTable, policy, gamma);
         agent.addQFunctionObserver(view);
         RLLoop.run(env, agent, policy, numEpisodes);
@@ -256,7 +256,7 @@ public class GWRun {
         SoftmaxPolicy<GWState, GWAction> policy = new SoftmaxPolicy<>(qTable, temperature, RNG);
         GWViewQValues view = new GWViewQValues(mdp, 20, 20, env);
         view.setGridEnabled(true);
-        new DRFrame(view, "Softmax (τ=" + temperature + ")");
+        new AppFrame(view, "Softmax (τ=" + temperature + ")");
         QLearning<GWState, GWAction> agent = new QLearning<>(qTable, policy, gamma);
         agent.addQFunctionObserver(view);
         RLLoop.run(env, agent, policy, numEpisodes);
@@ -275,7 +275,7 @@ public class GWRun {
                         (s, a) -> (qA.getValue(s, a) + qB.getValue(s, a)) / 2.0, 0.1, RNG);
         GWViewQValues view = new GWViewQValues(mdp, 20, 20, env);
         view.setGridEnabled(true);
-        new DRFrame(view, "Double Q-Learning");
+        new AppFrame(view, "Double Q-Learning");
         DoubleQLearning<GWState, GWAction> agent =
                 new DoubleQLearning<>(qA, qB, policy, gamma, RNG);
         agent.addQFunctionObserver(view);
@@ -293,7 +293,7 @@ public class GWRun {
         RandomPolicy<GWState, GWAction> policy = new RandomPolicy<>(RNG);
         GWViewQValues view = new GWViewQValues(mdp, 20, 20, env);
         view.setGridEnabled(true);
-        new DRFrame(view, "SARSA(λ)");
+        new AppFrame(view, "SARSA(λ)");
         SARSALambda<GWState, GWAction> agent = new SARSALambda<>(qTable, policy, gamma, lambda);
         agent.addQFunctionObserver(view);
         RLLoop.run(env, agent, policy, numEpisodes);
