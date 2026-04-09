@@ -56,7 +56,9 @@ public interface Policy<S, A> {
 
     /**
      * Switches the policy between training mode (exploration enabled) and evaluation mode
-     * (deterministic / greedy). Default implementation is a no-op.
+     * (deterministic / greedy). Unlike the other lifecycle hooks, this method is <em>not</em>
+     * called automatically by {@link net.davidrobles.axon.RLLoop} — callers must invoke it
+     * explicitly before evaluation runs. Default implementation is a no-op.
      *
      * @param training {@code true} to enable exploration, {@code false} for greedy evaluation
      */
