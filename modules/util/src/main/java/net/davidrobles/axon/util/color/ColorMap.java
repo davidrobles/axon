@@ -1,16 +1,22 @@
-package edu.mines.jtk.awt; /****************************************************************************
-                            * Copyright (c) 2004, Colorado School of Mines and others. All rights reserved.
-                            * This program and accompanying materials are made available under the terms of
-                            * the Common Public License - v1.0, which accompanies this distribution, and is
-                            * available at http://www.eclipse.org/legal/cpl-v10.html
-                            ****************************************************************************/
+package net.davidrobles.axon.util.color;
 
 import static java.lang.Math.*;
 
 import java.awt.*;
 import java.awt.image.IndexColorModel;
-import javax.swing.event.EventListenerList;
 
+/**
+ * Maps floating-point values to colors using an {@link java.awt.image.IndexColorModel}.
+ *
+ * <p>Provides predefined color schemes (GRAY, JET, GMT_JET, HUE, PRISM, RED_WHITE_BLUE,
+ * GRAY_YELLOW_RED) and factory methods for constructing custom schemes.
+ *
+ * <p>Originally from the Java Toolkit (JTK) by Dave Hale, Colorado School of Mines. Source: <a
+ * href="https://github.com/dhale/jtk">https://github.com/dhale/jtk</a>. Licensed under the Common
+ * Public License v1.0 (<a href="http://www.eclipse.org/legal/cpl-v10.html">CPL-1.0</a>). Modified
+ * for use in Axon: relocated to {@code net.davidrobles.axon.util.color}, removed the incomplete
+ * listener subsystem, and inlined argument validation.
+ */
 public class ColorMap {
 
     /** Color model for grays from black to white. */
@@ -59,8 +65,10 @@ public class ColorMap {
      * @param colorModel the index color model.
      */
     public ColorMap(double vmin, double vmax, IndexColorModel colorModel) {
-        Check.argument(colorModel.isValid(0), "0 is valid for color model");
-        Check.argument(colorModel.isValid(255), "255 is valid for color model");
+        if (!colorModel.isValid(0))
+            throw new IllegalArgumentException("required condition: 0 is valid for color model");
+        if (!colorModel.isValid(255))
+            throw new IllegalArgumentException("required condition: 255 is valid for color model");
         _vmin = vmin;
         _vmax = vmax;
         _colorModel = colorModel;
@@ -204,7 +212,6 @@ public class ColorMap {
     public void setValueRange(double vmin, double vmax) {
         _vmin = vmin;
         _vmax = vmax;
-        fireColorMapChanged();
     }
 
     /**
@@ -215,7 +222,6 @@ public class ColorMap {
     public void setColorModel(IndexColorModel colorModel) {
         _colorModel = colorModel;
         cacheColors();
-        fireColorMapChanged();
     }
 
     /**
@@ -226,28 +232,7 @@ public class ColorMap {
     public void setColorModel(Color c) {
         _colorModel = makeSolidColors(c);
         cacheColors();
-        fireColorMapChanged();
     }
-
-    /**
-     * Adds the specified color map listener. Then notifies the listener that this colormap has
-     * changed.
-     *
-     * @param cml the listener.
-     */
-    //  public void addListener(ColorMapListener cml) {
-    //    _colorMapListeners.add(ColorMapListener.class,cml);
-    //    cml.colorMapChanged(this);
-    //  }
-
-    /**
-     * Removes the specified color map listener.
-     *
-     * @param cml the listener.
-     */
-    //  public void removeListener(ColorMapListener cml) {
-    //    _colorMapListeners.remove(ColorMapListener.class,cml);
-    //  }
 
     /**
      * Gets a linear gray black-to-white color model.
@@ -470,15 +455,6 @@ public class ColorMap {
     private double _vmax = 1.0;
     private IndexColorModel _colorModel;
     private Color[] _colors = new Color[256];
-    private EventListenerList _colorMapListeners = new EventListenerList();
-
-    private void fireColorMapChanged() {
-        Object[] listeners = _colorMapListeners.getListenerList();
-        for (int i = listeners.length - 2; i >= 0; i -= 2) {
-            //      ColorMapListener cml = (ColorMapListener)listeners[i+1];
-            //      cml.colorMapChanged(this);
-        }
-    }
 
     private void cacheColors() {
         for (int index = 0; index < 256; ++index)
