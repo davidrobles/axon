@@ -6,13 +6,13 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-public class TabularPolicyTest {
+public class DeterministicPolicyTest {
 
-    private TabularPolicy<String, String> policy;
+    private DeterministicPolicy<String, String> policy;
 
     @Before
     public void setUp() {
-        policy = new TabularPolicy<>();
+        policy = new DeterministicPolicy<>();
     }
 
     // -------------------------------------------------------------------------
@@ -49,27 +49,7 @@ public class TabularPolicyTest {
 
     @Test
     public void unmappedStateReturnsNull() {
-        // TabularPolicy returns null for states not in the map.
         assertNull(policy.getAction("unknown"));
         assertNull(policy.selectAction("unknown", List.of("a0")));
-    }
-
-    // -------------------------------------------------------------------------
-    // logProbability
-    // -------------------------------------------------------------------------
-
-    @Test
-    public void logProbabilityForStoredActionIsZero() {
-        policy.setAction("s0", "a1");
-        assertEquals(0.0, policy.logProbability("s0", "a1", List.of("a0", "a1")), 1e-9);
-    }
-
-    @Test
-    public void logProbabilityForOtherActionIsNegativeInfinity() {
-        policy.setAction("s0", "a1");
-        assertEquals(
-                Double.NEGATIVE_INFINITY,
-                policy.logProbability("s0", "a0", List.of("a0", "a1")),
-                1e-9);
     }
 }

@@ -13,7 +13,7 @@ import java.util.Map;
  * @param <S> the type of the states
  * @param <A> the type of the actions
  */
-public class TabularPolicy<S, A> implements Policy<S, A>, StochasticPolicy<S, A> {
+public class DeterministicPolicy<S, A> implements Policy<S, A> {
     private final Map<S, A> map = new HashMap<>();
 
     public A getAction(S state) {
@@ -27,10 +27,5 @@ public class TabularPolicy<S, A> implements Policy<S, A>, StochasticPolicy<S, A>
     @Override
     public A selectAction(S state, List<A> actions) {
         return map.get(state);
-    }
-
-    @Override
-    public double logProbability(S state, A action, List<A> actions) {
-        return map.get(state).equals(action) ? 0.0 : Double.NEGATIVE_INFINITY;
     }
 }

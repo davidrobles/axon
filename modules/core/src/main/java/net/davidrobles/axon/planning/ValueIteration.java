@@ -4,8 +4,8 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import net.davidrobles.axon.MDP;
+import net.davidrobles.axon.policies.DeterministicPolicy;
 import net.davidrobles.axon.policies.Policy;
-import net.davidrobles.axon.policies.TabularPolicy;
 import net.davidrobles.axon.valuefunctions.TabularVFunction;
 import net.davidrobles.axon.valuefunctions.VFunctionObserver;
 
@@ -69,7 +69,7 @@ public class ValueIteration<S, A> implements Planner<S, A> {
         System.out.println("DP Value Iteration finished.");
 
         // Extract greedy policy via one-step lookahead
-        TabularPolicy<S, A> policy = new TabularPolicy<>();
+        DeterministicPolicy<S, A> policy = new DeterministicPolicy<>();
         for (S state : mdp.getStates()) {
             A bestAction = null;
             double bestValue = Double.NEGATIVE_INFINITY;
