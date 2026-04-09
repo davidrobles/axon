@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
-import net.davidrobles.axon.ObservableQAgent;
+import net.davidrobles.axon.QFunctionObservable;
 import net.davidrobles.axon.ReplayBuffer;
 import net.davidrobles.axon.StepResult;
 import net.davidrobles.axon.Transition;
@@ -27,7 +27,7 @@ import net.davidrobles.axon.valuefunctions.TrainableQFunction;
  * @param <S> the type of the states
  * @param <A> the type of the actions
  */
-public class QLearningWithReplay<S, A> implements ObservableQAgent<S, A> {
+public class QLearningWithReplay<S, A> implements QFunctionObservable<S, A> {
     private final Policy<S, A> policy;
     private final double gamma;
     private final int batchSize;

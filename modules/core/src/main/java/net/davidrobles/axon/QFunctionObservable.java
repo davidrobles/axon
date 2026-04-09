@@ -8,6 +8,6 @@ import net.davidrobles.axon.valuefunctions.QFunctionObserver;
  * @param <S> the type of the states
  * @param <A> the type of the actions
  */
-public interface ObservableQAgent<S, A> extends Agent<S, A> {
+public interface QFunctionObservable<S, A> extends Agent<S, A> {
     void addQFunctionObserver(QFunctionObserver<S, A> observer);
 }

@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import net.davidrobles.axon.Evaluator;
-import net.davidrobles.axon.ObservableVAgent;
 import net.davidrobles.axon.StepResult;
+import net.davidrobles.axon.VFunctionObservable;
 import net.davidrobles.axon.policies.Policy;
 import net.davidrobles.axon.valuefunctions.TrainableVFunction;
 import net.davidrobles.axon.valuefunctions.VFunctionObserver;
@@ -29,7 +29,7 @@ import net.davidrobles.axon.valuefunctions.VFunctionObserver;
  * @param <S> the type of the states
  * @param <A> the type of the actions
  */
-public class NStepTD<S, A> implements Evaluator<S, A>, ObservableVAgent<S, A> {
+public class NStepTD<S, A> implements Evaluator<S, A>, VFunctionObservable<S, A> {
     private record Entry<S>(S state, double reward) {}
 
     private final Policy<S, A> policy;

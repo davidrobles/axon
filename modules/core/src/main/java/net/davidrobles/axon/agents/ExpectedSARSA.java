@@ -4,7 +4,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import net.davidrobles.axon.ObservableQAgent;
+import net.davidrobles.axon.QFunctionObservable;
 import net.davidrobles.axon.StepResult;
 import net.davidrobles.axon.policies.StochasticPolicy;
 import net.davidrobles.axon.valuefunctions.QFunctionObserver;
@@ -24,7 +24,7 @@ import net.davidrobles.axon.valuefunctions.TrainableQFunction;
  * @param <S> the type of the states
  * @param <A> the type of the actions
  */
-public class ExpectedSARSA<S, A> implements ObservableQAgent<S, A> {
+public class ExpectedSARSA<S, A> implements QFunctionObservable<S, A> {
     private final StochasticPolicy<S, A> policy;
     private final double gamma;
     private final TrainableQFunction<S, A> table;
