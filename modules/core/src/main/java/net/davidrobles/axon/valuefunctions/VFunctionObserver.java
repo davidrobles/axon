@@ -1,10 +1,16 @@
 package net.davidrobles.axon.valuefunctions;
 
+/**
+ * Observer notified whenever a {@link net.davidrobles.axon.VFunctionObservable} updates its
+ * V-function estimate.
+ *
+ * @param <S> the type of the states
+ */
 public interface VFunctionObserver<S> {
     /**
-     * This method is called when the observable State Value Function changes.
+     * Called after each V-function update.
      *
-     * @param vFunction the new state value function
+     * @param vFunction the current V-function estimate
      */
     void valueFunctionUpdated(VFunction<S> vFunction);
 }
