@@ -114,7 +114,6 @@ public class PolicyIteration<S, A> implements Planner<S, A> {
             policyImprovement();
         }
 
-        System.out.println("Policy iteration finished.");
         return policy;
     }
 }

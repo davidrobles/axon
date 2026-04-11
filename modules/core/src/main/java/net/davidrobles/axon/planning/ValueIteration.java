@@ -34,8 +34,6 @@ public class ValueIteration<S, A> implements Planner<S, A> {
     public Policy<S, A> solve() {
         double delta;
 
-        System.out.println("Value Iteration started...");
-
         do {
             delta = 0;
 
@@ -62,11 +60,7 @@ public class ValueIteration<S, A> implements Planner<S, A> {
                 notifyValueFunctionUpdate();
             }
 
-            System.out.printf("%.4f (delta) < %.4f (theta) ?????\n", delta, theta);
-
         } while (delta > theta);
-
-        System.out.println("DP Value Iteration finished.");
 
         // Extract greedy policy via one-step lookahead
         DeterministicPolicy<S, A> policy = new DeterministicPolicy<>();
