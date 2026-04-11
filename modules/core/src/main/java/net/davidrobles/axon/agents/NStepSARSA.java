@@ -6,9 +6,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import net.davidrobles.axon.QFunctionObservable;
 import net.davidrobles.axon.StepResult;
 import net.davidrobles.axon.policies.Policy;
+import net.davidrobles.axon.valuefunctions.QFunctionObservable;
 import net.davidrobles.axon.valuefunctions.QFunctionObserver;
 import net.davidrobles.axon.valuefunctions.TrainableQFunction;
 

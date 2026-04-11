@@ -8,9 +8,9 @@ import java.util.Objects;
 import java.util.Set;
 import net.davidrobles.axon.Evaluator;
 import net.davidrobles.axon.StepResult;
-import net.davidrobles.axon.VFunctionObservable;
 import net.davidrobles.axon.policies.Policy;
 import net.davidrobles.axon.valuefunctions.TrainableVFunction;
+import net.davidrobles.axon.valuefunctions.VFunctionObservable;
 import net.davidrobles.axon.valuefunctions.VFunctionObserver;
 
 /**

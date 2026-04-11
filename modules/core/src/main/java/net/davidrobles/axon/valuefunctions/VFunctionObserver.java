@@ -1,8 +1,7 @@
 package net.davidrobles.axon.valuefunctions;
 
 /**
- * Observer notified whenever a {@link net.davidrobles.axon.VFunctionObservable} updates its
- * V-function estimate.
+ * Observer notified whenever a {@link VFunctionObservable} updates its V-function estimate.
  *
  * @param <S> the type of the states
  */

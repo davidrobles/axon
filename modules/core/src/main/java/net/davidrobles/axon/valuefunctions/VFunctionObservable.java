@@ -1,6 +1,6 @@
-package net.davidrobles.axon;
+package net.davidrobles.axon.valuefunctions;
 
-import net.davidrobles.axon.valuefunctions.VFunctionObserver;
+import net.davidrobles.axon.Agent;
 
 /**
  * An {@link Agent} that exposes its V-function updates to registered observers.
