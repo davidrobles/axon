@@ -2,15 +2,13 @@ package net.davidrobles.axon.agents;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import net.davidrobles.axon.QPair;
 import net.davidrobles.axon.StepResult;
 import net.davidrobles.axon.policies.Policy;
-import net.davidrobles.axon.valuefunctions.QFunctionObservable;
-import net.davidrobles.axon.valuefunctions.QFunctionObserver;
+import net.davidrobles.axon.valuefunctions.AbstractQFunctionObservable;
 import net.davidrobles.axon.valuefunctions.TrainableQFunction;
 
 /**
@@ -23,14 +21,13 @@ import net.davidrobles.axon.valuefunctions.TrainableQFunction;
  * @param <S> the type of the states
  * @param <A> the type of the actions
  */
-public class MCControl<S, A> implements QFunctionObservable<S, A> {
+public class MCControl<S, A> extends AbstractQFunctionObservable<S, A> {
     private final Policy<S, A> policy;
     private final double gamma;
     private final TrainableQFunction<S, A> table;
     private final List<S> states = new ArrayList<>();
     private final List<A> actions = new ArrayList<>();
     private final List<Double> rewards = new ArrayList<>();
-    private final Set<QFunctionObserver<S, A>> qFunctionObservers = new LinkedHashSet<>();
 
     /**
      * @param table the Q-function to update (shared with the behavior policy); owns the learning
@@ -72,22 +69,12 @@ public class MCControl<S, A> implements QFunctionObservable<S, A> {
 
             if (visited.add(pair)) {
                 table.update(states.get(t), actions.get(t), G);
-                notifyQFunctionUpdate();
+                notifyQFunctionObservers(table);
             }
         }
 
         states.clear();
         actions.clear();
         rewards.clear();
-    }
-
-    @Override
-    public void addQFunctionObserver(QFunctionObserver<S, A> observer) {
-        qFunctionObservers.add(observer);
-    }
-
-    private void notifyQFunctionUpdate() {
-        for (QFunctionObserver<S, A> observer : qFunctionObservers)
-            observer.qFunctionUpdated(table);
     }
 }

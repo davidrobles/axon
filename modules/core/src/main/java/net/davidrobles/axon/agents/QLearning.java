@@ -1,13 +1,10 @@
 package net.davidrobles.axon.agents;
 
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import net.davidrobles.axon.StepResult;
 import net.davidrobles.axon.policies.Policy;
-import net.davidrobles.axon.valuefunctions.QFunctionObservable;
-import net.davidrobles.axon.valuefunctions.QFunctionObserver;
+import net.davidrobles.axon.valuefunctions.AbstractQFunctionObservable;
 import net.davidrobles.axon.valuefunctions.TrainableQFunction;
 
 /**
@@ -20,11 +17,10 @@ import net.davidrobles.axon.valuefunctions.TrainableQFunction;
  * @param <S> the type of the states
  * @param <A> the type of the actions
  */
-public class QLearning<S, A> implements QFunctionObservable<S, A> {
+public class QLearning<S, A> extends AbstractQFunctionObservable<S, A> {
     private final Policy<S, A> policy;
     private final double gamma;
     private final TrainableQFunction<S, A> table;
-    private final Set<QFunctionObserver<S, A>> qFunctionObservers = new LinkedHashSet<>();
 
     /**
      * @param table the Q-function to update (shared with the behavior policy); owns the learning
@@ -57,16 +53,6 @@ public class QLearning<S, A> implements QFunctionObservable<S, A> {
         }
 
         table.update(state, action, result.reward() + gamma * maxNextQ);
-        notifyQFunctionUpdate();
-    }
-
-    @Override
-    public void addQFunctionObserver(QFunctionObserver<S, A> observer) {
-        qFunctionObservers.add(observer);
-    }
-
-    private void notifyQFunctionUpdate() {
-        for (QFunctionObserver<S, A> observer : qFunctionObservers)
-            observer.qFunctionUpdated(table);
+        notifyQFunctionObservers(table);
     }
 }

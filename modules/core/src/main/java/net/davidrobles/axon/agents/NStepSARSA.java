@@ -2,14 +2,11 @@ package net.davidrobles.axon.agents;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import net.davidrobles.axon.StepResult;
 import net.davidrobles.axon.policies.Policy;
-import net.davidrobles.axon.valuefunctions.QFunctionObservable;
-import net.davidrobles.axon.valuefunctions.QFunctionObserver;
+import net.davidrobles.axon.valuefunctions.AbstractQFunctionObservable;
 import net.davidrobles.axon.valuefunctions.TrainableQFunction;
 
 /**
@@ -28,7 +25,7 @@ import net.davidrobles.axon.valuefunctions.TrainableQFunction;
  * @param <S> the type of the states
  * @param <A> the type of the actions
  */
-public class NStepSARSA<S, A> implements QFunctionObservable<S, A> {
+public class NStepSARSA<S, A> extends AbstractQFunctionObservable<S, A> {
     private record Entry<S, A>(S state, A action, double reward) {}
 
     private final Policy<S, A> policy;
@@ -36,7 +33,6 @@ public class NStepSARSA<S, A> implements QFunctionObservable<S, A> {
     private final int n;
     private final TrainableQFunction<S, A> table;
     private final Deque<Entry<S, A>> buffer = new ArrayDeque<>();
-    private final Set<QFunctionObserver<S, A>> qFunctionObservers = new LinkedHashSet<>();
 
     /**
      * @param table the Q-function to update (shared with the behavior policy); owns the learning
@@ -77,7 +73,7 @@ public class NStepSARSA<S, A> implements QFunctionObservable<S, A> {
         double G = computeReturn(nextState, nextActions, done);
         Entry<S, A> oldest = buffer.removeFirst();
         table.update(oldest.state(), oldest.action(), G);
-        notifyQFunctionUpdate();
+        notifyQFunctionObservers(table);
     }
 
     /**
@@ -114,17 +110,7 @@ public class NStepSARSA<S, A> implements QFunctionObservable<S, A> {
             }
             buffer.removeFirst();
             table.update(oldest.state(), oldest.action(), G);
-            notifyQFunctionUpdate();
+            notifyQFunctionObservers(table);
         }
-    }
-
-    @Override
-    public void addQFunctionObserver(QFunctionObserver<S, A> observer) {
-        qFunctionObservers.add(observer);
-    }
-
-    private void notifyQFunctionUpdate() {
-        for (QFunctionObserver<S, A> observer : qFunctionObservers)
-            observer.qFunctionUpdated(table);
     }
 }

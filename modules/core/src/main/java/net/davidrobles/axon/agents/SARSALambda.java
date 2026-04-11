@@ -1,16 +1,13 @@
 package net.davidrobles.axon.agents;
 
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import net.davidrobles.axon.QPair;
 import net.davidrobles.axon.StepResult;
 import net.davidrobles.axon.policies.Policy;
-import net.davidrobles.axon.valuefunctions.QFunctionObservable;
-import net.davidrobles.axon.valuefunctions.QFunctionObserver;
+import net.davidrobles.axon.valuefunctions.AbstractQFunctionObservable;
 import net.davidrobles.axon.valuefunctions.TrainableQFunction;
 
 /**
@@ -22,7 +19,7 @@ import net.davidrobles.axon.valuefunctions.TrainableQFunction;
  * @param <S> the type of the states
  * @param <A> the type of the actions
  */
-public class SARSALambda<S, A> implements QFunctionObservable<S, A> {
+public class SARSALambda<S, A> extends AbstractQFunctionObservable<S, A> {
     private final Policy<S, A> policy;
     private final double gamma;
     private final double lambda;
@@ -30,7 +27,6 @@ public class SARSALambda<S, A> implements QFunctionObservable<S, A> {
     // Pre-selected next action for SARSA on-policy coupling.
     private A nextAction = null;
     private final Map<QPair<S, A>, Double> traces = new HashMap<>();
-    private final Set<QFunctionObserver<S, A>> qFunctionObservers = new LinkedHashSet<>();
 
     /**
      * @param table the Q-function to update (shared with the behavior policy); owns the learning
@@ -85,16 +81,6 @@ public class SARSALambda<S, A> implements QFunctionObservable<S, A> {
         }
 
         if (result.done()) traces.clear();
-        notifyQFunctionUpdate();
-    }
-
-    @Override
-    public void addQFunctionObserver(QFunctionObserver<S, A> observer) {
-        qFunctionObservers.add(observer);
-    }
-
-    private void notifyQFunctionUpdate() {
-        for (QFunctionObserver<S, A> observer : qFunctionObservers)
-            observer.qFunctionUpdated(table);
+        notifyQFunctionObservers(table);
     }
 }

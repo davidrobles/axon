@@ -2,16 +2,14 @@ package net.davidrobles.axon.prediction;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import net.davidrobles.axon.Evaluator;
 import net.davidrobles.axon.StepResult;
 import net.davidrobles.axon.policies.Policy;
+import net.davidrobles.axon.valuefunctions.AbstractVFunctionObservable;
 import net.davidrobles.axon.valuefunctions.TrainableVFunction;
-import net.davidrobles.axon.valuefunctions.VFunctionObservable;
-import net.davidrobles.axon.valuefunctions.VFunctionObserver;
 
 /**
  * First-visit Monte Carlo prediction for on-policy state value estimation.
@@ -22,13 +20,12 @@ import net.davidrobles.axon.valuefunctions.VFunctionObserver;
  * @param <S> the type of the states
  * @param <A> the type of the actions
  */
-public class MCPrediction<S, A> implements Evaluator<S, A>, VFunctionObservable<S, A> {
+public class MCPrediction<S, A> extends AbstractVFunctionObservable<S, A> implements Evaluator<S, A> {
     private final Policy<S, A> policy;
     private final double gamma;
     private final TrainableVFunction<S> table;
     private final List<S> states = new ArrayList<>();
     private final List<Double> rewards = new ArrayList<>();
-    private final Set<VFunctionObserver<S>> valueFuncObservers = new LinkedHashSet<>();
 
     /**
      * @param table the V-function to evaluate and update; owns the learning rate
@@ -68,21 +65,11 @@ public class MCPrediction<S, A> implements Evaluator<S, A>, VFunctionObservable<
 
             if (visited.add(s)) {
                 table.update(s, G);
-                notifyValueFunctionUpdate();
+                notifyVFunctionObservers(table);
             }
         }
 
         states.clear();
         rewards.clear();
-    }
-
-    @Override
-    public void addVFunctionObserver(VFunctionObserver<S> observer) {
-        valueFuncObservers.add(observer);
-    }
-
-    private void notifyValueFunctionUpdate() {
-        for (VFunctionObserver<S> observer : valueFuncObservers)
-            observer.valueFunctionUpdated(table);
     }
 }

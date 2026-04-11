@@ -2,16 +2,13 @@ package net.davidrobles.axon.prediction;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import net.davidrobles.axon.Evaluator;
 import net.davidrobles.axon.StepResult;
 import net.davidrobles.axon.policies.Policy;
+import net.davidrobles.axon.valuefunctions.AbstractVFunctionObservable;
 import net.davidrobles.axon.valuefunctions.TrainableVFunction;
-import net.davidrobles.axon.valuefunctions.VFunctionObservable;
-import net.davidrobles.axon.valuefunctions.VFunctionObserver;
 
 /**
  * n-step TD prediction for on-policy state value estimation.
@@ -29,7 +26,7 @@ import net.davidrobles.axon.valuefunctions.VFunctionObserver;
  * @param <S> the type of the states
  * @param <A> the type of the actions
  */
-public class NStepTD<S, A> implements Evaluator<S, A>, VFunctionObservable<S, A> {
+public class NStepTD<S, A> extends AbstractVFunctionObservable<S, A> implements Evaluator<S, A> {
     private record Entry<S>(S state, double reward) {}
 
     private final Policy<S, A> policy;
@@ -37,7 +34,6 @@ public class NStepTD<S, A> implements Evaluator<S, A>, VFunctionObservable<S, A>
     private final int n;
     private final TrainableVFunction<S> table;
     private final Deque<Entry<S>> buffer = new ArrayDeque<>();
-    private final Set<VFunctionObserver<S>> valueFuncObservers = new LinkedHashSet<>();
 
     /**
      * @param table the V-function to evaluate and update; owns the learning rate
@@ -77,7 +73,7 @@ public class NStepTD<S, A> implements Evaluator<S, A>, VFunctionObservable<S, A>
         double G = computeReturn(nextState, done);
         S stateToUpdate = buffer.removeFirst().state();
         table.update(stateToUpdate, G);
-        notifyValueFunctionUpdate();
+        notifyVFunctionObservers(table);
     }
 
     /**
@@ -112,17 +108,7 @@ public class NStepTD<S, A> implements Evaluator<S, A>, VFunctionObservable<S, A>
             }
             buffer.removeFirst();
             table.update(stateToUpdate, G);
-            notifyValueFunctionUpdate();
+            notifyVFunctionObservers(table);
         }
-    }
-
-    @Override
-    public void addVFunctionObserver(VFunctionObserver<S> observer) {
-        valueFuncObservers.add(observer);
-    }
-
-    private void notifyValueFunctionUpdate() {
-        for (VFunctionObserver<S> observer : valueFuncObservers)
-            observer.valueFunctionUpdated(table);
     }
 }
