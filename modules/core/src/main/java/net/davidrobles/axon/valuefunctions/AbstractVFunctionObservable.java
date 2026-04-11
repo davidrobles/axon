@@ -4,15 +4,14 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * Abstract base class for agents that expose V-function updates to registered observers.
+ * Abstract base class for objects that expose V-function updates to registered observers.
  *
  * <p>Handles the observer set and notification boilerplate so subclasses only need to call {@link
  * #notifyVFunctionObservers(VFunction)} after each update.
  *
  * @param <S> the type of the states
- * @param <A> the type of the actions
  */
-public abstract class AbstractVFunctionObservable<S, A> implements VFunctionObservable<S, A> {
+public abstract class AbstractVFunctionObservable<S> implements VFunctionObservable<S> {
     private final Set<VFunctionObserver<S>> vFunctionObservers = new LinkedHashSet<>();
 
     @Override

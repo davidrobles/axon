@@ -17,7 +17,7 @@ import net.davidrobles.axon.valuefunctions.TrainableVFunction;
  * @param <S> the type of the states
  * @param <A> the type of the actions
  */
-public class TD0<S, A> extends AbstractVFunctionObservable<S, A> implements Evaluator<S, A> {
+public class TD0<S, A> extends AbstractVFunctionObservable<S> implements Evaluator<S, A> {
     private final Policy<S, A> policy;
     private final double gamma;
     private final TrainableVFunction<S> table;

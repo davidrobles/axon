@@ -26,7 +26,7 @@ import net.davidrobles.axon.valuefunctions.TrainableVFunction;
  * @param <S> the type of the states
  * @param <A> the type of the actions
  */
-public class NStepTD<S, A> extends AbstractVFunctionObservable<S, A> implements Evaluator<S, A> {
+public class NStepTD<S, A> extends AbstractVFunctionObservable<S> implements Evaluator<S, A> {
     private record Entry<S>(S state, double reward) {}
 
     private final Policy<S, A> policy;

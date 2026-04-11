@@ -2,6 +2,7 @@ package net.davidrobles.axon.valuefunctions;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
+import net.davidrobles.axon.Agent;
 
 /**
  * Abstract base class for agents that expose Q-function updates to registered observers.
@@ -12,7 +13,8 @@ import java.util.Set;
  * @param <S> the type of the states
  * @param <A> the type of the actions
  */
-public abstract class AbstractQFunctionObservable<S, A> implements QFunctionObservable<S, A> {
+public abstract class AbstractQFunctionObservable<S, A>
+        implements Agent<S, A>, QFunctionObservable<S, A> {
     private final Set<QFunctionObserver<S, A>> qFunctionObservers = new LinkedHashSet<>();
 
     @Override

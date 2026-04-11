@@ -1,33 +1,22 @@
 package net.davidrobles.axon.planning;
 
-import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
 import net.davidrobles.axon.MDP;
 import net.davidrobles.axon.policies.DeterministicPolicy;
 import net.davidrobles.axon.policies.Policy;
+import net.davidrobles.axon.valuefunctions.AbstractVFunctionObservable;
 import net.davidrobles.axon.valuefunctions.TabularVFunction;
-import net.davidrobles.axon.valuefunctions.VFunctionObserver;
 
-public class ValueIteration<S, A> implements Planner<S, A> {
+public class ValueIteration<S, A> extends AbstractVFunctionObservable<S> implements Planner<S, A> {
     private MDP<S, A> mdp;
     private TabularVFunction<S> table = new TabularVFunction<S>();
     private double theta; // A small positive number used as a termination condition
     private double gamma; // Discount factor
-    private final Set<VFunctionObserver<S>> observers = new LinkedHashSet<>();
 
     public ValueIteration(MDP<S, A> mdp, double theta, double gamma) {
         this.mdp = mdp;
         this.theta = theta;
         this.gamma = gamma;
-    }
-
-    public void notifyValueFunctionUpdate() {
-        for (VFunctionObserver<S> observer : observers) observer.valueFunctionUpdated(table);
-    }
-
-    public void addVFunctionObserver(VFunctionObserver<S> observer) {
-        observers.add(observer);
     }
 
     @Override
@@ -57,7 +46,7 @@ public class ValueIteration<S, A> implements Planner<S, A> {
 
                 table.setValue(state, newStateValue);
                 delta = Math.max(delta, Math.abs(oldStateValue - table.getValue(state)));
-                notifyValueFunctionUpdate();
+                notifyVFunctionObservers(table);
             }
 
         } while (delta > theta);
