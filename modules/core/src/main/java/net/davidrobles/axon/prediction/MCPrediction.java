@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import net.davidrobles.axon.Evaluator;
+import net.davidrobles.axon.Agent;
 import net.davidrobles.axon.StepResult;
 import net.davidrobles.axon.policies.Policy;
 import net.davidrobles.axon.valuefunctions.AbstractVFunctionObservable;
@@ -20,7 +20,7 @@ import net.davidrobles.axon.valuefunctions.TrainableVFunction;
  * @param <S> the type of the states
  * @param <A> the type of the actions
  */
-public class MCPrediction<S, A> extends AbstractVFunctionObservable<S> implements Evaluator<S, A> {
+public class MCPrediction<S, A> extends AbstractVFunctionObservable<S> implements Agent<S, A> {
     private final Policy<S, A> policy;
     private final double gamma;
     private final TrainableVFunction<S> table;
@@ -45,6 +45,10 @@ public class MCPrediction<S, A> extends AbstractVFunctionObservable<S> implement
     }
 
     @Override
+    public void update(S state, A action, StepResult<S> result, List<A> nextActions) {
+        observe(state, result);
+    }
+
     public void observe(S state, StepResult<S> result) {
         states.add(state);
         rewards.add(result.reward());

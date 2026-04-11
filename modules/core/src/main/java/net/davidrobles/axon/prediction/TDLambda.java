@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import net.davidrobles.axon.Evaluator;
+import net.davidrobles.axon.Agent;
 import net.davidrobles.axon.StepResult;
 import net.davidrobles.axon.policies.Policy;
 import net.davidrobles.axon.valuefunctions.AbstractVFunctionObservable;
@@ -19,7 +19,7 @@ import net.davidrobles.axon.valuefunctions.TrainableVFunction;
  * @param <S> the type of the states
  * @param <A> the type of the actions
  */
-public class TDLambda<S, A> extends AbstractVFunctionObservable<S> implements Evaluator<S, A> {
+public class TDLambda<S, A> extends AbstractVFunctionObservable<S> implements Agent<S, A> {
     private final Policy<S, A> policy;
     private final double gamma;
     private final double lambda;
@@ -49,6 +49,10 @@ public class TDLambda<S, A> extends AbstractVFunctionObservable<S> implements Ev
     }
 
     @Override
+    public void update(S state, A action, StepResult<S> result, List<A> nextActions) {
+        observe(state, result);
+    }
+
     public void observe(S state, StepResult<S> result) {
         double nextV = result.done() ? 0.0 : table.getValue(result.nextState());
         double tdError = result.reward() + gamma * nextV - table.getValue(state);

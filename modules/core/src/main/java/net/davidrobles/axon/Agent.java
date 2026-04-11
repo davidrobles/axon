@@ -3,12 +3,9 @@ package net.davidrobles.axon;
 import java.util.List;
 
 /**
- * Base interface for <em>control</em> algorithms — agents that learn to act by improving a policy
- * through experience. Encapsulates the update rule only; it does not own an environment or episode
- * loop. Use {@link RLLoop} to drive training.
- *
- * <p>For <em>prediction</em> (estimating the value of a fixed policy without improving it), see
- * {@link Evaluator}.
+ * Core interface for all RL algorithms — both control (learning to improve a policy) and prediction
+ * (estimating the value of a fixed policy). Encapsulates action selection and the update rule only;
+ * it does not own an environment or episode loop. Use {@link RLLoop} to drive training.
  *
  * @param <S> the type of the states
  * @param <A> the type of the actions

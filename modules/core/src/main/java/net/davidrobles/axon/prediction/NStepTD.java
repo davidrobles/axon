@@ -4,7 +4,7 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
 import java.util.Objects;
-import net.davidrobles.axon.Evaluator;
+import net.davidrobles.axon.Agent;
 import net.davidrobles.axon.StepResult;
 import net.davidrobles.axon.policies.Policy;
 import net.davidrobles.axon.valuefunctions.AbstractVFunctionObservable;
@@ -26,7 +26,7 @@ import net.davidrobles.axon.valuefunctions.TrainableVFunction;
  * @param <S> the type of the states
  * @param <A> the type of the actions
  */
-public class NStepTD<S, A> extends AbstractVFunctionObservable<S> implements Evaluator<S, A> {
+public class NStepTD<S, A> extends AbstractVFunctionObservable<S> implements Agent<S, A> {
     private record Entry<S>(S state, double reward) {}
 
     private final Policy<S, A> policy;
@@ -56,6 +56,10 @@ public class NStepTD<S, A> extends AbstractVFunctionObservable<S> implements Eva
     }
 
     @Override
+    public void update(S state, A action, StepResult<S> result, List<A> nextActions) {
+        observe(state, result);
+    }
+
     public void observe(S state, StepResult<S> result) {
         buffer.addLast(new Entry<>(state, result.reward()));
 

@@ -103,7 +103,7 @@ public class MCPredictionTest {
     }
 
     // -------------------------------------------------------------------------
-    // update() delegates to observe() — Evaluator interface default
+    // update() delegates to observe()
     // -------------------------------------------------------------------------
 
     @Test

@@ -62,7 +62,7 @@ public class TD0Test {
     }
 
     // -------------------------------------------------------------------------
-    // update() delegates to observe() — Evaluator interface default
+    // update() delegates to observe()
     // -------------------------------------------------------------------------
 
     @Test
