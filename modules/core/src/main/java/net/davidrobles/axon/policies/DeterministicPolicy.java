@@ -16,10 +16,6 @@ import java.util.Map;
 public class DeterministicPolicy<S, A> implements Policy<S, A> {
     private final Map<S, A> map = new HashMap<>();
 
-    public A getAction(S state) {
-        return map.get(state);
-    }
-
     public void setAction(S state, A action) {
         map.put(state, action);
     }

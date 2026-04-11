@@ -15,16 +15,6 @@ public class DeterministicPolicyTest {
         policy = new DeterministicPolicy<>();
     }
 
-    // -------------------------------------------------------------------------
-    // getAction / setAction / selectAction
-    // -------------------------------------------------------------------------
-
-    @Test
-    public void getActionReturnsSetAction() {
-        policy.setAction("s0", "a1");
-        assertEquals("a1", policy.getAction("s0"));
-    }
-
     @Test
     public void selectActionReturnsSetAction() {
         policy.setAction("s0", "a2");
@@ -35,7 +25,6 @@ public class DeterministicPolicyTest {
     public void setActionOverwrites() {
         policy.setAction("s0", "a0");
         policy.setAction("s0", "a1");
-        assertEquals("a1", policy.getAction("s0"));
         assertEquals("a1", policy.selectAction("s0", List.of("a0", "a1")));
     }
 
@@ -49,7 +38,6 @@ public class DeterministicPolicyTest {
 
     @Test
     public void unmappedStateReturnsNull() {
-        assertNull(policy.getAction("unknown"));
         assertNull(policy.selectAction("unknown", List.of("a0")));
     }
 }

@@ -5,7 +5,6 @@ import static org.junit.Assert.*;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
-import net.davidrobles.axon.agents.ReplayBuffer;
 import net.davidrobles.axon.StepResult;
 import net.davidrobles.axon.policies.GreedyPolicy;
 import net.davidrobles.axon.valuefunctions.QFunction;

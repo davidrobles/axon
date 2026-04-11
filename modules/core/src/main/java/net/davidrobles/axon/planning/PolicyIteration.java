@@ -41,7 +41,7 @@ public class PolicyIteration<S, A> implements Planner<S, A> {
                 Set<S> nextStates = new HashSet<>();
                 for (A a : mdp.getActions(state))
                     nextStates.addAll(mdp.getTransitions(state, a).keySet());
-                A action = policy.getAction(state);
+                A action = policy.selectAction(state, new ArrayList<>(mdp.getActions(state)));
                 double newValue = 0;
 
                 for (S nextState : nextStates) {
@@ -66,7 +66,7 @@ public class PolicyIteration<S, A> implements Planner<S, A> {
         policyStable = true;
 
         for (S state : mdp.getStates()) {
-            A oldAction = policy.getAction(state);
+            A oldAction = policy.selectAction(state, new ArrayList<>(mdp.getActions(state)));
             A bestAction = null;
             double bestScore = Double.NEGATIVE_INFINITY;
 
@@ -89,7 +89,9 @@ public class PolicyIteration<S, A> implements Planner<S, A> {
 
             policy.setAction(state, bestAction);
 
-            if (!mdp.isTerminal(state) && !oldAction.equals(policy.getAction(state)))
+            if (!mdp.isTerminal(state)
+                    && !oldAction.equals(
+                            policy.selectAction(state, new ArrayList<>(mdp.getActions(state)))))
                 policyStable = false;
         }
     }
