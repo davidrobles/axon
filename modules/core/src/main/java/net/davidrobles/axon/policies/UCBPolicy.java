@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import net.davidrobles.axon.QPair;
 import net.davidrobles.axon.valuefunctions.QFunction;
-import net.davidrobles.axon.valuefunctions.QPair;
 
 /**
  * Upper Confidence Bound policy (UCB1).

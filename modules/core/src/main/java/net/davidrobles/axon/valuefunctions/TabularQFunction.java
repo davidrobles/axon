@@ -2,6 +2,7 @@ package net.davidrobles.axon.valuefunctions;
 
 import java.util.HashMap;
 import java.util.Map;
+import net.davidrobles.axon.QPair;
 
 /** Tabular (lookup table) implementation of a trainable state-action value function. */
 public class TabularQFunction<S, A> implements TrainableQFunction<S, A> {
