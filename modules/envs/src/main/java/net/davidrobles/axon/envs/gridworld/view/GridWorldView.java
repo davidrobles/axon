@@ -182,32 +182,7 @@ public abstract class GridWorldView extends JPanel implements MouseMotionListene
     public void mouseDragged(MouseEvent e) {}
 
     @Override
-    public void mouseMoved(MouseEvent e) {
-        //        xCell = e.getX() / cellWidth;
-        //        yCell = e.getY() / cellHeight;
-        //        System.out.printf("X: %d, Y: %d\n", xCell, yCell);
-        //        printCellInfo();
-    }
-
-    //    public void printCellInfo() {
-    //        GWState state = gridWorld.getState(xCell, yCell);
-    //        System.out.println("-----------------------");
-    //        System.out.printf("State: %d, %d\n", xCell, yCell);
-    //        System.out.println("-----------------------");
-    //        System.out.println("Actions:");
-    //        for (MDPAction action : gridWorld.getActions(state)) {
-    //            System.out.println("\t" + action);
-    //            for (MDPState nextState : gridWorld.successors(state, action)) {
-    //                GWState nState = (GWState) nextState;
-    //                System.out.printf("\t\tNext state: %d, %d, with probability of %.2f\n",
-    // nState.getX(), nState.getY(),
-    //                        gridWorld.transition(state, action, nextState));
-    //            }
-    //        }
-    //        System.out.printf("Value:  %.4f\n", valueFunction.getValue(state));
-    //        System.out.printf("Reward: %.1f\n", gridWorld.reward(state));
-    //        System.out.println();
-    //    }
+    public void mouseMoved(MouseEvent e) {}
 
     int xCell = -1;
     int yCell = -1;

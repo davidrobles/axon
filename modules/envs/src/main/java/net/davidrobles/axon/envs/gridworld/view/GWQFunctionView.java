@@ -37,23 +37,9 @@ public class GWQFunctionView extends GridWorldView implements QFunctionObserver<
 
             ColorMap colorMap = new ColorMap(min, max, ColorMap.getJet());
 
-            for (GWState s : gw.getStates()) {
-                for (GWAction action : gw.getActions(s)) {
-                    GWState state = (GWState) s;
+            for (GWState state : gw.getStates()) {
+                for (GWAction action : gw.getActions(state)) {
                     g.setColor(colorMap.getColor(qFunction.getValue(state, action)));
-                    //                    g.setColor(colorMap.getColor(qFunction.getValue(state,
-                    // action)));
-                    //                    g.fillRect(state.getX() * cellWidth, state.getY() *
-                    // cellHeight, cellWidth, cellHeight);
-
-                    // draw values
-                    //                    if (valuesEnabled) {
-                    //                        g.setColor(Color.WHITE);
-                    //                        String t = String.format("%.1f", (float)
-                    // qFunction.getValue(state, action));
-                    //                        g.drawString(t, state.getX() * cellWidth, state.getY()
-                    // * cellHeight + cellHeight / 2);
-                    //                    }
 
                     if (action == GWAction.UP) {
                         // Top
