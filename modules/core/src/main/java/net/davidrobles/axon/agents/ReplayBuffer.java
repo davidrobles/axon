@@ -1,4 +1,4 @@
-package net.davidrobles.axon;
+package net.davidrobles.axon.agents;
 
 import java.util.ArrayList;
 import java.util.List;

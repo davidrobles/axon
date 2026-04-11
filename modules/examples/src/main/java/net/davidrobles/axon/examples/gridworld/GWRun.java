@@ -2,8 +2,8 @@ package net.davidrobles.axon.examples.gridworld;
 
 import java.util.Random;
 import net.davidrobles.axon.RLLoop;
-import net.davidrobles.axon.ReplayBuffer;
 import net.davidrobles.axon.agents.*;
+import net.davidrobles.axon.agents.ReplayBuffer;
 import net.davidrobles.axon.envs.gridworld.GWAction;
 import net.davidrobles.axon.envs.gridworld.GWState;
 import net.davidrobles.axon.envs.gridworld.GridWorldEnv;

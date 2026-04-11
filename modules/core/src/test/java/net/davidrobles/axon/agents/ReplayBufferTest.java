@@ -1,4 +1,4 @@
-package net.davidrobles.axon;
+package net.davidrobles.axon.agents;
 
 import static org.junit.Assert.*;
 
@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import net.davidrobles.axon.StepResult;
 import org.junit.Before;
 import org.junit.Test;
 
