@@ -6,8 +6,6 @@ import java.util.Random;
 /**
  * Uniform random policy. Selects each available action with equal probability.
  *
- * <p>Implements {@link StochasticPolicy}: log π(a|s) = −log(|actions|).
- *
  * @param <S> the type of the state
  * @param <A> the type of the action
  */
@@ -24,7 +22,7 @@ public class RandomPolicy<S, A> implements StochasticPolicy<S, A> {
     }
 
     @Override
-    public double logProbability(S state, A action, List<A> actions) {
-        return -Math.log(actions.size());
+    public double probability(S state, A action, List<A> actions) {
+        return 1.0 / actions.size();
     }
 }

@@ -56,10 +56,10 @@ public class SoftmaxPolicy<S, A> implements StochasticPolicy<S, A> {
     }
 
     @Override
-    public double logProbability(S state, A action, List<A> actions) {
+    public double probability(S state, A action, List<A> actions) {
         double[] logProbs = computeLogProbs(state, actions);
         int idx = actions.indexOf(action);
-        return idx >= 0 ? logProbs[idx] : Double.NEGATIVE_INFINITY;
+        return idx >= 0 ? Math.exp(logProbs[idx]) : 0.0;
     }
 
     /**

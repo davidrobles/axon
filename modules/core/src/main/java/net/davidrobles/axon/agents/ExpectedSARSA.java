@@ -56,9 +56,7 @@ public class ExpectedSARSA<S, A> implements QFunctionObservable<S, A> {
 
         if (!result.done() && !nextActions.isEmpty()) {
             for (A nextAction : nextActions) {
-                double prob =
-                        Math.exp(
-                                policy.logProbability(result.nextState(), nextAction, nextActions));
+                double prob = policy.probability(result.nextState(), nextAction, nextActions);
                 expectedNextQ += prob * table.getValue(result.nextState(), nextAction);
             }
         }

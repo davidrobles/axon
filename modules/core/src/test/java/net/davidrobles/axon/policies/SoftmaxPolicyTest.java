@@ -20,20 +20,18 @@ public class SoftmaxPolicyTest {
     }
 
     // -------------------------------------------------------------------------
-    // Log-probabilities sum to 0 (i.e. probabilities sum to 1)
+    // Probabilities sum to 1
     // -------------------------------------------------------------------------
 
     @Test
-    public void logProbabilitiesSumToOne() {
+    public void probabilitiesSumToOne() {
         q.setValue("s0", "a0", 1.0);
         q.setValue("s0", "a1", 2.0);
         q.setValue("s0", "a2", 3.0);
         SoftmaxPolicy<String, String> policy = new SoftmaxPolicy<>(q, 1.0, new Random(0));
         List<String> actions = List.of("a0", "a1", "a2");
         double sum = 0.0;
-        for (String a : actions) {
-            sum += Math.exp(policy.logProbability("s0", a, actions));
-        }
+        for (String a : actions) sum += policy.probability("s0", a, actions);
         assertEquals(1.0, sum, 1e-10);
     }
 
@@ -42,9 +40,8 @@ public class SoftmaxPolicyTest {
         // All Q=0 → all probs equal 1/n
         SoftmaxPolicy<String, String> policy = new SoftmaxPolicy<>(q, 1.0, new Random(0));
         List<String> actions = List.of("a0", "a1", "a2");
-        double expected = Math.log(1.0 / 3.0);
         for (String a : actions) {
-            assertEquals(expected, policy.logProbability("s0", a, actions), 1e-10);
+            assertEquals(1.0 / 3.0, policy.probability("s0", a, actions), 1e-10);
         }
     }
 
@@ -58,8 +55,8 @@ public class SoftmaxPolicyTest {
         q.setValue("s0", "a1", 5.0);
         SoftmaxPolicy<String, String> policy = new SoftmaxPolicy<>(q, 1.0, new Random(0));
         List<String> actions = List.of("a0", "a1");
-        double p0 = Math.exp(policy.logProbability("s0", "a0", actions));
-        double p1 = Math.exp(policy.logProbability("s0", "a1", actions));
+        double p0 = policy.probability("s0", "a0", actions);
+        double p1 = policy.probability("s0", "a1", actions);
         assertTrue(p1 > p0);
     }
 
@@ -74,8 +71,8 @@ public class SoftmaxPolicyTest {
         List<String> actions = List.of("a0", "a1");
         SoftmaxPolicy<String, String> highTemp = new SoftmaxPolicy<>(q, 100.0, new Random(0));
         SoftmaxPolicy<String, String> lowTemp = new SoftmaxPolicy<>(q, 0.01, new Random(0));
-        double highTempP1 = Math.exp(highTemp.logProbability("s0", "a1", actions));
-        double lowTempP1 = Math.exp(lowTemp.logProbability("s0", "a1", actions));
+        double highTempP1 = highTemp.probability("s0", "a1", actions);
+        double lowTempP1 = lowTemp.probability("s0", "a1", actions);
         assertTrue(lowTempP1 > highTempP1);
     }
 
@@ -85,10 +82,8 @@ public class SoftmaxPolicyTest {
         q.setValue("s0", "a1", 1000.0); // huge difference, but temperature also huge
         List<String> actions = List.of("a0", "a1");
         SoftmaxPolicy<String, String> policy = new SoftmaxPolicy<>(q, 1e9, new Random(0));
-        double p0 = Math.exp(policy.logProbability("s0", "a0", actions));
-        double p1 = Math.exp(policy.logProbability("s0", "a1", actions));
-        assertEquals(0.5, p0, 1e-4);
-        assertEquals(0.5, p1, 1e-4);
+        assertEquals(0.5, policy.probability("s0", "a0", actions), 1e-4);
+        assertEquals(0.5, policy.probability("s0", "a1", actions), 1e-4);
     }
 
     // -------------------------------------------------------------------------
@@ -102,8 +97,7 @@ public class SoftmaxPolicyTest {
         SoftmaxPolicy<String, String> policy = new SoftmaxPolicy<>(q, 1.0, new Random(42));
         List<String> actions = List.of("a0", "a1");
         for (int i = 0; i < 50; i++) {
-            String chosen = policy.selectAction("s0", actions);
-            assertTrue(actions.contains(chosen));
+            assertTrue(actions.contains(policy.selectAction("s0", actions)));
         }
     }
 
@@ -116,14 +110,13 @@ public class SoftmaxPolicyTest {
     }
 
     // -------------------------------------------------------------------------
-    // Unknown action returns -infinity
+    // Unknown action returns 0
     // -------------------------------------------------------------------------
 
     @Test
-    public void unknownActionReturnsNegativeInfinity() {
+    public void unknownActionReturnsZero() {
         SoftmaxPolicy<String, String> policy = new SoftmaxPolicy<>(q, 1.0, new Random(0));
-        double lp = policy.logProbability("s0", "unknown", List.of("a0", "a1"));
-        assertEquals(Double.NEGATIVE_INFINITY, lp, EPS);
+        assertEquals(0.0, policy.probability("s0", "unknown", List.of("a0", "a1")), EPS);
     }
 
     // -------------------------------------------------------------------------
@@ -136,9 +129,9 @@ public class SoftmaxPolicyTest {
         q.setValue("s0", "a1", 1e300);
         SoftmaxPolicy<String, String> policy = new SoftmaxPolicy<>(q, 1.0, new Random(0));
         List<String> actions = List.of("a0", "a1");
-        double lp = policy.logProbability("s0", "a0", actions);
-        assertFalse(Double.isNaN(lp));
-        assertFalse(Double.isInfinite(lp));
+        double p = policy.probability("s0", "a0", actions);
+        assertFalse(Double.isNaN(p));
+        assertFalse(Double.isInfinite(p));
     }
 
     // -------------------------------------------------------------------------

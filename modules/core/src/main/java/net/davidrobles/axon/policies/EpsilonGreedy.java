@@ -101,7 +101,7 @@ public class EpsilonGreedy<S, A> implements StochasticPolicy<S, A> {
     }
 
     /**
-     * Returns the log-probability of selecting {@code action} under the ε-greedy distribution.
+     * Returns the probability of selecting {@code action} under the ε-greedy distribution.
      *
      * <p>Each action gets a base probability of ε/|A|. The (1-ε) greedy mass is split evenly among
      * all actions tied for the highest Q-value.
@@ -109,10 +109,10 @@ public class EpsilonGreedy<S, A> implements StochasticPolicy<S, A> {
      * @param state the current state
      * @param action the action whose probability is queried
      * @param actions the full list of available actions
-     * @return log π(action | state)
+     * @return π(action | state), a value in [0, 1]
      */
     @Override
-    public double logProbability(S state, A action, List<A> actions) {
+    public double probability(S state, A action, List<A> actions) {
         int n = actions.size();
         double baseProb = epsilon / n;
 
@@ -127,12 +127,9 @@ public class EpsilonGreedy<S, A> implements StochasticPolicy<S, A> {
             if (qFunc.getValue(state, a) == maxQ) numGreedy++;
         }
 
-        double prob =
-                qFunc.getValue(state, action) == maxQ
-                        ? baseProb + (1.0 - epsilon) / numGreedy
-                        : baseProb;
-
-        return Math.log(prob);
+        return qFunc.getValue(state, action) == maxQ
+                ? baseProb + (1.0 - epsilon) / numGreedy
+                : baseProb;
     }
 
     public double getEpsilon() {

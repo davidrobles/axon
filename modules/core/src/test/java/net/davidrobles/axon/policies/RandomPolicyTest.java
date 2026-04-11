@@ -35,34 +35,34 @@ public class RandomPolicyTest {
     }
 
     @Test
-    public void logProbabilityForSingleAction() {
+    public void probabilityForSingleAction() {
         RandomPolicy<String, String> policy = new RandomPolicy<>(new Random(0));
-        // log(1/1) = 0
-        assertEquals(0.0, policy.logProbability("s", "a0", List.of("a0")), EPS);
+        assertEquals(1.0, policy.probability("s", "a0", List.of("a0")), EPS);
     }
 
     @Test
-    public void logProbabilityForTwoActions() {
+    public void probabilityForTwoActions() {
         RandomPolicy<String, String> policy = new RandomPolicy<>(new Random(0));
-        double expected = -Math.log(2);
-        assertEquals(expected, policy.logProbability("s", "a0", List.of("a0", "a1")), EPS);
-        assertEquals(expected, policy.logProbability("s", "a1", List.of("a0", "a1")), EPS);
+        assertEquals(0.5, policy.probability("s", "a0", List.of("a0", "a1")), EPS);
+        assertEquals(0.5, policy.probability("s", "a1", List.of("a0", "a1")), EPS);
     }
 
     @Test
-    public void logProbabilityForFourActions() {
+    public void probabilityForFourActions() {
         RandomPolicy<String, String> policy = new RandomPolicy<>(new Random(0));
-        double expected = -Math.log(4);
         List<String> actions = List.of("a0", "a1", "a2", "a3");
         for (String a : actions) {
-            assertEquals(expected, policy.logProbability("s", a, actions), EPS);
+            assertEquals(0.25, policy.probability("s", a, actions), EPS);
         }
     }
 
     @Test
-    public void logProbabilityIsNegative() {
+    public void probabilitiesSumToOne() {
         RandomPolicy<String, String> policy = new RandomPolicy<>(new Random(0));
-        assertTrue(policy.logProbability("s", "a0", List.of("a0", "a1")) < 0);
+        List<String> actions = List.of("a0", "a1", "a2");
+        double sum = 0.0;
+        for (String a : actions) sum += policy.probability("s", a, actions);
+        assertEquals(1.0, sum, EPS);
     }
 
     // Lifecycle hooks are no-ops; verify they don't throw.
