@@ -28,8 +28,8 @@ import net.davidrobles.axon.valuefunctions.TrainableQFunction;
  * </ul>
  *
  * <p>The behavior policy should be constructed with a composite Q-function that averages or sums
- * both tables (see factory helpers in the GWRun examples). Observers receive the average of QA and
- * QB after every update.
+ * both tables (see factory helpers in the GridWorldDemo examples). Observers receive the average of
+ * QA and QB after every update.
  *
  * @param <S> the type of the states
  * @param <A> the type of the actions

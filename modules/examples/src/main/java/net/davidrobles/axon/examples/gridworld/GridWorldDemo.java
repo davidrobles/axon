@@ -21,7 +21,7 @@ import net.davidrobles.axon.util.AppFrame;
 import net.davidrobles.axon.valuefunctions.TabularQFunction;
 import net.davidrobles.axon.valuefunctions.TabularVFunction;
 
-public class GWRun {
+public class GridWorldDemo {
     private static final Random RNG = new Random();
 
     private static void policyIteration() {
