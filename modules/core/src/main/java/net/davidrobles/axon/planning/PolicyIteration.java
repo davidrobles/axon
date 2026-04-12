@@ -2,7 +2,7 @@ package net.davidrobles.axon.planning;
 
 import java.util.*;
 import net.davidrobles.axon.MDP;
-import net.davidrobles.axon.policies.DeterministicPolicy;
+import net.davidrobles.axon.policies.TabularPolicy;
 import net.davidrobles.axon.policies.Policy;
 import net.davidrobles.axon.valuefunctions.AbstractVFunctionObservable;
 import net.davidrobles.axon.valuefunctions.TabularVFunction;
@@ -13,7 +13,7 @@ public class PolicyIteration<S, A> extends AbstractVFunctionObservable<S> implem
     private boolean policyStable = false;
     private double theta; // A small positive number used as a termination condition
     private double gamma; // Discount factor
-    private DeterministicPolicy<S, A> policy;
+    private TabularPolicy<S, A> policy;
 
     public PolicyIteration(MDP<S, A> mdp, double theta, double gamma) {
         this.mdp = mdp;
@@ -91,7 +91,7 @@ public class PolicyIteration<S, A> extends AbstractVFunctionObservable<S> implem
 
     @Override
     public Policy<S, A> solve() {
-        policy = new DeterministicPolicy<>();
+        policy = new TabularPolicy<>();
 
         // Initialize the policy arbitrarily
         for (S state : mdp.getStates()) {

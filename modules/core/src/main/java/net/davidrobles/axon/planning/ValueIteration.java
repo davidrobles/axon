@@ -2,7 +2,7 @@ package net.davidrobles.axon.planning;
 
 import java.util.Map;
 import net.davidrobles.axon.MDP;
-import net.davidrobles.axon.policies.DeterministicPolicy;
+import net.davidrobles.axon.policies.TabularPolicy;
 import net.davidrobles.axon.policies.Policy;
 import net.davidrobles.axon.valuefunctions.AbstractVFunctionObservable;
 import net.davidrobles.axon.valuefunctions.TabularVFunction;
@@ -52,7 +52,7 @@ public class ValueIteration<S, A> extends AbstractVFunctionObservable<S> impleme
         } while (delta > theta);
 
         // Extract greedy policy via one-step lookahead
-        DeterministicPolicy<S, A> policy = new DeterministicPolicy<>();
+        TabularPolicy<S, A> policy = new TabularPolicy<>();
         for (S state : mdp.getStates()) {
             A bestAction = null;
             double bestValue = Double.NEGATIVE_INFINITY;

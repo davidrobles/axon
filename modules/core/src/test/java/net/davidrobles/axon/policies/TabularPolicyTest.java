@@ -6,13 +6,13 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-public class DeterministicPolicyTest {
+public class TabularPolicyTest {
 
-    private DeterministicPolicy<String, String> policy;
+    private TabularPolicy<String, String> policy;
 
     @Before
     public void setUp() {
-        policy = new DeterministicPolicy<>();
+        policy = new TabularPolicy<>();
     }
 
     @Test

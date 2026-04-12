@@ -13,7 +13,7 @@ import java.util.Map;
  * @param <S> the type of the states
  * @param <A> the type of the actions
  */
-public class DeterministicPolicy<S, A> implements Policy<S, A> {
+public class TabularPolicy<S, A> implements Policy<S, A> {
     private final Map<S, A> map = new HashMap<>();
 
     public void setAction(S state, A action) {
