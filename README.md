@@ -55,11 +55,22 @@ A tabular reinforcement learning framework in Java. Implements classic model-fre
 ```java
 interface Agent<S, A> {
     A selectAction(S state, List<A> actions);
-    void update(S state, A action, StepResult<S> result, List<A> nextActions);
+    void update(Experience<S, A> experience);
 }
 ```
 
 Agents only define the update rule. The `RLLoop` drives the episode loop.
+
+### Predictor
+
+```java
+interface Predictor<S> {
+    void observe(S state, StepResult<S> result);
+}
+```
+
+Predictors solve the prediction problem only. They estimate `V(s)` under an external policy and do
+not select actions themselves.
 
 ### RLLoop
 
@@ -68,6 +79,12 @@ RLLoop.run(environment, agent, policy, numEpisodes);
 ```
 
 Handles reset → select → step → update for each episode.
+
+Prediction algorithms use the predictor overload:
+
+```java
+RLLoop.run(environment, policy, predictor, numEpisodes);
+```
 
 ### Policies
 
@@ -93,7 +110,8 @@ Both implement `TrainableQFunction` / `TrainableVFunction` with an `update(state
 
 ### Observer Pattern
 
-Agents implement `ObservableQAgent` or `ObservableVAgent`, notifying registered observers after each value function update. Used to hook in real-time visualization.
+Control algorithms and predictors expose observable value functions, notifying registered
+observers after each value update. This is used to hook in real-time visualization.
 
 ## Quick Start
 

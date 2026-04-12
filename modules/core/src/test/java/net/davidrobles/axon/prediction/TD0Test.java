@@ -2,11 +2,8 @@ package net.davidrobles.axon.prediction;
 
 import static org.junit.Assert.*;
 
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import net.davidrobles.axon.Experience;
 import net.davidrobles.axon.StepResult;
-import net.davidrobles.axon.policies.RandomPolicy;
 import net.davidrobles.axon.valuefunctions.TabularVFunction;
 import net.davidrobles.axon.valuefunctions.VFunction;
 import org.junit.Before;
@@ -17,12 +14,12 @@ public class TD0Test {
     private static final double EPS = 1e-9;
 
     private TabularVFunction<String> table;
-    private TD0<String, String> td0;
+    private TD0<String> td0;
 
     @Before
     public void setUp() {
         table = new TabularVFunction<>(0.5);
-        td0 = new TD0<>(table, new RandomPolicy<>(new java.util.Random(0)), 0.9);
+        td0 = new TD0<>(table, 0.9);
     }
 
     // -------------------------------------------------------------------------
@@ -47,8 +44,7 @@ public class TD0Test {
 
     @Test
     public void observeWithGammaZeroIgnoresFuture() {
-        TD0<String, String> noDiscount =
-                new TD0<>(table, new RandomPolicy<>(new java.util.Random(0)), 0.0);
+        TD0<String> noDiscount = new TD0<>(table, 0.0);
         table.setValue("s1", 999.0);
         // target = 3.0 + 0 = 3.0;  new V = 0 + 0.5*3.0 = 1.5
         noDiscount.observe("s0", new StepResult<>("s1", 3.0, false));
@@ -60,29 +56,6 @@ public class TD0Test {
         table.setValue("s1", 7.0);
         td0.observe("s0", new StepResult<>("s1", 0.0, false));
         assertEquals(7.0, table.getValue("s1"), EPS);
-    }
-
-    // -------------------------------------------------------------------------
-    // update() delegates to observe()
-    // -------------------------------------------------------------------------
-
-    @Test
-    public void updateDelegatesToObserve() {
-        table.setValue("s1", 2.0);
-        // Same call as observeNonTerminal above but via update()
-        td0.update(new Experience<>("s0", "ignored-action", 1.0, "s1", false, List.of("a0")));
-        assertEquals(1.4, table.getValue("s0"), EPS);
-    }
-
-    // -------------------------------------------------------------------------
-    // selectAction delegates to the policy
-    // -------------------------------------------------------------------------
-
-    @Test
-    public void selectActionDelegatesToPolicy() {
-        // RandomPolicy picks from the given list; just verify it returns one of them
-        String selected = td0.selectAction("s0", List.of("a0", "a1"));
-        assertTrue(List.of("a0", "a1").contains(selected));
     }
 
     // -------------------------------------------------------------------------
@@ -128,21 +101,16 @@ public class TD0Test {
 
     @Test(expected = IllegalArgumentException.class)
     public void gammaBelowZeroIsRejected() {
-        new TD0<>(table, new RandomPolicy<>(new java.util.Random(0)), -0.1);
+        new TD0<>(table, -0.1);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void gammaAboveOneIsRejected() {
-        new TD0<>(table, new RandomPolicy<>(new java.util.Random(0)), 1.1);
+        new TD0<>(table, 1.1);
     }
 
     @Test(expected = NullPointerException.class)
     public void nullTableIsRejected() {
-        new TD0<>(null, new RandomPolicy<>(new java.util.Random(0)), 0.9);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void nullPolicyIsRejected() {
-        new TD0<>(table, null, 0.9);
+        new TD0<>(null, 0.9);
     }
 }

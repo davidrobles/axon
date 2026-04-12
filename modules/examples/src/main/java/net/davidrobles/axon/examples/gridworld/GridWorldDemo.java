@@ -58,9 +58,9 @@ public class GridWorldDemo {
         RandomPolicy<GWState, GWAction> policy = new RandomPolicy<>(RNG);
         GWVFunctionView view = new GWVFunctionView(mdp, 20, 20, env);
         new AppFrame(view, "MC Prediction");
-        MCPrediction<GWState, GWAction> agent = new MCPrediction<>(vTable, policy, gamma);
-        agent.addVFunctionObserver(view);
-        RLLoop.run(env, agent, policy, numEpisodes);
+        MCPrediction<GWState> predictor = new MCPrediction<>(vTable, gamma);
+        predictor.addVFunctionObserver(view);
+        RLLoop.run(env, policy, predictor, numEpisodes);
     }
 
     private static void tabularMCControl() {
@@ -89,9 +89,9 @@ public class GridWorldDemo {
         RandomPolicy<GWState, GWAction> policy = new RandomPolicy<>(RNG);
         GWVFunctionView view = new GWVFunctionView(mdp, 20, 20, env);
         new AppFrame(view, "TD(0)");
-        TD0<GWState, GWAction> agent = new TD0<>(vTable, policy, gamma);
-        agent.addVFunctionObserver(view);
-        RLLoop.run(env, agent, policy, numEpisodes);
+        TD0<GWState> predictor = new TD0<>(vTable, gamma);
+        predictor.addVFunctionObserver(view);
+        RLLoop.run(env, policy, predictor, numEpisodes);
     }
 
     private static void tabularTDLambda() {
@@ -105,9 +105,9 @@ public class GridWorldDemo {
         RandomPolicy<GWState, GWAction> policy = new RandomPolicy<>(RNG);
         GWVFunctionView view = new GWVFunctionView(mdp, 20, 20, env);
         new AppFrame(view, "TD(λ)");
-        TDLambda<GWState, GWAction> agent = new TDLambda<>(vTable, policy, gamma, lambda);
-        agent.addVFunctionObserver(view);
-        RLLoop.run(env, agent, policy, numEpisodes);
+        TDLambda<GWState> predictor = new TDLambda<>(vTable, gamma, lambda);
+        predictor.addVFunctionObserver(view);
+        RLLoop.run(env, policy, predictor, numEpisodes);
     }
 
     private static void tabularQLearningWithReplay() {
@@ -158,9 +158,9 @@ public class GridWorldDemo {
         RandomPolicy<GWState, GWAction> policy = new RandomPolicy<>(RNG);
         GWVFunctionView view = new GWVFunctionView(mdp, 20, 20, env);
         new AppFrame(view, "n-step TD (n=" + n + ")");
-        NStepTD<GWState, GWAction> agent = new NStepTD<>(vTable, policy, n, gamma);
-        agent.addVFunctionObserver(view);
-        RLLoop.run(env, agent, policy, numEpisodes);
+        NStepTD<GWState> predictor = new NStepTD<>(vTable, n, gamma);
+        predictor.addVFunctionObserver(view);
+        RLLoop.run(env, policy, predictor, numEpisodes);
     }
 
     private static void tabularNStepSARSA() {

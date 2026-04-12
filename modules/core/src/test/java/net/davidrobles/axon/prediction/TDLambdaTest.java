@@ -2,11 +2,8 @@ package net.davidrobles.axon.prediction;
 
 import static org.junit.Assert.*;
 
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import net.davidrobles.axon.Experience;
 import net.davidrobles.axon.StepResult;
-import net.davidrobles.axon.policies.RandomPolicy;
 import net.davidrobles.axon.valuefunctions.TabularVFunction;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,13 +13,13 @@ public class TDLambdaTest {
     private static final double EPS = 1e-9;
 
     private TabularVFunction<String> table;
-    private TDLambda<String, String> tdl;
+    private TDLambda<String> tdl;
 
     @Before
     public void setUp() {
         // alpha=1.0 for exact arithmetic; gamma=1.0; lambda=0.5
         table = new TabularVFunction<>(1.0);
-        tdl = new TDLambda<>(table, new RandomPolicy<>(new java.util.Random(0)), 1.0, 0.5);
+        tdl = new TDLambda<>(table, 1.0, 0.5);
     }
 
     // -------------------------------------------------------------------------
@@ -65,8 +62,7 @@ public class TDLambdaTest {
     @Test
     public void lambda0BehavesLikeTD0() {
         TabularVFunction<String> localTable = new TabularVFunction<>(1.0);
-        TDLambda<String, String> td0Like =
-                new TDLambda<>(localTable, new RandomPolicy<>(new java.util.Random(0)), 1.0, 0.0);
+        TDLambda<String> td0Like = new TDLambda<>(localTable, 1.0, 0.0);
 
         // lambda=0: traces decay to 0 after each step, so only the current state gets credit.
         // Step 1: V(s0) stays 0 (tdError=0 since V(s1)=0); e(s0) decays to 0
@@ -85,16 +81,6 @@ public class TDLambdaTest {
         // Traces cleared. New episode — only s0 should be updated by this single step
         tdl.observe("s0", new StepResult<>("s3", 1.0, true));
         // V(s0) was 0.5; update: V(s0) = 0.5 + 1*(1-0.5) = 1.0
-        assertEquals(1.0, table.getValue("s0"), EPS);
-    }
-
-    // -------------------------------------------------------------------------
-    // update() delegates to observe()
-    // -------------------------------------------------------------------------
-
-    @Test
-    public void updateDelegatesToObserve() {
-        tdl.update(new Experience<>("s0", "any-action", 1.0, "s1", true, List.of()));
         assertEquals(1.0, table.getValue("s0"), EPS);
     }
 
@@ -130,26 +116,21 @@ public class TDLambdaTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void gammaBelowZeroIsRejected() {
-        new TDLambda<>(table, new RandomPolicy<>(new java.util.Random(0)), -0.1, 0.5);
+        new TDLambda<>(table, -0.1, 0.5);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void lambdaBelowZeroIsRejected() {
-        new TDLambda<>(table, new RandomPolicy<>(new java.util.Random(0)), 0.9, -0.1);
+        new TDLambda<>(table, 0.9, -0.1);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void lambdaAboveOneIsRejected() {
-        new TDLambda<>(table, new RandomPolicy<>(new java.util.Random(0)), 0.9, 1.1);
+        new TDLambda<>(table, 0.9, 1.1);
     }
 
     @Test(expected = NullPointerException.class)
     public void nullTableIsRejected() {
-        new TDLambda<>(null, new RandomPolicy<>(new java.util.Random(0)), 0.9, 0.5);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void nullPolicyIsRejected() {
-        new TDLambda<>(table, null, 0.9, 0.5);
+        new TDLambda<>(null, 0.9, 0.5);
     }
 }

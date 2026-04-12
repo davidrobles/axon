@@ -4,7 +4,6 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Objects;
 import net.davidrobles.axon.StepResult;
-import net.davidrobles.axon.policies.Policy;
 import net.davidrobles.axon.valuefunctions.TrainableVFunction;
 
 /**
@@ -21,9 +20,8 @@ import net.davidrobles.axon.valuefunctions.TrainableVFunction;
  * visited, or at episode end for states within the last n steps.
  *
  * @param <S> the type of the states
- * @param <A> the type of the actions
  */
-public class NStepTD<S, A> extends AbstractVAgent<S, A> {
+public class NStepTD<S> extends AbstractPredictor<S> {
     private record Entry<S>(S state, double reward) {}
 
     private final double gamma;
@@ -33,12 +31,10 @@ public class NStepTD<S, A> extends AbstractVAgent<S, A> {
 
     /**
      * @param table the V-function to evaluate and update; owns the learning rate
-     * @param policy the behavior policy used for action selection
      * @param n number of steps to look ahead before bootstrapping; must be >= 1
      * @param gamma discount factor
      */
-    public NStepTD(TrainableVFunction<S> table, Policy<S, A> policy, int n, double gamma) {
-        super(policy);
+    public NStepTD(TrainableVFunction<S> table, int n, double gamma) {
         if (n < 1) throw new IllegalArgumentException("n must be >= 1, got: " + n);
         if (gamma < 0 || gamma > 1) throw new IllegalArgumentException("gamma must be in [0, 1]");
         this.table = Objects.requireNonNull(table, "table must not be null");

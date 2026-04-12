@@ -69,4 +69,43 @@ public class RLLoop {
             policy.onEpisodeEnd(ep);
         }
     }
+
+    /**
+     * Runs {@code numEpisodes} full episodes using an externally supplied policy and a predictor
+     * that only updates state values.
+     *
+     * @param env the environment
+     * @param policy the policy driving action selection (receives lifecycle callbacks)
+     * @param predictor the predictor to update from observed transitions
+     * @param numEpisodes number of episodes to run; must be non-negative
+     * @param <S> state type
+     * @param <A> action type
+     * @throws IllegalArgumentException if {@code numEpisodes} is negative
+     */
+    public static <S, A> void run(
+            Environment<S, A> env, Policy<S, A> policy, Predictor<S> predictor, int numEpisodes) {
+        if (numEpisodes < 0)
+            throw new IllegalArgumentException(
+                    "numEpisodes must be non-negative, got: " + numEpisodes);
+        int totalSteps = 0;
+
+        for (int ep = 0; ep < numEpisodes; ep++) {
+            policy.reset();
+            S state = env.reset();
+            List<A> actions = env.getActions(state);
+
+            while (!actions.isEmpty()) {
+                A action = policy.selectAction(state, actions);
+                StepResult<S> result = env.step(action);
+                predictor.observe(state, result);
+                policy.onStep(++totalSteps);
+
+                if (result.done()) break;
+                state = result.nextState();
+                actions = env.getActions(state);
+            }
+
+            policy.onEpisodeEnd(ep);
+        }
+    }
 }

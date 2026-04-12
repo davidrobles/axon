@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import net.davidrobles.axon.StepResult;
-import net.davidrobles.axon.policies.Policy;
 import net.davidrobles.axon.valuefunctions.TrainableVFunction;
 
 /**
@@ -14,9 +13,8 @@ import net.davidrobles.axon.valuefunctions.TrainableVFunction;
  * states. Setting λ=0 recovers TD(0); λ=1 approximates Monte Carlo updates.
  *
  * @param <S> the type of the states
- * @param <A> the type of the actions
  */
-public class TDLambda<S, A> extends AbstractVAgent<S, A> {
+public class TDLambda<S> extends AbstractPredictor<S> {
     private final double gamma;
     private final double lambda;
     private final TrainableVFunction<S> table;
@@ -25,12 +23,10 @@ public class TDLambda<S, A> extends AbstractVAgent<S, A> {
     /**
      * @param table the V-function to evaluate and update (shared with the caller); owns the
      *     learning rate
-     * @param policy the behavior policy used for action selection
      * @param gamma discount factor
      * @param lambda eligibility-trace decay rate (0 = TD(0), 1 = Monte Carlo)
      */
-    public TDLambda(TrainableVFunction<S> table, Policy<S, A> policy, double gamma, double lambda) {
-        super(policy);
+    public TDLambda(TrainableVFunction<S> table, double gamma, double lambda) {
         if (gamma < 0 || gamma > 1) throw new IllegalArgumentException("gamma must be in [0, 1]");
         if (lambda < 0 || lambda > 1)
             throw new IllegalArgumentException("lambda must be in [0, 1]");

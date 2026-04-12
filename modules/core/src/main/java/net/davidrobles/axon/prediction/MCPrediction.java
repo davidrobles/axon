@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import net.davidrobles.axon.StepResult;
-import net.davidrobles.axon.policies.Policy;
 import net.davidrobles.axon.valuefunctions.TrainableVFunction;
 
 /**
@@ -16,9 +15,8 @@ import net.davidrobles.axon.valuefunctions.TrainableVFunction;
  * return for each state and updates V(s) for the first visit to each state per episode.
  *
  * @param <S> the type of the states
- * @param <A> the type of the actions
  */
-public class MCPrediction<S, A> extends AbstractVAgent<S, A> {
+public class MCPrediction<S> extends AbstractPredictor<S> {
     private final double gamma;
     private final TrainableVFunction<S> table;
     private final List<S> states = new ArrayList<>();
@@ -26,11 +24,9 @@ public class MCPrediction<S, A> extends AbstractVAgent<S, A> {
 
     /**
      * @param table the V-function to evaluate and update; owns the learning rate
-     * @param policy the behavior policy used for action selection
      * @param gamma discount factor
      */
-    public MCPrediction(TrainableVFunction<S> table, Policy<S, A> policy, double gamma) {
-        super(policy);
+    public MCPrediction(TrainableVFunction<S> table, double gamma) {
         if (gamma < 0 || gamma > 1) throw new IllegalArgumentException("gamma must be in [0, 1]");
         this.table = Objects.requireNonNull(table, "table must not be null");
         this.gamma = gamma;

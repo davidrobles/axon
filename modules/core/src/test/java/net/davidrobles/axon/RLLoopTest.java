@@ -71,6 +71,19 @@ public class RLLoopTest {
         policy = new CountingPolicy();
     }
 
+    private static class CountingPredictor implements Predictor<Integer> {
+        final List<Integer> statesSeen = new ArrayList<>();
+        final List<StepResult<Integer>> resultsSeen = new ArrayList<>();
+        int observeCount = 0;
+
+        @Override
+        public void observe(Integer state, StepResult<Integer> result) {
+            statesSeen.add(state);
+            resultsSeen.add(result);
+            observeCount++;
+        }
+    }
+
     // -------------------------------------------------------------------------
     // Episode count
     // -------------------------------------------------------------------------
@@ -186,6 +199,45 @@ public class RLLoopTest {
     @Test(expected = IllegalArgumentException.class)
     public void negativeNumEpisodesThrows() {
         RLLoop.run(env, agent, policy, -1);
+    }
+
+    // -------------------------------------------------------------------------
+    // Predictor overload
+    // -------------------------------------------------------------------------
+
+    @Test
+    public void predictorLoopRunsOneObservePerStep() {
+        CountingPredictor predictor = new CountingPredictor();
+        RLLoop.run(env, policy, predictor, 3);
+        assertEquals(6, predictor.observeCount);
+    }
+
+    @Test
+    public void predictorLoopUsesPolicyForActionSelection() {
+        CountingPredictor predictor = new CountingPredictor();
+        RLLoop.run(env, policy, predictor, 1);
+        assertEquals(List.of(0, 1), predictor.statesSeen);
+    }
+
+    @Test
+    public void predictorLoopReceivesTerminalStepResult() {
+        CountingPredictor predictor = new CountingPredictor();
+        RLLoop.run(env, policy, predictor, 1);
+        assertTrue(predictor.resultsSeen.get(1).done());
+    }
+
+    @Test
+    public void predictorLoopInvokesPolicyLifecycleHooks() {
+        CountingPredictor predictor = new CountingPredictor();
+        RLLoop.run(env, policy, predictor, 2);
+        assertEquals(2, policy.resetCount);
+        assertEquals(List.of(1, 2, 3, 4), policy.onStepArgs);
+        assertEquals(List.of(0, 1), policy.onEpisodeEndArgs);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void predictorLoopRejectsNegativeNumEpisodes() {
+        RLLoop.run(env, policy, new CountingPredictor(), -1);
     }
 
     // -------------------------------------------------------------------------

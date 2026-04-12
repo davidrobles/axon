@@ -2,11 +2,8 @@ package net.davidrobles.axon.prediction;
 
 import static org.junit.Assert.*;
 
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import net.davidrobles.axon.Experience;
 import net.davidrobles.axon.StepResult;
-import net.davidrobles.axon.policies.RandomPolicy;
 import net.davidrobles.axon.valuefunctions.TabularVFunction;
 import net.davidrobles.axon.valuefunctions.VFunction;
 import org.junit.Before;
@@ -17,12 +14,12 @@ public class MCPredictionTest {
     private static final double EPS = 1e-9;
 
     private TabularVFunction<String> table;
-    private MCPrediction<String, String> agent;
+    private MCPrediction<String> agent;
 
     @Before
     public void setUp() {
         table = new TabularVFunction<>(0.5);
-        agent = new MCPrediction<>(table, new RandomPolicy<>(new java.util.Random(0)), 1.0);
+        agent = new MCPrediction<>(table, 1.0);
     }
 
     // -------------------------------------------------------------------------
@@ -61,8 +58,7 @@ public class MCPredictionTest {
     @Test
     public void discountingReducesEarlierReturns() {
         // gamma=0.5; episode: s0 -r=0-> s1 -r=4-> done
-        MCPrediction<String, String> discounted =
-                new MCPrediction<>(table, new RandomPolicy<>(new java.util.Random(0)), 0.5);
+        MCPrediction<String> discounted = new MCPrediction<>(table, 0.5);
         // G(s1) = 4, G(s0) = 0 + 0.5*4 = 2
         // new V(s1) = 0 + 0.5*4 = 2.0
         // new V(s0) = 0 + 0.5*2 = 1.0
@@ -101,17 +97,6 @@ public class MCPredictionTest {
         // Episode 2: s0 -r=4-> done → update from 1.0: 1.0 + 0.5*(4-1.0) = 2.5
         agent.observe("s0", new StepResult<>("s1", 4.0, true));
         assertEquals(2.5, table.getValue("s0"), EPS);
-    }
-
-    // -------------------------------------------------------------------------
-    // update() delegates to observe()
-    // -------------------------------------------------------------------------
-
-    @Test
-    public void updateDelegatesToObserve() {
-        // Same as singleStepEpisodeUpdatesWithReward but via update()
-        agent.update(new Experience<>("s0", "a0", 2.0, "s1", true, List.of()));
-        assertEquals(1.0, table.getValue("s0"), EPS);
     }
 
     // -------------------------------------------------------------------------
@@ -167,21 +152,16 @@ public class MCPredictionTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void gammaBelowZeroIsRejected() {
-        new MCPrediction<>(table, new RandomPolicy<>(new java.util.Random(0)), -0.1);
+        new MCPrediction<>(table, -0.1);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void gammaAboveOneIsRejected() {
-        new MCPrediction<>(table, new RandomPolicy<>(new java.util.Random(0)), 1.1);
+        new MCPrediction<>(table, 1.1);
     }
 
     @Test(expected = NullPointerException.class)
     public void nullTableIsRejected() {
-        new MCPrediction<>(null, new RandomPolicy<>(new java.util.Random(0)), 0.9);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void nullPolicyIsRejected() {
-        new MCPrediction<>(table, null, 0.9);
+        new MCPrediction<>(null, 0.9);
     }
 }
