@@ -4,8 +4,8 @@ import java.util.*;
 import net.davidrobles.axon.MDP;
 import net.davidrobles.axon.policies.TabularPolicy;
 import net.davidrobles.axon.policies.Policy;
-import net.davidrobles.axon.valuefunctions.AbstractVFunctionObservable;
-import net.davidrobles.axon.valuefunctions.TabularVFunction;
+import net.davidrobles.axon.values.AbstractVFunctionObservable;
+import net.davidrobles.axon.values.TabularVFunction;
 
 public class PolicyIteration<S, A> extends AbstractVFunctionObservable<S> implements Planner<S, A> {
     private MDP<S, A> mdp;

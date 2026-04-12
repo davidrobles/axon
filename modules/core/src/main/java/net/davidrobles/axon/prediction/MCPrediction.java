@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import net.davidrobles.axon.StepResult;
-import net.davidrobles.axon.valuefunctions.TrainableVFunction;
+import net.davidrobles.axon.values.TrainableVFunction;
 
 /**
  * First-visit Monte Carlo prediction for on-policy state value estimation.

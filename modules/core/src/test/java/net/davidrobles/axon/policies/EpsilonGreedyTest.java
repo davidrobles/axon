@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 import java.util.List;
 import java.util.Random;
 import net.davidrobles.axon.LoopListener;
-import net.davidrobles.axon.valuefunctions.TabularQFunction;
+import net.davidrobles.axon.values.TabularQFunction;
 import org.junit.Before;
 import org.junit.Test;
 

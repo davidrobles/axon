@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import net.davidrobles.axon.Experience;
 import net.davidrobles.axon.policies.GreedyPolicy;
-import net.davidrobles.axon.valuefunctions.TabularQFunction;
+import net.davidrobles.axon.values.TabularQFunction;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -114,7 +114,7 @@ public class SARSATest {
     @Test
     public void duplicateObserverIsRegisteredOnce() {
         AtomicInteger count = new AtomicInteger();
-        net.davidrobles.axon.valuefunctions.QFunctionObserver<String, String> o =
+        net.davidrobles.axon.values.QFunctionObserver<String, String> o =
                 qf -> count.incrementAndGet();
         agent.addQFunctionObserver(o);
         agent.addQFunctionObserver(o);

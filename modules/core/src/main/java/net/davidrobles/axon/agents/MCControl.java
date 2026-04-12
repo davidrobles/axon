@@ -8,7 +8,7 @@ import java.util.Set;
 import net.davidrobles.axon.Experience;
 import net.davidrobles.axon.StateActionPair;
 import net.davidrobles.axon.policies.Policy;
-import net.davidrobles.axon.valuefunctions.TrainableQFunction;
+import net.davidrobles.axon.values.TrainableQFunction;
 
 /**
  * First-visit on-policy Monte Carlo control.

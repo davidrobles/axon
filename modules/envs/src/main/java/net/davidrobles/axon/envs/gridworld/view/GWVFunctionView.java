@@ -5,8 +5,8 @@ import net.davidrobles.axon.envs.gridworld.GWState;
 import net.davidrobles.axon.envs.gridworld.GridWorldEnv;
 import net.davidrobles.axon.envs.gridworld.GridWorldMDP;
 import net.davidrobles.axon.util.color.ColorMap;
-import net.davidrobles.axon.valuefunctions.VFunction;
-import net.davidrobles.axon.valuefunctions.VFunctionObserver;
+import net.davidrobles.axon.values.VFunction;
+import net.davidrobles.axon.values.VFunctionObserver;
 
 public class GWVFunctionView extends GridWorldView implements VFunctionObserver<GWState> {
     private VFunction<GWState> vFunction;

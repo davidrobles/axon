@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import net.davidrobles.axon.StateActionPair;
-import net.davidrobles.axon.valuefunctions.QFunction;
+import net.davidrobles.axon.values.QFunction;
 
 /**
  * Upper Confidence Bound policy (UCB1).

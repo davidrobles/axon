@@ -9,7 +9,7 @@ import java.util.Random;
 import net.davidrobles.axon.Experience;
 import net.davidrobles.axon.StateActionPair;
 import net.davidrobles.axon.policies.Policy;
-import net.davidrobles.axon.valuefunctions.TrainableQFunction;
+import net.davidrobles.axon.values.TrainableQFunction;
 
 /**
  * Tabular Dyna-Q (Sutton, 1990).

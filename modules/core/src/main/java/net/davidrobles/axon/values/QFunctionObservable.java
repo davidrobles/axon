@@ -1,4 +1,4 @@
-package net.davidrobles.axon.valuefunctions;
+package net.davidrobles.axon.values;
 
 /**
  * Implemented by any object that exposes its Q-function updates to registered observers.

@@ -3,7 +3,7 @@ package net.davidrobles.axon.agents;
 import java.util.List;
 import java.util.Objects;
 import net.davidrobles.axon.policies.Policy;
-import net.davidrobles.axon.valuefunctions.AbstractQFunctionObservable;
+import net.davidrobles.axon.values.AbstractQFunctionObservable;
 
 /**
  * Abstract base class for tabular Q-function agents.

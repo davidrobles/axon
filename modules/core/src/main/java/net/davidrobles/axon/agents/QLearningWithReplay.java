@@ -5,7 +5,7 @@ import java.util.Random;
 import net.davidrobles.axon.Experience;
 import net.davidrobles.axon.policies.Policy;
 import net.davidrobles.axon.replay.ReplayBuffer;
-import net.davidrobles.axon.valuefunctions.TrainableQFunction;
+import net.davidrobles.axon.values.TrainableQFunction;
 
 /**
  * Off-policy Q-Learning with experience replay (Lin, 1992).

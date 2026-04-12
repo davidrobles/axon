@@ -71,7 +71,7 @@ public class PolicyIterationTest {
     @Test
     public void duplicateObserverIsNotifiedOnce() {
         AtomicInteger count = new AtomicInteger();
-        net.davidrobles.axon.valuefunctions.VFunctionObserver<Integer> o =
+        net.davidrobles.axon.values.VFunctionObserver<Integer> o =
                 vf -> count.incrementAndGet();
         pi.addVFunctionObserver(o);
         pi.addVFunctionObserver(o); // duplicate

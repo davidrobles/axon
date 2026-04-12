@@ -3,7 +3,7 @@ package net.davidrobles.axon.policies;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
-import net.davidrobles.axon.valuefunctions.QFunction;
+import net.davidrobles.axon.values.QFunction;
 
 /**
  * Softmax (Boltzmann) exploration policy.

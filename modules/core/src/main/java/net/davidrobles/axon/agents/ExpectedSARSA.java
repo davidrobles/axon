@@ -3,7 +3,7 @@ package net.davidrobles.axon.agents;
 import java.util.Objects;
 import net.davidrobles.axon.Experience;
 import net.davidrobles.axon.policies.StochasticPolicy;
-import net.davidrobles.axon.valuefunctions.TrainableQFunction;
+import net.davidrobles.axon.values.TrainableQFunction;
 
 /**
  * On-policy tabular Expected SARSA.

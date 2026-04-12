@@ -2,7 +2,7 @@ package net.davidrobles.axon.prediction;
 
 import java.util.Objects;
 import net.davidrobles.axon.StepResult;
-import net.davidrobles.axon.valuefunctions.TrainableVFunction;
+import net.davidrobles.axon.values.TrainableVFunction;
 
 /**
  * TD(0) for on-policy state value prediction.

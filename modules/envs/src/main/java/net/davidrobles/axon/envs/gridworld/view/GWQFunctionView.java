@@ -6,8 +6,8 @@ import net.davidrobles.axon.envs.gridworld.GWState;
 import net.davidrobles.axon.envs.gridworld.GridWorldEnv;
 import net.davidrobles.axon.envs.gridworld.GridWorldMDP;
 import net.davidrobles.axon.util.color.ColorMap;
-import net.davidrobles.axon.valuefunctions.QFunction;
-import net.davidrobles.axon.valuefunctions.QFunctionObserver;
+import net.davidrobles.axon.values.QFunction;
+import net.davidrobles.axon.values.QFunctionObserver;
 
 public class GWQFunctionView extends GridWorldView implements QFunctionObserver<GWState, GWAction> {
     private QFunction<GWState, GWAction> qFunction;

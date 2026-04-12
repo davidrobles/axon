@@ -4,8 +4,8 @@ import static org.junit.Assert.*;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import net.davidrobles.axon.StepResult;
-import net.davidrobles.axon.valuefunctions.TabularVFunction;
-import net.davidrobles.axon.valuefunctions.VFunction;
+import net.davidrobles.axon.values.TabularVFunction;
+import net.davidrobles.axon.values.VFunction;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -175,7 +175,7 @@ public class NStepTDTest {
     @Test
     public void duplicateObserverIsRegisteredOnce() {
         AtomicInteger count = new AtomicInteger();
-        net.davidrobles.axon.valuefunctions.VFunctionObserver<String> o =
+        net.davidrobles.axon.values.VFunctionObserver<String> o =
                 vf -> count.incrementAndGet();
         NStepTD<String> a = agent(1);
         a.addVFunctionObserver(o);

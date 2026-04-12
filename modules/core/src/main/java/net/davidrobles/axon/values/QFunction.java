@@ -1,4 +1,4 @@
-package net.davidrobles.axon.valuefunctions;
+package net.davidrobles.axon.values;
 
 /**
  * A state-action value function Q(s, a).

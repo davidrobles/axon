@@ -1,4 +1,4 @@
-package net.davidrobles.axon.valuefunctions;
+package net.davidrobles.axon.values;
 
 /**
  * A Q-function that can be updated towards a TD target.

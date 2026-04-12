@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import net.davidrobles.axon.StepResult;
-import net.davidrobles.axon.valuefunctions.TrainableVFunction;
+import net.davidrobles.axon.values.TrainableVFunction;
 
 /**
  * TD(λ) for on-policy state value prediction with eligibility traces.

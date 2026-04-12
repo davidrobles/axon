@@ -4,8 +4,8 @@ import java.util.Objects;
 import java.util.Random;
 import net.davidrobles.axon.Experience;
 import net.davidrobles.axon.policies.Policy;
-import net.davidrobles.axon.valuefunctions.QFunction;
-import net.davidrobles.axon.valuefunctions.TrainableQFunction;
+import net.davidrobles.axon.values.QFunction;
+import net.davidrobles.axon.values.TrainableQFunction;
 
 /**
  * Double Q-Learning (van Hasselt, 2010).

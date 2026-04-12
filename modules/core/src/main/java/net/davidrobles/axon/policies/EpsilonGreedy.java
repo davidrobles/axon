@@ -3,7 +3,7 @@ package net.davidrobles.axon.policies;
 import java.util.List;
 import java.util.Random;
 import net.davidrobles.axon.LoopListener;
-import net.davidrobles.axon.valuefunctions.QFunction;
+import net.davidrobles.axon.values.QFunction;
 
 /**
  * ε-greedy policy: takes a random action with probability ε, otherwise the greedy action (highest

@@ -1,4 +1,4 @@
-package net.davidrobles.axon.valuefunctions;
+package net.davidrobles.axon.values;
 
 /**
  * Observer notified whenever a {@link QFunctionObservable} updates its Q-function estimate.

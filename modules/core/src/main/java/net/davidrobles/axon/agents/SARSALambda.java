@@ -7,7 +7,7 @@ import java.util.Objects;
 import net.davidrobles.axon.Experience;
 import net.davidrobles.axon.StateActionPair;
 import net.davidrobles.axon.policies.Policy;
-import net.davidrobles.axon.valuefunctions.TrainableQFunction;
+import net.davidrobles.axon.values.TrainableQFunction;
 
 /**
  * On-policy tabular SARSA(λ) with accumulating eligibility traces.

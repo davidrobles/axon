@@ -243,8 +243,8 @@ public class InteractionLoopTest {
 
     @Test
     public void qLearningLearnsPositiveQValueAfterManyEpisodes() {
-        net.davidrobles.axon.valuefunctions.TabularQFunction<Integer, String> q =
-                new net.davidrobles.axon.valuefunctions.TabularQFunction<>(0.1);
+        net.davidrobles.axon.values.TabularQFunction<Integer, String> q =
+                new net.davidrobles.axon.values.TabularQFunction<>(0.1);
         net.davidrobles.axon.policies.EpsilonGreedy<Integer, String> epsilonGreedy =
                 new net.davidrobles.axon.policies.EpsilonGreedy<>(q, 0.1, new java.util.Random(0));
         net.davidrobles.axon.agents.QLearning<Integer, String> ql =

@@ -1,7 +1,7 @@
 package net.davidrobles.axon.prediction;
 
 import net.davidrobles.axon.Predictor;
-import net.davidrobles.axon.valuefunctions.AbstractVFunctionObservable;
+import net.davidrobles.axon.values.AbstractVFunctionObservable;
 
 /**
  * Abstract base class for tabular V-function prediction algorithms.

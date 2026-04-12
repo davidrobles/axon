@@ -1,13 +1,13 @@
 package net.davidrobles.axon.policies;
 
 import java.util.List;
-import net.davidrobles.axon.valuefunctions.QFunction;
+import net.davidrobles.axon.values.QFunction;
 
 /**
  * Always selects the action with the highest Q-value (greedy w.r.t. the Q-function).
  *
  * <p>The Q-function is bound at construction. Because {@link
- * net.davidrobles.axon.valuefunctions.TabularQFunction} is mutable, the policy always reflects the
+ * net.davidrobles.axon.values.TabularQFunction} is mutable, the policy always reflects the
  * latest estimates produced by the learning algorithm.
  *
  * @param <S> the type of the states

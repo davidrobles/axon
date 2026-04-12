@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import net.davidrobles.axon.ChainMDP;
 import net.davidrobles.axon.policies.Policy;
-import net.davidrobles.axon.valuefunctions.VFunction;
+import net.davidrobles.axon.values.VFunction;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -89,7 +89,7 @@ public class ValueIterationTest {
     @Test
     public void duplicateObserverIsNotifiedOnce() {
         AtomicInteger count = new AtomicInteger();
-        net.davidrobles.axon.valuefunctions.VFunctionObserver<Integer> o =
+        net.davidrobles.axon.values.VFunctionObserver<Integer> o =
                 vf -> count.incrementAndGet();
         vi.addVFunctionObserver(o);
         vi.addVFunctionObserver(o);
@@ -99,7 +99,7 @@ public class ValueIterationTest {
         int after = count.get();
         // Reset and check second solve would give same count (not doubled)
         AtomicInteger count2 = new AtomicInteger();
-        net.davidrobles.axon.valuefunctions.VFunctionObserver<Integer> o2 =
+        net.davidrobles.axon.values.VFunctionObserver<Integer> o2 =
                 vf -> count2.incrementAndGet();
         ValueIteration<Integer, String> vi2 = new ValueIteration<>(mdp, 1e-6, 1.0);
         vi2.addVFunctionObserver(o2);

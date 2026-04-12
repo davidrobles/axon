@@ -18,8 +18,8 @@ import net.davidrobles.axon.prediction.*;
 import net.davidrobles.axon.prediction.NStepTD;
 import net.davidrobles.axon.replay.ReplayBuffer;
 import net.davidrobles.axon.util.AppFrame;
-import net.davidrobles.axon.valuefunctions.TabularQFunction;
-import net.davidrobles.axon.valuefunctions.TabularVFunction;
+import net.davidrobles.axon.values.TabularQFunction;
+import net.davidrobles.axon.values.TabularVFunction;
 
 public class GridWorldDemo {
     private static final Random RNG = new Random();

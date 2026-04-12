@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Objects;
 import net.davidrobles.axon.Experience;
 import net.davidrobles.axon.policies.Policy;
-import net.davidrobles.axon.valuefunctions.TrainableQFunction;
+import net.davidrobles.axon.values.TrainableQFunction;
 
 /**
  * On-policy tabular SARSA (Rummery &amp; Niranjan, 1994).

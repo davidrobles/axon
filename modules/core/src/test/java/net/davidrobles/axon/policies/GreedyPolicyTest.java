@@ -3,7 +3,7 @@ package net.davidrobles.axon.policies;
 import static org.junit.Assert.*;
 
 import java.util.List;
-import net.davidrobles.axon.valuefunctions.TabularQFunction;
+import net.davidrobles.axon.values.TabularQFunction;
 import org.junit.Before;
 import org.junit.Test;
 
