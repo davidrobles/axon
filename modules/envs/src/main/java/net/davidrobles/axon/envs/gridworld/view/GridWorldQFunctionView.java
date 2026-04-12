@@ -1,18 +1,18 @@
 package net.davidrobles.axon.envs.gridworld.view;
 
 import java.awt.*;
-import net.davidrobles.axon.envs.gridworld.GWAction;
-import net.davidrobles.axon.envs.gridworld.GWState;
+import net.davidrobles.axon.envs.gridworld.GridWorldAction;
+import net.davidrobles.axon.envs.gridworld.GridWorldState;
 import net.davidrobles.axon.envs.gridworld.GridWorldEnv;
 import net.davidrobles.axon.envs.gridworld.GridWorldMDP;
 import net.davidrobles.axon.util.color.ColorMap;
 import net.davidrobles.axon.values.QFunction;
 import net.davidrobles.axon.values.QFunctionObserver;
 
-public class GWQFunctionView extends GridWorldView implements QFunctionObserver<GWState, GWAction> {
-    private QFunction<GWState, GWAction> qFunction;
+public class GridWorldQFunctionView extends GridWorldView implements QFunctionObserver<GridWorldState, GridWorldAction> {
+    private QFunction<GridWorldState, GridWorldAction> qFunction;
 
-    public GWQFunctionView(
+    public GridWorldQFunctionView(
             GridWorldMDP gridWorld, int cellWidth, int cellHeight, GridWorldEnv environment) {
         super(gridWorld, cellWidth, cellHeight, environment);
     }
@@ -23,8 +23,8 @@ public class GWQFunctionView extends GridWorldView implements QFunctionObserver<
             float max = Float.MIN_VALUE;
             float min = Float.MAX_VALUE;
 
-            for (GWState state : gw.getStates()) {
-                for (GWAction action : gw.getActions(state)) {
+            for (GridWorldState state : gw.getStates()) {
+                for (GridWorldAction action : gw.getActions(state)) {
                     float colorValue = (float) qFunction.getValue(state, action);
                     if (colorValue < min) {
                         min = colorValue;
@@ -37,11 +37,11 @@ public class GWQFunctionView extends GridWorldView implements QFunctionObserver<
 
             ColorMap colorMap = new ColorMap(min, max, ColorMap.getJet());
 
-            for (GWState state : gw.getStates()) {
-                for (GWAction action : gw.getActions(state)) {
+            for (GridWorldState state : gw.getStates()) {
+                for (GridWorldAction action : gw.getActions(state)) {
                     g.setColor(colorMap.getColor(qFunction.getValue(state, action)));
 
-                    if (action == GWAction.UP) {
+                    if (action == GridWorldAction.UP) {
                         // Top
                         g.fillRect(
                                 state.getX() * cellWidth + cellWidth / 3,
@@ -50,7 +50,7 @@ public class GWQFunctionView extends GridWorldView implements QFunctionObserver<
                                 cellHeight / 3);
                     }
 
-                    if (action == GWAction.DOWN) {
+                    if (action == GridWorldAction.DOWN) {
                         // Bottom
                         g.fillRect(
                                 state.getX() * cellWidth + cellWidth / 3,
@@ -59,7 +59,7 @@ public class GWQFunctionView extends GridWorldView implements QFunctionObserver<
                                 cellHeight / 3);
                     }
 
-                    if (action == GWAction.LEFT) {
+                    if (action == GridWorldAction.LEFT) {
                         // Left
                         g.fillRect(
                                 state.getX() * cellWidth,
@@ -68,7 +68,7 @@ public class GWQFunctionView extends GridWorldView implements QFunctionObserver<
                                 cellHeight / 3);
                     }
 
-                    if (action == GWAction.RIGHT) {
+                    if (action == GridWorldAction.RIGHT) {
                         // Right
                         g.fillRect(
                                 state.getX() * cellWidth + (cellWidth / 3) * 2,
@@ -82,7 +82,7 @@ public class GWQFunctionView extends GridWorldView implements QFunctionObserver<
     }
 
     @Override
-    public void qFunctionUpdated(QFunction<GWState, GWAction> qFunction) {
+    public void qFunctionUpdated(QFunction<GridWorldState, GridWorldAction> qFunction) {
         this.qFunction = qFunction;
         repaint();
     }

@@ -1,17 +1,17 @@
 package net.davidrobles.axon.envs.gridworld.view;
 
 import java.awt.*;
-import net.davidrobles.axon.envs.gridworld.GWState;
+import net.davidrobles.axon.envs.gridworld.GridWorldState;
 import net.davidrobles.axon.envs.gridworld.GridWorldEnv;
 import net.davidrobles.axon.envs.gridworld.GridWorldMDP;
 import net.davidrobles.axon.util.color.ColorMap;
 import net.davidrobles.axon.values.VFunction;
 import net.davidrobles.axon.values.VFunctionObserver;
 
-public class GWVFunctionView extends GridWorldView implements VFunctionObserver<GWState> {
-    private VFunction<GWState> vFunction;
+public class GridWorldVFunctionView extends GridWorldView implements VFunctionObserver<GridWorldState> {
+    private VFunction<GridWorldState> vFunction;
 
-    public GWVFunctionView(
+    public GridWorldVFunctionView(
             GridWorldMDP gridWorld, int cellWidth, int cellHeight, GridWorldEnv env) {
         super(gridWorld, cellWidth, cellHeight, env);
     }
@@ -23,7 +23,7 @@ public class GWVFunctionView extends GridWorldView implements VFunctionObserver<
             float min = Float.MAX_VALUE;
 
             // calculate max and min color values
-            for (GWState state : gw.getStates()) {
+            for (GridWorldState state : gw.getStates()) {
                 float colorValue = (float) vFunction.getValue(state);
 
                 if (colorValue < min) min = colorValue;
@@ -34,7 +34,7 @@ public class GWVFunctionView extends GridWorldView implements VFunctionObserver<
             ColorMap colorMap = new ColorMap(min, max, ColorMap.getJet());
 
             // draw states
-            for (GWState state : gw.getStates()) {
+            for (GridWorldState state : gw.getStates()) {
                 g.setColor(colorMap.getColor(vFunction.getValue(state)));
                 g.fillRect(
                         state.getX() * cellWidth, state.getY() * cellHeight, cellWidth, cellHeight);
@@ -61,7 +61,7 @@ public class GWVFunctionView extends GridWorldView implements VFunctionObserver<
     }
 
     @Override
-    public void valueFunctionUpdated(VFunction<GWState> vFunction) {
+    public void valueFunctionUpdated(VFunction<GridWorldState> vFunction) {
         this.vFunction = vFunction;
         repaint();
     }

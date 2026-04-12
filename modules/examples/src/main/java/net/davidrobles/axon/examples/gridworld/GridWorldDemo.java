@@ -3,12 +3,12 @@ package net.davidrobles.axon.examples.gridworld;
 import java.util.Random;
 import net.davidrobles.axon.InteractionLoop;
 import net.davidrobles.axon.agents.*;
-import net.davidrobles.axon.envs.gridworld.GWAction;
-import net.davidrobles.axon.envs.gridworld.GWState;
+import net.davidrobles.axon.envs.gridworld.GridWorldAction;
+import net.davidrobles.axon.envs.gridworld.GridWorldState;
 import net.davidrobles.axon.envs.gridworld.GridWorldEnv;
 import net.davidrobles.axon.envs.gridworld.GridWorldMDP;
-import net.davidrobles.axon.envs.gridworld.view.GWQFunctionView;
-import net.davidrobles.axon.envs.gridworld.view.GWVFunctionView;
+import net.davidrobles.axon.envs.gridworld.view.GridWorldQFunctionView;
+import net.davidrobles.axon.envs.gridworld.view.GridWorldVFunctionView;
 import net.davidrobles.axon.planning.*;
 import net.davidrobles.axon.policies.EpsilonGreedy;
 import net.davidrobles.axon.policies.RandomPolicy;
@@ -29,9 +29,9 @@ public class GridWorldDemo {
         double gamma = 0.99;
         GridWorldMDP mdp = new GridWorldMDP(25, 25, RNG);
         GridWorldEnv env = new GridWorldEnv(mdp, RNG);
-        GWVFunctionView view = new GWVFunctionView(mdp, 20, 20, env);
+        GridWorldVFunctionView view = new GridWorldVFunctionView(mdp, 20, 20, env);
         new AppFrame(view);
-        PolicyIteration<GWState, GWAction> learner = new PolicyIteration<>(mdp, theta, gamma);
+        PolicyIteration<GridWorldState, GridWorldAction> learner = new PolicyIteration<>(mdp, theta, gamma);
         learner.addVFunctionObserver(view);
         learner.solve();
     }
@@ -41,9 +41,9 @@ public class GridWorldDemo {
         double gamma = 0.99;
         GridWorldMDP mdp = new GridWorldMDP(25, 25, RNG);
         GridWorldEnv env = new GridWorldEnv(mdp, RNG);
-        GWVFunctionView view = new GWVFunctionView(mdp, 20, 20, env);
+        GridWorldVFunctionView view = new GridWorldVFunctionView(mdp, 20, 20, env);
         new AppFrame(view);
-        ValueIteration<GWState, GWAction> learner = new ValueIteration<>(mdp, theta, gamma);
+        ValueIteration<GridWorldState, GridWorldAction> learner = new ValueIteration<>(mdp, theta, gamma);
         learner.addVFunctionObserver(view);
         learner.solve();
     }
@@ -54,11 +54,11 @@ public class GridWorldDemo {
         int numEpisodes = 2000;
         GridWorldMDP mdp = new GridWorldMDP(20, 20, RNG);
         GridWorldEnv env = new GridWorldEnv(mdp, RNG);
-        TabularVFunction<GWState> vTable = new TabularVFunction<>(alpha);
-        RandomPolicy<GWState, GWAction> policy = new RandomPolicy<>(RNG);
-        GWVFunctionView view = new GWVFunctionView(mdp, 20, 20, env);
+        TabularVFunction<GridWorldState> vTable = new TabularVFunction<>(alpha);
+        RandomPolicy<GridWorldState, GridWorldAction> policy = new RandomPolicy<>(RNG);
+        GridWorldVFunctionView view = new GridWorldVFunctionView(mdp, 20, 20, env);
         new AppFrame(view, "MC Prediction");
-        MCPrediction<GWState> predictor = new MCPrediction<>(vTable, gamma);
+        MCPrediction<GridWorldState> predictor = new MCPrediction<>(vTable, gamma);
         predictor.addVFunctionObserver(view);
         InteractionLoop.run(env, policy, predictor, numEpisodes);
     }
@@ -69,12 +69,12 @@ public class GridWorldDemo {
         int numEpisodes = 2000;
         GridWorldMDP mdp = new GridWorldMDP(20, 20, RNG);
         GridWorldEnv env = new GridWorldEnv(mdp, RNG);
-        TabularQFunction<GWState, GWAction> qTable = new TabularQFunction<>(alpha);
-        EpsilonGreedy<GWState, GWAction> policy = new EpsilonGreedy<>(qTable, 0.1, RNG);
-        GWQFunctionView view = new GWQFunctionView(mdp, 20, 20, env);
+        TabularQFunction<GridWorldState, GridWorldAction> qTable = new TabularQFunction<>(alpha);
+        EpsilonGreedy<GridWorldState, GridWorldAction> policy = new EpsilonGreedy<>(qTable, 0.1, RNG);
+        GridWorldQFunctionView view = new GridWorldQFunctionView(mdp, 20, 20, env);
         view.setGridEnabled(true);
         new AppFrame(view, "MC Control");
-        MCControl<GWState, GWAction> agent = new MCControl<>(qTable, policy, gamma);
+        MCControl<GridWorldState, GridWorldAction> agent = new MCControl<>(qTable, policy, gamma);
         agent.addQFunctionObserver(view);
         InteractionLoop.run(env, agent, policy, numEpisodes, policy);
     }
@@ -85,11 +85,11 @@ public class GridWorldDemo {
         int numEpisodes = 5000;
         GridWorldMDP mdp = new GridWorldMDP(20, 20, RNG);
         GridWorldEnv env = new GridWorldEnv(mdp, RNG);
-        TabularVFunction<GWState> vTable = new TabularVFunction<>(alpha);
-        RandomPolicy<GWState, GWAction> policy = new RandomPolicy<>(RNG);
-        GWVFunctionView view = new GWVFunctionView(mdp, 20, 20, env);
+        TabularVFunction<GridWorldState> vTable = new TabularVFunction<>(alpha);
+        RandomPolicy<GridWorldState, GridWorldAction> policy = new RandomPolicy<>(RNG);
+        GridWorldVFunctionView view = new GridWorldVFunctionView(mdp, 20, 20, env);
         new AppFrame(view, "TD(0)");
-        TD0<GWState> predictor = new TD0<>(vTable, gamma);
+        TD0<GridWorldState> predictor = new TD0<>(vTable, gamma);
         predictor.addVFunctionObserver(view);
         InteractionLoop.run(env, policy, predictor, numEpisodes);
     }
@@ -101,11 +101,11 @@ public class GridWorldDemo {
         int numEpisodes = 1000;
         GridWorldMDP mdp = new GridWorldMDP(20, 20, RNG);
         GridWorldEnv env = new GridWorldEnv(mdp, RNG);
-        TabularVFunction<GWState> vTable = new TabularVFunction<>(alpha);
-        RandomPolicy<GWState, GWAction> policy = new RandomPolicy<>(RNG);
-        GWVFunctionView view = new GWVFunctionView(mdp, 20, 20, env);
+        TabularVFunction<GridWorldState> vTable = new TabularVFunction<>(alpha);
+        RandomPolicy<GridWorldState, GridWorldAction> policy = new RandomPolicy<>(RNG);
+        GridWorldVFunctionView view = new GridWorldVFunctionView(mdp, 20, 20, env);
         new AppFrame(view, "TD(λ)");
-        TDLambda<GWState> predictor = new TDLambda<>(vTable, gamma, lambda);
+        TDLambda<GridWorldState> predictor = new TDLambda<>(vTable, gamma, lambda);
         predictor.addVFunctionObserver(view);
         InteractionLoop.run(env, policy, predictor, numEpisodes);
     }
@@ -118,12 +118,12 @@ public class GridWorldDemo {
         int numEpisodes = 300;
         GridWorldMDP mdp = new GridWorldMDP(20, 20, RNG);
         GridWorldEnv env = new GridWorldEnv(mdp, RNG);
-        TabularQFunction<GWState, GWAction> qTable = new TabularQFunction<>(alpha);
-        EpsilonGreedy<GWState, GWAction> policy = new EpsilonGreedy<>(qTable, 0.1, RNG);
-        GWQFunctionView view = new GWQFunctionView(mdp, 20, 20, env);
+        TabularQFunction<GridWorldState, GridWorldAction> qTable = new TabularQFunction<>(alpha);
+        EpsilonGreedy<GridWorldState, GridWorldAction> policy = new EpsilonGreedy<>(qTable, 0.1, RNG);
+        GridWorldQFunctionView view = new GridWorldQFunctionView(mdp, 20, 20, env);
         view.setGridEnabled(true);
         new AppFrame(view, "Q-Learning + Replay (batch=" + batchSize + ")");
-        QLearningWithReplay<GWState, GWAction> agent =
+        QLearningWithReplay<GridWorldState, GridWorldAction> agent =
                 new QLearningWithReplay<>(
                         qTable, policy, gamma, new ReplayBuffer<>(bufferCapacity), batchSize, RNG);
         agent.addQFunctionObserver(view);
@@ -137,12 +137,12 @@ public class GridWorldDemo {
         int numEpisodes = 50;
         GridWorldMDP mdp = new GridWorldMDP(20, 20, RNG);
         GridWorldEnv env = new GridWorldEnv(mdp, RNG);
-        TabularQFunction<GWState, GWAction> qTable = new TabularQFunction<>(alpha);
-        EpsilonGreedy<GWState, GWAction> policy = new EpsilonGreedy<>(qTable, 0.1, RNG);
-        GWQFunctionView view = new GWQFunctionView(mdp, 20, 20, env);
+        TabularQFunction<GridWorldState, GridWorldAction> qTable = new TabularQFunction<>(alpha);
+        EpsilonGreedy<GridWorldState, GridWorldAction> policy = new EpsilonGreedy<>(qTable, 0.1, RNG);
+        GridWorldQFunctionView view = new GridWorldQFunctionView(mdp, 20, 20, env);
         view.setGridEnabled(true);
         new AppFrame(view, "Dyna-Q (n=" + planningSteps + ")");
-        DynaQ<GWState, GWAction> agent = new DynaQ<>(qTable, policy, gamma, planningSteps, RNG);
+        DynaQ<GridWorldState, GridWorldAction> agent = new DynaQ<>(qTable, policy, gamma, planningSteps, RNG);
         agent.addQFunctionObserver(view);
         InteractionLoop.run(env, agent, policy, numEpisodes, policy);
     }
@@ -154,11 +154,11 @@ public class GridWorldDemo {
         int numEpisodes = 1000;
         GridWorldMDP mdp = new GridWorldMDP(20, 20, RNG);
         GridWorldEnv env = new GridWorldEnv(mdp, RNG);
-        TabularVFunction<GWState> vTable = new TabularVFunction<>(alpha);
-        RandomPolicy<GWState, GWAction> policy = new RandomPolicy<>(RNG);
-        GWVFunctionView view = new GWVFunctionView(mdp, 20, 20, env);
+        TabularVFunction<GridWorldState> vTable = new TabularVFunction<>(alpha);
+        RandomPolicy<GridWorldState, GridWorldAction> policy = new RandomPolicy<>(RNG);
+        GridWorldVFunctionView view = new GridWorldVFunctionView(mdp, 20, 20, env);
         new AppFrame(view, "n-step TD (n=" + n + ")");
-        NStepTD<GWState> predictor = new NStepTD<>(vTable, n, gamma);
+        NStepTD<GridWorldState> predictor = new NStepTD<>(vTable, n, gamma);
         predictor.addVFunctionObserver(view);
         InteractionLoop.run(env, policy, predictor, numEpisodes);
     }
@@ -170,12 +170,12 @@ public class GridWorldDemo {
         int numEpisodes = 200;
         GridWorldMDP mdp = new GridWorldMDP(20, 20, RNG);
         GridWorldEnv env = new GridWorldEnv(mdp, RNG);
-        TabularQFunction<GWState, GWAction> qTable = new TabularQFunction<>(alpha);
-        EpsilonGreedy<GWState, GWAction> policy = new EpsilonGreedy<>(qTable, 0.1, RNG);
-        GWQFunctionView view = new GWQFunctionView(mdp, 20, 20, env);
+        TabularQFunction<GridWorldState, GridWorldAction> qTable = new TabularQFunction<>(alpha);
+        EpsilonGreedy<GridWorldState, GridWorldAction> policy = new EpsilonGreedy<>(qTable, 0.1, RNG);
+        GridWorldQFunctionView view = new GridWorldQFunctionView(mdp, 20, 20, env);
         view.setGridEnabled(true);
         new AppFrame(view, "n-step SARSA (n=" + n + ")");
-        NStepSARSA<GWState, GWAction> agent = new NStepSARSA<>(qTable, policy, n, gamma);
+        NStepSARSA<GridWorldState, GridWorldAction> agent = new NStepSARSA<>(qTable, policy, n, gamma);
         agent.addQFunctionObserver(view);
         InteractionLoop.run(env, agent, policy, numEpisodes, policy);
     }
@@ -186,12 +186,12 @@ public class GridWorldDemo {
         int numEpisodes = 100;
         GridWorldMDP mdp = new GridWorldMDP(20, 20, RNG);
         GridWorldEnv env = new GridWorldEnv(mdp, RNG);
-        TabularQFunction<GWState, GWAction> qTable = new TabularQFunction<>(alpha);
-        EpsilonGreedy<GWState, GWAction> policy = new EpsilonGreedy<>(qTable, 0.1, RNG);
-        GWQFunctionView view = new GWQFunctionView(mdp, 20, 20, env);
+        TabularQFunction<GridWorldState, GridWorldAction> qTable = new TabularQFunction<>(alpha);
+        EpsilonGreedy<GridWorldState, GridWorldAction> policy = new EpsilonGreedy<>(qTable, 0.1, RNG);
+        GridWorldQFunctionView view = new GridWorldQFunctionView(mdp, 20, 20, env);
         view.setGridEnabled(true);
         new AppFrame(view, "Expected SARSA");
-        ExpectedSARSA<GWState, GWAction> agent = new ExpectedSARSA<>(qTable, policy, gamma);
+        ExpectedSARSA<GridWorldState, GridWorldAction> agent = new ExpectedSARSA<>(qTable, policy, gamma);
         agent.addQFunctionObserver(view);
         InteractionLoop.run(env, agent, policy, numEpisodes, policy);
     }
@@ -202,12 +202,12 @@ public class GridWorldDemo {
         int numEpisodes = 100;
         GridWorldMDP mdp = new GridWorldMDP(20, 20, RNG);
         GridWorldEnv env = new GridWorldEnv(mdp, RNG);
-        TabularQFunction<GWState, GWAction> qTable = new TabularQFunction<>(alpha);
-        RandomPolicy<GWState, GWAction> policy = new RandomPolicy<>(RNG);
-        GWQFunctionView view = new GWQFunctionView(mdp, 20, 20, env);
+        TabularQFunction<GridWorldState, GridWorldAction> qTable = new TabularQFunction<>(alpha);
+        RandomPolicy<GridWorldState, GridWorldAction> policy = new RandomPolicy<>(RNG);
+        GridWorldQFunctionView view = new GridWorldQFunctionView(mdp, 20, 20, env);
         view.setGridEnabled(true);
         new AppFrame(view, "SARSA");
-        SARSA<GWState, GWAction> agent = new SARSA<>(qTable, policy, gamma);
+        SARSA<GridWorldState, GridWorldAction> agent = new SARSA<>(qTable, policy, gamma);
         agent.addQFunctionObserver(view);
         InteractionLoop.run(env, agent, policy, numEpisodes);
     }
@@ -218,12 +218,12 @@ public class GridWorldDemo {
         int numEpisodes = 300;
         GridWorldMDP mdp = new GridWorldMDP(25, 25, RNG);
         GridWorldEnv env = new GridWorldEnv(mdp, RNG);
-        TabularQFunction<GWState, GWAction> qTable = new TabularQFunction<>(alpha);
-        EpsilonGreedy<GWState, GWAction> policy = new EpsilonGreedy<>(qTable, 0.1, RNG);
-        GWQFunctionView view = new GWQFunctionView(mdp, 20, 20, env);
+        TabularQFunction<GridWorldState, GridWorldAction> qTable = new TabularQFunction<>(alpha);
+        EpsilonGreedy<GridWorldState, GridWorldAction> policy = new EpsilonGreedy<>(qTable, 0.1, RNG);
+        GridWorldQFunctionView view = new GridWorldQFunctionView(mdp, 20, 20, env);
         view.setGridEnabled(true);
         new AppFrame(view, "Q-Learning");
-        QLearning<GWState, GWAction> agent = new QLearning<>(qTable, policy, gamma);
+        QLearning<GridWorldState, GridWorldAction> agent = new QLearning<>(qTable, policy, gamma);
         agent.addQFunctionObserver(view);
         InteractionLoop.run(env, agent, policy, numEpisodes, policy);
     }
@@ -235,12 +235,12 @@ public class GridWorldDemo {
         int numEpisodes = 300;
         GridWorldMDP mdp = new GridWorldMDP(20, 20, RNG);
         GridWorldEnv env = new GridWorldEnv(mdp, RNG);
-        TabularQFunction<GWState, GWAction> qTable = new TabularQFunction<>(alpha);
-        UCBPolicy<GWState, GWAction> policy = new UCBPolicy<>(qTable, c);
-        GWQFunctionView view = new GWQFunctionView(mdp, 20, 20, env);
+        TabularQFunction<GridWorldState, GridWorldAction> qTable = new TabularQFunction<>(alpha);
+        UCBPolicy<GridWorldState, GridWorldAction> policy = new UCBPolicy<>(qTable, c);
+        GridWorldQFunctionView view = new GridWorldQFunctionView(mdp, 20, 20, env);
         view.setGridEnabled(true);
         new AppFrame(view, "UCB (c=" + c + ")");
-        QLearning<GWState, GWAction> agent = new QLearning<>(qTable, policy, gamma);
+        QLearning<GridWorldState, GridWorldAction> agent = new QLearning<>(qTable, policy, gamma);
         agent.addQFunctionObserver(view);
         InteractionLoop.run(env, agent, policy, numEpisodes);
     }
@@ -252,12 +252,12 @@ public class GridWorldDemo {
         int numEpisodes = 300;
         GridWorldMDP mdp = new GridWorldMDP(20, 20, RNG);
         GridWorldEnv env = new GridWorldEnv(mdp, RNG);
-        TabularQFunction<GWState, GWAction> qTable = new TabularQFunction<>(alpha);
-        SoftmaxPolicy<GWState, GWAction> policy = new SoftmaxPolicy<>(qTable, temperature, RNG);
-        GWQFunctionView view = new GWQFunctionView(mdp, 20, 20, env);
+        TabularQFunction<GridWorldState, GridWorldAction> qTable = new TabularQFunction<>(alpha);
+        SoftmaxPolicy<GridWorldState, GridWorldAction> policy = new SoftmaxPolicy<>(qTable, temperature, RNG);
+        GridWorldQFunctionView view = new GridWorldQFunctionView(mdp, 20, 20, env);
         view.setGridEnabled(true);
         new AppFrame(view, "Softmax (τ=" + temperature + ")");
-        QLearning<GWState, GWAction> agent = new QLearning<>(qTable, policy, gamma);
+        QLearning<GridWorldState, GridWorldAction> agent = new QLearning<>(qTable, policy, gamma);
         agent.addQFunctionObserver(view);
         InteractionLoop.run(env, agent, policy, numEpisodes);
     }
@@ -268,15 +268,15 @@ public class GridWorldDemo {
         int numEpisodes = 300;
         GridWorldMDP mdp = new GridWorldMDP(20, 20, RNG);
         GridWorldEnv env = new GridWorldEnv(mdp, RNG);
-        TabularQFunction<GWState, GWAction> qA = new TabularQFunction<>(alpha);
-        TabularQFunction<GWState, GWAction> qB = new TabularQFunction<>(alpha);
-        EpsilonGreedy<GWState, GWAction> policy =
+        TabularQFunction<GridWorldState, GridWorldAction> qA = new TabularQFunction<>(alpha);
+        TabularQFunction<GridWorldState, GridWorldAction> qB = new TabularQFunction<>(alpha);
+        EpsilonGreedy<GridWorldState, GridWorldAction> policy =
                 new EpsilonGreedy<>(
                         (s, a) -> (qA.getValue(s, a) + qB.getValue(s, a)) / 2.0, 0.1, RNG);
-        GWQFunctionView view = new GWQFunctionView(mdp, 20, 20, env);
+        GridWorldQFunctionView view = new GridWorldQFunctionView(mdp, 20, 20, env);
         view.setGridEnabled(true);
         new AppFrame(view, "Double Q-Learning");
-        DoubleQLearning<GWState, GWAction> agent =
+        DoubleQLearning<GridWorldState, GridWorldAction> agent =
                 new DoubleQLearning<>(qA, qB, policy, gamma, RNG);
         agent.addQFunctionObserver(view);
         InteractionLoop.run(env, agent, policy, numEpisodes, policy);
@@ -289,12 +289,12 @@ public class GridWorldDemo {
         int numEpisodes = 100;
         GridWorldMDP mdp = new GridWorldMDP(20, 20, RNG);
         GridWorldEnv env = new GridWorldEnv(mdp, RNG);
-        TabularQFunction<GWState, GWAction> qTable = new TabularQFunction<>(alpha);
-        RandomPolicy<GWState, GWAction> policy = new RandomPolicy<>(RNG);
-        GWQFunctionView view = new GWQFunctionView(mdp, 20, 20, env);
+        TabularQFunction<GridWorldState, GridWorldAction> qTable = new TabularQFunction<>(alpha);
+        RandomPolicy<GridWorldState, GridWorldAction> policy = new RandomPolicy<>(RNG);
+        GridWorldQFunctionView view = new GridWorldQFunctionView(mdp, 20, 20, env);
         view.setGridEnabled(true);
         new AppFrame(view, "SARSA(λ)");
-        SARSALambda<GWState, GWAction> agent = new SARSALambda<>(qTable, policy, gamma, lambda);
+        SARSALambda<GridWorldState, GridWorldAction> agent = new SARSALambda<>(qTable, policy, gamma, lambda);
         agent.addQFunctionObserver(view);
         InteractionLoop.run(env, agent, policy, numEpisodes);
     }

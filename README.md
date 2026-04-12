@@ -130,7 +130,7 @@ var rng = new Random(42);
 var mdp = new GridWorldMDP(10, 10, rng);
 var env = new GridWorldEnv(mdp, rng);
 
-var qFunc = new TabularQFunction<GWState, GWAction>(0.1);   // α = 0.1
+var qFunc = new TabularQFunction<GridWorldState, GridWorldAction>(0.1);   // α = 0.1
 var policy = new EpsilonGreedy<>(qFunc, 0.1, rng);
 var agent = new QLearning<>(qFunc, policy, 0.99);           // γ = 0.99
 
@@ -142,7 +142,7 @@ InteractionLoop.run(env, agent, policy, 1000, policy);
 ```java
 var mdp = new GridWorldMDP(10, 10, new Random(42));
 var planner = new ValueIteration<>(mdp, 0.01, 0.99);        // θ=0.01, γ=0.99
-Policy<GWState, GWAction> policy = planner.solve();
+Policy<GridWorldState, GridWorldAction> policy = planner.solve();
 ```
 
 ## Requirements

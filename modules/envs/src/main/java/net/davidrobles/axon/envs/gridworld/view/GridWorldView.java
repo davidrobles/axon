@@ -5,7 +5,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import javax.swing.*;
-import net.davidrobles.axon.envs.gridworld.GWState;
+import net.davidrobles.axon.envs.gridworld.GridWorldState;
 import net.davidrobles.axon.envs.gridworld.GridWorldEnv;
 import net.davidrobles.axon.envs.gridworld.GridWorldMDP;
 
@@ -65,7 +65,7 @@ public abstract class GridWorldView extends JPanel implements MouseMotionListene
     ////        ColorMap colorMap = new ColorMap(min, max, ColorMap.getGray());
     //
     //        for (MDPState s : gridWorld.getStates()) {
-    //            GWState state = (GWState) s;
+    //            GridWorldState state = (GridWorldState) s;
     ////            g.setColor(colorMap.getColor(colorMap.getIndex(valueFunction.getValue(state))));
     //            g.setColor(colorMap.getColor(valueFunction.getValue(state)));
     //            g.fillRect(state.getX() * cellWidth, state.getY() * cellHeight, cellWidth,
@@ -90,7 +90,7 @@ public abstract class GridWorldView extends JPanel implements MouseMotionListene
         //        }
 
         // Draw grid
-        for (GWState gwState : gw.getStates()) {
+        for (GridWorldState gwState : gw.getStates()) {
 
             //            if (gridWorld.isStateTerminal(gwState)) {
             //                g.setColor(Color.GREEN);
@@ -130,7 +130,7 @@ public abstract class GridWorldView extends JPanel implements MouseMotionListene
 
         // Draw current state
         if (showCurrentState) {
-            GWState st = (GWState) env.getCurrentState();
+            GridWorldState st = (GridWorldState) env.getCurrentState();
             g.setColor(CURRENT_STATE_FILL_COLOR);
             g.fillRect(st.getX() * cellWidth, st.getY() * cellHeight, cellWidth, cellHeight);
             g.setColor(CURRENT_STATE_BORDER_COLOR);
@@ -148,7 +148,7 @@ public abstract class GridWorldView extends JPanel implements MouseMotionListene
         // draw q values
         //        for (MDPState s : gridWorld.getStates())
         //        {
-        //            GWState state = (GWState) s;
+        //            GridWorldState state = (GridWorldState) s;
         //
         //            // Top
         //            g.fillRect(state.getX() * cellWidth + cellWidth / 3, state.getY() *
@@ -170,7 +170,7 @@ public abstract class GridWorldView extends JPanel implements MouseMotionListene
         //        }
     }
 
-    private void drawObject(Graphics g, GWState s, Color c) {
+    private void drawObject(Graphics g, GridWorldState s, Color c) {
         assert s != null;
         int x = s.getX();
         int y = s.getY();

@@ -6,9 +6,9 @@ import java.util.Random;
 import net.davidrobles.axon.Environment;
 import net.davidrobles.axon.StepResult;
 
-public class GridWorldEnv implements Environment<GWState, GWAction> {
+public class GridWorldEnv implements Environment<GridWorldState, GridWorldAction> {
     private GridWorldMDP mdp;
-    private GWState currentState;
+    private GridWorldState currentState;
     private Random rng;
 
     public GridWorldEnv(GridWorldMDP mdp, Random rng) {
@@ -22,28 +22,28 @@ public class GridWorldEnv implements Environment<GWState, GWAction> {
     //////////////////////////////
 
     @Override
-    public GWState getCurrentState() {
+    public GridWorldState getCurrentState() {
         return currentState;
     }
 
     @Override
-    public List<GWAction> getActions(GWState state) {
+    public List<GridWorldAction> getActions(GridWorldState state) {
         return mdp.getActions(state);
     }
 
     @Override
-    public StepResult<GWState> step(GWAction action) {
+    public StepResult<GridWorldState> step(GridWorldAction action) {
         if (!mdp.getActions(currentState).contains(action))
             throw new IllegalArgumentException("Invalid action!");
 
-        Map<GWState, Double> stateDoubleMap = currentState.getActionNextStatesMap().get(action);
+        Map<GridWorldState, Double> stateDoubleMap = currentState.getActionNextStatesMap().get(action);
         currentState = stateDoubleMap.keySet().iterator().next();
         double reward = mdp.getReward(currentState, action, currentState);
         return new StepResult<>(currentState, reward, isTerminal());
     }
 
     @Override
-    public GWState reset() {
+    public GridWorldState reset() {
         currentState = mdp.getStartState();
         return currentState;
     }

@@ -4,23 +4,23 @@ import java.util.*;
 import net.davidrobles.axon.MDP;
 
 /** A Grid World Markov Decision Process. */
-public class GridWorldMDP implements MDP<GWState, GWAction> {
+public class GridWorldMDP implements MDP<GridWorldState, GridWorldAction> {
     private int cols;
     private int rows;
-    private GWState startState;
-    private GWState[][] states;
-    private List<GWState> allStates;
-    private List<GWState> terminalStates;
-    private Map<GWState, Double> rewards = new HashMap<GWState, Double>();
+    private GridWorldState startState;
+    private GridWorldState[][] states;
+    private List<GridWorldState> allStates;
+    private List<GridWorldState> terminalStates;
+    private Map<GridWorldState, Double> rewards = new HashMap<GridWorldState, Double>();
     private final Random rng;
 
     public GridWorldMDP(int cols, int rows, Random rng) {
         this.cols = cols;
         this.rows = rows;
         this.rng = rng;
-        this.states = new GWState[cols][rows];
-        this.allStates = new ArrayList<GWState>();
-        this.terminalStates = new ArrayList<GWState>();
+        this.states = new GridWorldState[cols][rows];
+        this.allStates = new ArrayList<GridWorldState>();
+        this.terminalStates = new ArrayList<GridWorldState>();
 
         createStates();
         createTransitions();
@@ -35,22 +35,22 @@ public class GridWorldMDP implements MDP<GWState, GWAction> {
     }
 
     private void initTerminalStates() {
-        for (GWState state : allStates) rewards.put(state, -1.0);
+        for (GridWorldState state : allStates) rewards.put(state, -1.0);
 
-        GWState t1;
+        GridWorldState t1;
 
         for (int i = 0; i < 1; i++) {
             t1 = getRandomState();
             terminalStates.add(t1);
         }
 
-        for (GWState terminalState : terminalStates) terminalState.getActionNextStatesMap().clear();
+        for (GridWorldState terminalState : terminalStates) terminalState.getActionNextStatesMap().clear();
     }
 
     public void createStates() {
         for (int x = 0; x < cols; x++) {
             for (int y = 0; y < rows; y++) {
-                GWState newState = new GWState(x, y);
+                GridWorldState newState = new GridWorldState(x, y);
                 states[x][y] = newState;
                 allStates.add(newState);
             }
@@ -58,51 +58,51 @@ public class GridWorldMDP implements MDP<GWState, GWAction> {
     }
 
     private void createTransitions() {
-        for (GWState state : allStates) {
-            Map<GWAction, Map<GWState, Double>> map = new HashMap<GWAction, Map<GWState, Double>>();
+        for (GridWorldState state : allStates) {
+            Map<GridWorldAction, Map<GridWorldState, Double>> map = new HashMap<GridWorldAction, Map<GridWorldState, Double>>();
 
             // UP
-            Map<GWState, Double> upTransProb = new HashMap<GWState, Double>();
+            Map<GridWorldState, Double> upTransProb = new HashMap<GridWorldState, Double>();
 
             if (state.getY() > 0 && state.getY() < rows)
                 upTransProb.put(states[state.getX()][state.getY() - 1], 1.0);
             else upTransProb.put(states[state.getX()][state.getY()], 1.0);
 
-            map.put(GWAction.UP, upTransProb);
+            map.put(GridWorldAction.UP, upTransProb);
 
             // LEFT
-            Map<GWState, Double> leftTransProb = new HashMap<GWState, Double>();
+            Map<GridWorldState, Double> leftTransProb = new HashMap<GridWorldState, Double>();
 
             if (state.getX() > 0 && state.getX() < rows)
                 leftTransProb.put(states[state.getX() - 1][state.getY()], 1.0);
             else leftTransProb.put(states[state.getX()][state.getY()], 1.0);
 
-            map.put(GWAction.LEFT, leftTransProb);
+            map.put(GridWorldAction.LEFT, leftTransProb);
 
             // RIGHT
-            Map<GWState, Double> rightTransProb = new HashMap<GWState, Double>();
+            Map<GridWorldState, Double> rightTransProb = new HashMap<GridWorldState, Double>();
 
             if (state.getX() >= 0 && state.getX() < (rows - 1))
                 rightTransProb.put(states[state.getX() + 1][state.getY()], 1.0);
             else rightTransProb.put(states[state.getX()][state.getY()], 1.0);
 
-            map.put(GWAction.RIGHT, rightTransProb);
+            map.put(GridWorldAction.RIGHT, rightTransProb);
 
             // DOWN
-            Map<GWState, Double> downTransProb = new HashMap<GWState, Double>();
+            Map<GridWorldState, Double> downTransProb = new HashMap<GridWorldState, Double>();
 
             if (state.getY() >= 0 && state.getY() < (rows - 1))
                 downTransProb.put(states[state.getX()][state.getY() + 1], 1.0);
             else downTransProb.put(states[state.getX()][state.getY()], 1.0);
 
-            map.put(GWAction.DOWN, downTransProb);
+            map.put(GridWorldAction.DOWN, downTransProb);
 
             // Don't forget to set the map in the states!
             state.setActionNextStatesMap(map);
         }
     }
 
-    protected GWState getRandomState() {
+    protected GridWorldState getRandomState() {
         return allStates.get(rng.nextInt(allStates.size()));
     }
 
@@ -114,45 +114,45 @@ public class GridWorldMDP implements MDP<GWState, GWAction> {
         return rows;
     }
 
-    public GWState getState(int x, int y) {
+    public GridWorldState getState(int x, int y) {
         return states[x][y];
     }
 
-    public List<GWState> getTerminalStates() {
+    public List<GridWorldState> getTerminalStates() {
         return terminalStates;
     }
 
     // MDP Interface
 
     @Override
-    public GWState getStartState() {
+    public GridWorldState getStartState() {
         return startState;
     }
 
     @Override
-    public List<GWAction> getActions(GWState state) {
-        return new ArrayList<GWAction>(state.getActionNextStatesMap().keySet());
+    public List<GridWorldAction> getActions(GridWorldState state) {
+        return new ArrayList<GridWorldAction>(state.getActionNextStatesMap().keySet());
     }
 
     @Override
-    public List<GWState> getStates() {
+    public List<GridWorldState> getStates() {
         return allStates;
     }
 
     @Override
-    public Map<GWState, Double> getTransitions(GWState state, GWAction action) {
-        if (isTerminal(state)) return new HashMap<GWState, Double>();
+    public Map<GridWorldState, Double> getTransitions(GridWorldState state, GridWorldAction action) {
+        if (isTerminal(state)) return new HashMap<GridWorldState, Double>();
 
         return state.getActionNextStatesMap().get(action);
     }
 
     @Override
-    public double getReward(GWState state, GWAction action, GWState nextState) {
+    public double getReward(GridWorldState state, GridWorldAction action, GridWorldState nextState) {
         return rewards.get(state);
     }
 
     @Override
-    public boolean isTerminal(GWState state) {
+    public boolean isTerminal(GridWorldState state) {
         return terminalStates.contains(state);
     }
 }

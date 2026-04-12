@@ -1,6 +1,6 @@
 package net.davidrobles.axon.envs.gridworld;
 
-public enum GWAction {
+public enum GridWorldAction {
     UP,
     DOWN,
     LEFT,

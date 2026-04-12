@@ -2,12 +2,12 @@ package net.davidrobles.axon.envs.gridworld;
 
 import java.util.Map;
 
-public class GWState {
+public class GridWorldState {
     private int x;
     private int y;
-    private Map<GWAction, Map<GWState, Double>> actionNextStatesMap;
+    private Map<GridWorldAction, Map<GridWorldState, Double>> actionNextStatesMap;
 
-    public GWState(int x, int y) {
+    public GridWorldState(int x, int y) {
         this.x = x;
         this.y = y;
     }
@@ -20,11 +20,11 @@ public class GWState {
         return y;
     }
 
-    public Map<GWAction, Map<GWState, Double>> getActionNextStatesMap() {
+    public Map<GridWorldAction, Map<GridWorldState, Double>> getActionNextStatesMap() {
         return actionNextStatesMap;
     }
 
-    public void setActionNextStatesMap(Map<GWAction, Map<GWState, Double>> actionNextStatesMap) {
+    public void setActionNextStatesMap(Map<GridWorldAction, Map<GridWorldState, Double>> actionNextStatesMap) {
         this.actionNextStatesMap = actionNextStatesMap;
     }
 
@@ -33,7 +33,7 @@ public class GWState {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        GWState gwState = (GWState) o;
+        GridWorldState gwState = (GridWorldState) o;
 
         if (x != gwState.x) return false;
         if (y != gwState.y) return false;
@@ -50,6 +50,6 @@ public class GWState {
 
     @Override
     public String toString() {
-        return "GWState{" + "x=" + x + ", y=" + y + '}';
+        return "GridWorldState{" + "x=" + x + ", y=" + y + '}';
     }
 }
