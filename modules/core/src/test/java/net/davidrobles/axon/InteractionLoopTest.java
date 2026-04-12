@@ -8,7 +8,7 @@ import net.davidrobles.axon.policies.Policy;
 import org.junit.Before;
 import org.junit.Test;
 
-public class RLLoopTest {
+public class InteractionLoopTest {
 
     // -------------------------------------------------------------------------
     // Helpers
@@ -87,7 +87,7 @@ public class RLLoopTest {
 
     @Test
     public void zeroEpisodesRunsNoSteps() {
-        RLLoop.run(env, agent, policy, 0);
+        InteractionLoop.run(env, agent, policy, 0);
         assertEquals(0, agent.updateCount);
         assertTrue(listener.onEpisodeStartArgs.isEmpty());
     }
@@ -95,13 +95,13 @@ public class RLLoopTest {
     @Test
     public void singleEpisodeTwoSteps() {
         // TestEnvironment: step 0→1 (not done), step 1→2 (done)
-        RLLoop.run(env, agent, policy, 1);
+        InteractionLoop.run(env, agent, policy, 1);
         assertEquals(2, agent.updateCount);
     }
 
     @Test
     public void threeEpisodesRunsSixUpdates() {
-        RLLoop.run(env, agent, policy, 3);
+        InteractionLoop.run(env, agent, policy, 3);
         assertEquals(6, agent.updateCount);
     }
 
@@ -111,26 +111,26 @@ public class RLLoopTest {
 
     @Test
     public void resetCalledOncePerEpisode() {
-        RLLoop.run(env, agent, policy, 3, listener);
+        InteractionLoop.run(env, agent, policy, 3, listener);
         assertEquals(List.of(0, 1, 2), listener.onEpisodeStartArgs);
     }
 
     @Test
     public void onEpisodeEndCalledOncePerEpisodeWithCorrectIndex() {
-        RLLoop.run(env, agent, policy, 3, listener);
+        InteractionLoop.run(env, agent, policy, 3, listener);
         assertEquals(List.of(0, 1, 2), listener.onEpisodeEndArgs);
     }
 
     @Test
     public void onStepCalledWithMonotonicallyIncreasingTotalSteps() {
-        RLLoop.run(env, agent, policy, 2, listener);
+        InteractionLoop.run(env, agent, policy, 2, listener);
         // 2 episodes × 2 steps each = 4 total steps, numbered 1..4
         assertEquals(List.of(1, 2, 3, 4), listener.onStepArgs);
     }
 
     @Test
     public void totalStepCountContinuesAcrossEpisodes() {
-        RLLoop.run(env, agent, policy, 3, listener);
+        InteractionLoop.run(env, agent, policy, 3, listener);
         // 6 steps total, numbered 1..6
         assertEquals(List.of(1, 2, 3, 4, 5, 6), listener.onStepArgs);
     }
@@ -141,7 +141,7 @@ public class RLLoopTest {
 
     @Test
     public void agentSeesCorrectStateSequence() {
-        RLLoop.run(env, agent, policy, 1);
+        InteractionLoop.run(env, agent, policy, 1);
         // selectAction called for state 0 and state 1
         assertEquals(List.of(0, 1), agent.statesSeen);
     }
@@ -163,7 +163,7 @@ public class RLLoopTest {
                     }
                 };
 
-        RLLoop.run(env, capturingAgent, policy, 1);
+        InteractionLoop.run(env, capturingAgent, policy, 1);
         // Second update (terminal step) should have empty nextActions
         assertTrue(nextActionsList.get(1).isEmpty());
     }
@@ -184,7 +184,7 @@ public class RLLoopTest {
                     }
                 };
 
-        RLLoop.run(env, capturingAgent, policy, 1);
+        InteractionLoop.run(env, capturingAgent, policy, 1);
         // First update (non-terminal step) should have non-empty nextActions
         assertFalse(nextActionsList.get(0).isEmpty());
     }
@@ -195,7 +195,7 @@ public class RLLoopTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void negativeNumEpisodesThrows() {
-        RLLoop.run(env, agent, policy, -1);
+        InteractionLoop.run(env, agent, policy, -1);
     }
 
     // -------------------------------------------------------------------------
@@ -205,28 +205,28 @@ public class RLLoopTest {
     @Test
     public void predictorLoopRunsOneObservePerStep() {
         CountingPredictor predictor = new CountingPredictor();
-        RLLoop.run(env, policy, predictor, 3);
+        InteractionLoop.run(env, policy, predictor, 3);
         assertEquals(6, predictor.observeCount);
     }
 
     @Test
     public void predictorLoopUsesPolicyForActionSelection() {
         CountingPredictor predictor = new CountingPredictor();
-        RLLoop.run(env, policy, predictor, 1);
+        InteractionLoop.run(env, policy, predictor, 1);
         assertEquals(List.of(0, 1), predictor.statesSeen);
     }
 
     @Test
     public void predictorLoopReceivesTerminalStepResult() {
         CountingPredictor predictor = new CountingPredictor();
-        RLLoop.run(env, policy, predictor, 1);
+        InteractionLoop.run(env, policy, predictor, 1);
         assertTrue(predictor.resultsSeen.get(1).done());
     }
 
     @Test
     public void predictorLoopInvokesPolicyLifecycleHooks() {
         CountingPredictor predictor = new CountingPredictor();
-        RLLoop.run(env, policy, predictor, 2, listener);
+        InteractionLoop.run(env, policy, predictor, 2, listener);
         assertEquals(List.of(0, 1), listener.onEpisodeStartArgs);
         assertEquals(List.of(1, 2, 3, 4), listener.onStepArgs);
         assertEquals(List.of(0, 1), listener.onEpisodeEndArgs);
@@ -234,7 +234,7 @@ public class RLLoopTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void predictorLoopRejectsNegativeNumEpisodes() {
-        RLLoop.run(env, policy, new CountingPredictor(), -1);
+        InteractionLoop.run(env, policy, new CountingPredictor(), -1);
     }
 
     // -------------------------------------------------------------------------
@@ -250,7 +250,7 @@ public class RLLoopTest {
         net.davidrobles.axon.agents.QLearning<Integer, String> ql =
                 new net.davidrobles.axon.agents.QLearning<>(q, epsilonGreedy, 0.9);
 
-        RLLoop.run(env, ql, epsilonGreedy, 500);
+        InteractionLoop.run(env, ql, epsilonGreedy, 500);
 
         // After 500 episodes the Q-values at state 0 and 1 should be positive
         assertTrue("Q(0,go) should be positive", q.getValue(0, TestEnvironment.GO) > 0.5);

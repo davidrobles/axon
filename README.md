@@ -59,7 +59,7 @@ interface Agent<S, A> {
 }
 ```
 
-Agents only define the update rule. The `RLLoop` drives the episode loop.
+Agents only define the update rule. The `InteractionLoop` drives the interaction loop.
 
 ### Predictor
 
@@ -72,10 +72,10 @@ interface Predictor<S> {
 Predictors solve the prediction problem only. They estimate `V(s)` under an external policy and do
 not select actions themselves.
 
-### RLLoop
+### InteractionLoop
 
 ```java
-RLLoop.run(environment, agent, policy, numEpisodes);
+InteractionLoop.run(environment, agent, policy, numEpisodes);
 ```
 
 Handles reset → select → step → update for each episode.
@@ -83,13 +83,13 @@ Handles reset → select → step → update for each episode.
 Scheduling and other training-loop concerns are supplied separately via `LoopListener`s:
 
 ```java
-RLLoop.run(environment, agent, policy, numEpisodes, listener);
+InteractionLoop.run(environment, agent, policy, numEpisodes, listener);
 ```
 
 Prediction algorithms use the predictor overload:
 
 ```java
-RLLoop.run(environment, policy, predictor, numEpisodes);
+InteractionLoop.run(environment, policy, predictor, numEpisodes);
 ```
 
 ### Policies
@@ -134,7 +134,7 @@ var qFunc = new TabularQFunction<GWState, GWAction>(0.1);   // α = 0.1
 var policy = new EpsilonGreedy<>(qFunc, 0.1, rng);
 var agent = new QLearning<>(qFunc, policy, 0.99);           // γ = 0.99
 
-RLLoop.run(env, agent, policy, 1000, policy);
+InteractionLoop.run(env, agent, policy, 1000, policy);
 ```
 
 **Value Iteration on GridWorld:**

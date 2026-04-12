@@ -37,6 +37,6 @@ Never commit changes without explicit confirmation from the user. After making c
 
 - Module dependencies: `examples` → `envs` → `core`, `util`
 - Algorithms are generic over `<S, A>` (state, action) — no domain-specific code in `core`
-- Value functions are injected into agents and policies; agents do not own the training loop — `RLLoop` does
+- Value functions are injected into agents and policies; agents do not own the interaction loop — `InteractionLoop` does
 - Planning algorithms use `MDP<S, A>`; model-free algorithms use `Environment<S, A>`
 - Code is formatted with Spotless (Google Java Format, AOSP style) — run `./gradlew spotlessApply` before committing

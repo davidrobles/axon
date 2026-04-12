@@ -17,8 +17,8 @@ import net.davidrobles.axon.policies.Policy;
  *   <li>{@link LoopListener#onEpisodeEnd(int)} — end of episode
  * </ol>
  */
-public class RLLoop {
-    private RLLoop() {}
+public class InteractionLoop {
+    private InteractionLoop() {}
 
     /**
      * Runs {@code numEpisodes} full episodes of interaction between {@code env} and {@code agent}.

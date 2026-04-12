@@ -9,7 +9,7 @@ import net.davidrobles.axon.policies.Policy;
  * <p>A predictor observes state transitions and updates its internal value estimate V(s). It has no
  * opinion about what action to take; action selection is entirely external. Predictors are
  * typically used as components inside larger systems (e.g. the critic in an actor-critic
- * architecture) or driven by {@link RLLoop#run(Environment, Policy, Predictor, int)}.
+ * architecture) or driven by {@link InteractionLoop#run(Environment, Policy, Predictor, int)}.
  *
  * <p>For algorithms that also select actions (control), see {@link Agent}.
  *

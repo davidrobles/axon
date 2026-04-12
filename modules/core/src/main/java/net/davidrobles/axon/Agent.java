@@ -6,7 +6,7 @@ import java.util.List;
  * Core interface for control algorithms that both act and learn from experience.
  *
  * <p>An agent encapsulates action selection and the update rule only; it does not own an
- * environment or episode loop. Use {@link RLLoop} to drive training.
+ * environment or episode loop. Use {@link InteractionLoop} to drive training.
  *
  * <p>For prediction-only algorithms that estimate state values under an external policy, see {@link
  * Predictor}.

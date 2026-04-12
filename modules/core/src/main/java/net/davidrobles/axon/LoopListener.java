@@ -1,7 +1,7 @@
 package net.davidrobles.axon;
 
 /**
- * Listener for training-loop lifecycle events emitted by {@link RLLoop}.
+ * Listener for training-loop lifecycle events emitted by {@link InteractionLoop}.
  *
  * <p>Use this for schedules or other stateful behavior that should react to episode and step
  * boundaries without overloading the {@code Policy} abstraction.
