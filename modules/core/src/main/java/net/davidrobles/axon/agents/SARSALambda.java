@@ -7,7 +7,6 @@ import java.util.Objects;
 import net.davidrobles.axon.Experience;
 import net.davidrobles.axon.QPair;
 import net.davidrobles.axon.policies.Policy;
-import net.davidrobles.axon.valuefunctions.AbstractQFunctionObservable;
 import net.davidrobles.axon.valuefunctions.TrainableQFunction;
 
 /**
@@ -19,8 +18,7 @@ import net.davidrobles.axon.valuefunctions.TrainableQFunction;
  * @param <S> the type of the states
  * @param <A> the type of the actions
  */
-public class SARSALambda<S, A> extends AbstractQFunctionObservable<S, A> {
-    private final Policy<S, A> policy;
+public class SARSALambda<S, A> extends AbstractQAgent<S, A> {
     private final double gamma;
     private final double lambda;
     private final TrainableQFunction<S, A> table;
@@ -37,11 +35,11 @@ public class SARSALambda<S, A> extends AbstractQFunctionObservable<S, A> {
      */
     public SARSALambda(
             TrainableQFunction<S, A> table, Policy<S, A> policy, double gamma, double lambda) {
+        super(policy);
         if (gamma < 0 || gamma > 1) throw new IllegalArgumentException("gamma must be in [0, 1]");
         if (lambda < 0 || lambda > 1)
             throw new IllegalArgumentException("lambda must be in [0, 1]");
         this.table = Objects.requireNonNull(table, "table must not be null");
-        this.policy = Objects.requireNonNull(policy, "policy must not be null");
         this.gamma = gamma;
         this.lambda = lambda;
     }

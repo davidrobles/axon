@@ -1,10 +1,8 @@
 package net.davidrobles.axon.agents;
 
-import java.util.List;
 import java.util.Objects;
 import net.davidrobles.axon.Experience;
 import net.davidrobles.axon.policies.StochasticPolicy;
-import net.davidrobles.axon.valuefunctions.AbstractQFunctionObservable;
 import net.davidrobles.axon.valuefunctions.TrainableQFunction;
 
 /**
@@ -21,8 +19,8 @@ import net.davidrobles.axon.valuefunctions.TrainableQFunction;
  * @param <S> the type of the states
  * @param <A> the type of the actions
  */
-public class ExpectedSARSA<S, A> extends AbstractQFunctionObservable<S, A> {
-    private final StochasticPolicy<S, A> policy;
+public class ExpectedSARSA<S, A> extends AbstractQAgent<S, A> {
+    private final StochasticPolicy<S, A> stochasticPolicy;
     private final double gamma;
     private final TrainableQFunction<S, A> table;
 
@@ -35,15 +33,11 @@ public class ExpectedSARSA<S, A> extends AbstractQFunctionObservable<S, A> {
      */
     public ExpectedSARSA(
             TrainableQFunction<S, A> table, StochasticPolicy<S, A> policy, double gamma) {
+        super(policy);
         if (gamma < 0 || gamma > 1) throw new IllegalArgumentException("gamma must be in [0, 1]");
         this.table = Objects.requireNonNull(table, "table must not be null");
-        this.policy = Objects.requireNonNull(policy, "policy must not be null");
+        this.stochasticPolicy = Objects.requireNonNull(policy, "policy must not be null");
         this.gamma = gamma;
-    }
-
-    @Override
-    public A selectAction(S state, List<A> actions) {
-        return policy.selectAction(state, actions);
     }
 
     @Override
@@ -52,7 +46,9 @@ public class ExpectedSARSA<S, A> extends AbstractQFunctionObservable<S, A> {
 
         if (!exp.done() && !exp.nextActions().isEmpty()) {
             for (A nextAction : exp.nextActions()) {
-                double prob = policy.probability(exp.nextState(), nextAction, exp.nextActions());
+                double prob =
+                        stochasticPolicy.probability(
+                                exp.nextState(), nextAction, exp.nextActions());
                 expectedNextQ += prob * table.getValue(exp.nextState(), nextAction);
             }
         }

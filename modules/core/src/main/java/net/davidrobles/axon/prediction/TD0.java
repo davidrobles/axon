@@ -1,12 +1,8 @@
 package net.davidrobles.axon.prediction;
 
-import java.util.List;
 import java.util.Objects;
-import net.davidrobles.axon.Agent;
-import net.davidrobles.axon.Experience;
 import net.davidrobles.axon.StepResult;
 import net.davidrobles.axon.policies.Policy;
-import net.davidrobles.axon.valuefunctions.AbstractVFunctionObservable;
 import net.davidrobles.axon.valuefunctions.TrainableVFunction;
 
 /**
@@ -18,8 +14,7 @@ import net.davidrobles.axon.valuefunctions.TrainableVFunction;
  * @param <S> the type of the states
  * @param <A> the type of the actions
  */
-public class TD0<S, A> extends AbstractVFunctionObservable<S> implements Agent<S, A> {
-    private final Policy<S, A> policy;
+public class TD0<S, A> extends AbstractVAgent<S, A> {
     private final double gamma;
     private final TrainableVFunction<S> table;
 
@@ -30,22 +25,13 @@ public class TD0<S, A> extends AbstractVFunctionObservable<S> implements Agent<S
      * @param gamma discount factor
      */
     public TD0(TrainableVFunction<S> table, Policy<S, A> policy, double gamma) {
+        super(policy);
         if (gamma < 0 || gamma > 1) throw new IllegalArgumentException("gamma must be in [0, 1]");
         this.table = Objects.requireNonNull(table, "table must not be null");
-        this.policy = Objects.requireNonNull(policy, "policy must not be null");
         this.gamma = gamma;
     }
 
     @Override
-    public A selectAction(S state, List<A> actions) {
-        return policy.selectAction(state, actions);
-    }
-
-    @Override
-    public void update(Experience<S, A> exp) {
-        observe(exp.state(), new StepResult<>(exp.nextState(), exp.reward(), exp.done()));
-    }
-
     public void observe(S state, StepResult<S> result) {
         double nextV = result.done() ? 0.0 : table.getValue(result.nextState());
         table.update(state, result.reward() + gamma * nextV);

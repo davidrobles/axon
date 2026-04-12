@@ -2,13 +2,9 @@ package net.davidrobles.axon.prediction;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.List;
 import java.util.Objects;
-import net.davidrobles.axon.Agent;
-import net.davidrobles.axon.Experience;
 import net.davidrobles.axon.StepResult;
 import net.davidrobles.axon.policies.Policy;
-import net.davidrobles.axon.valuefunctions.AbstractVFunctionObservable;
 import net.davidrobles.axon.valuefunctions.TrainableVFunction;
 
 /**
@@ -27,10 +23,9 @@ import net.davidrobles.axon.valuefunctions.TrainableVFunction;
  * @param <S> the type of the states
  * @param <A> the type of the actions
  */
-public class NStepTD<S, A> extends AbstractVFunctionObservable<S> implements Agent<S, A> {
+public class NStepTD<S, A> extends AbstractVAgent<S, A> {
     private record Entry<S>(S state, double reward) {}
 
-    private final Policy<S, A> policy;
     private final double gamma;
     private final int n;
     private final TrainableVFunction<S> table;
@@ -43,24 +38,15 @@ public class NStepTD<S, A> extends AbstractVFunctionObservable<S> implements Age
      * @param gamma discount factor
      */
     public NStepTD(TrainableVFunction<S> table, Policy<S, A> policy, int n, double gamma) {
+        super(policy);
         if (n < 1) throw new IllegalArgumentException("n must be >= 1, got: " + n);
         if (gamma < 0 || gamma > 1) throw new IllegalArgumentException("gamma must be in [0, 1]");
         this.table = Objects.requireNonNull(table, "table must not be null");
-        this.policy = Objects.requireNonNull(policy, "policy must not be null");
         this.n = n;
         this.gamma = gamma;
     }
 
     @Override
-    public A selectAction(S state, List<A> actions) {
-        return policy.selectAction(state, actions);
-    }
-
-    @Override
-    public void update(Experience<S, A> exp) {
-        observe(exp.state(), new StepResult<>(exp.nextState(), exp.reward(), exp.done()));
-    }
-
     public void observe(S state, StepResult<S> result) {
         buffer.addLast(new Entry<>(state, result.reward()));
 

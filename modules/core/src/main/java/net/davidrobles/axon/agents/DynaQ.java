@@ -9,7 +9,6 @@ import java.util.Random;
 import net.davidrobles.axon.Experience;
 import net.davidrobles.axon.QPair;
 import net.davidrobles.axon.policies.Policy;
-import net.davidrobles.axon.valuefunctions.AbstractQFunctionObservable;
 import net.davidrobles.axon.valuefunctions.TrainableQFunction;
 
 /**
@@ -31,8 +30,7 @@ import net.davidrobles.axon.valuefunctions.TrainableQFunction;
  * @param <S> the type of the states
  * @param <A> the type of the actions
  */
-public class DynaQ<S, A> extends AbstractQFunctionObservable<S, A> {
-    private final Policy<S, A> policy;
+public class DynaQ<S, A> extends AbstractQAgent<S, A> {
     private final double gamma;
     private final int planningSteps;
     private final Random rng;
@@ -54,19 +52,14 @@ public class DynaQ<S, A> extends AbstractQFunctionObservable<S, A> {
             double gamma,
             int planningSteps,
             Random rng) {
+        super(policy);
         if (gamma < 0 || gamma > 1) throw new IllegalArgumentException("gamma must be in [0, 1]");
         if (planningSteps < 0)
             throw new IllegalArgumentException("planningSteps must be >= 0, got: " + planningSteps);
         this.table = Objects.requireNonNull(table, "table must not be null");
-        this.policy = Objects.requireNonNull(policy, "policy must not be null");
         this.rng = Objects.requireNonNull(rng, "rng must not be null");
         this.gamma = gamma;
         this.planningSteps = planningSteps;
-    }
-
-    @Override
-    public A selectAction(S state, List<A> actions) {
-        return policy.selectAction(state, actions);
     }
 
     @Override

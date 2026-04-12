@@ -1,11 +1,9 @@
 package net.davidrobles.axon.agents;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 import net.davidrobles.axon.Experience;
 import net.davidrobles.axon.policies.Policy;
-import net.davidrobles.axon.valuefunctions.AbstractQFunctionObservable;
 import net.davidrobles.axon.valuefunctions.QFunction;
 import net.davidrobles.axon.valuefunctions.TrainableQFunction;
 
@@ -31,10 +29,9 @@ import net.davidrobles.axon.valuefunctions.TrainableQFunction;
  * @param <S> the type of the states
  * @param <A> the type of the actions
  */
-public class DoubleQLearning<S, A> extends AbstractQFunctionObservable<S, A> {
+public class DoubleQLearning<S, A> extends AbstractQAgent<S, A> {
     private final TrainableQFunction<S, A> qA;
     private final TrainableQFunction<S, A> qB;
-    private final Policy<S, A> policy;
     private final double gamma;
     private final Random rng;
     private final QFunction<S, A> composite;
@@ -52,19 +49,14 @@ public class DoubleQLearning<S, A> extends AbstractQFunctionObservable<S, A> {
             Policy<S, A> policy,
             double gamma,
             Random rng) {
+        super(policy);
         if (gamma < 0 || gamma > 1) throw new IllegalArgumentException("gamma must be in [0, 1]");
         this.qA = Objects.requireNonNull(qA, "qA must not be null");
         this.qB = Objects.requireNonNull(qB, "qB must not be null");
-        this.policy = Objects.requireNonNull(policy, "policy must not be null");
         this.rng = Objects.requireNonNull(rng, "rng must not be null");
         this.gamma = gamma;
         // Pre-built composite for observer callbacks — avoids a new lambda per update
         this.composite = (s, a) -> (qA.getValue(s, a) + qB.getValue(s, a)) / 2.0;
-    }
-
-    @Override
-    public A selectAction(S state, List<A> actions) {
-        return policy.selectAction(state, actions);
     }
 
     @Override
