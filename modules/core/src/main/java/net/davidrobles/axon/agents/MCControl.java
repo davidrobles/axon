@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import net.davidrobles.axon.Experience;
-import net.davidrobles.axon.QPair;
+import net.davidrobles.axon.StateActionPair;
 import net.davidrobles.axon.policies.Policy;
 import net.davidrobles.axon.valuefunctions.TrainableQFunction;
 
@@ -54,11 +54,11 @@ public class MCControl<S, A> extends AbstractQAgent<S, A> {
     private void flush() {
         int n = states.size();
         double G = 0.0;
-        Set<QPair<S, A>> visited = new HashSet<>();
+        Set<StateActionPair<S, A>> visited = new HashSet<>();
 
         for (int t = n - 1; t >= 0; t--) {
             G = rewards.get(t) + gamma * G;
-            QPair<S, A> pair = new QPair<>(states.get(t), actions.get(t));
+            StateActionPair<S, A> pair = new StateActionPair<>(states.get(t), actions.get(t));
 
             if (visited.add(pair)) {
                 table.update(states.get(t), actions.get(t), G);

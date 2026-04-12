@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import net.davidrobles.axon.Experience;
-import net.davidrobles.axon.QPair;
+import net.davidrobles.axon.StateActionPair;
 import net.davidrobles.axon.policies.Policy;
 import net.davidrobles.axon.valuefunctions.TrainableQFunction;
 
@@ -24,7 +24,7 @@ public class SARSALambda<S, A> extends AbstractQAgent<S, A> {
     private final TrainableQFunction<S, A> table;
     // Pre-selected next action for SARSA on-policy coupling.
     private A nextAction = null;
-    private final Map<QPair<S, A>, Double> traces = new HashMap<>();
+    private final Map<StateActionPair<S, A>, Double> traces = new HashMap<>();
 
     /**
      * @param table the Q-function to update (shared with the behavior policy); owns the learning
@@ -69,10 +69,10 @@ public class SARSALambda<S, A> extends AbstractQAgent<S, A> {
         double tdError = exp.reward() + gamma * nextQ - table.getValue(exp.state(), exp.action());
 
         // Accumulating trace: e(s,a) += 1
-        traces.merge(new QPair<>(exp.state(), exp.action()), 1.0, Double::sum);
+        traces.merge(new StateActionPair<>(exp.state(), exp.action()), 1.0, Double::sum);
 
-        for (Map.Entry<QPair<S, A>, Double> entry : traces.entrySet()) {
-            QPair<S, A> key = entry.getKey();
+        for (Map.Entry<StateActionPair<S, A>, Double> entry : traces.entrySet()) {
+            StateActionPair<S, A> key = entry.getKey();
             double currentQ = table.getValue(key.state(), key.action());
             table.update(key.state(), key.action(), currentQ + tdError * entry.getValue());
             entry.setValue(gamma * lambda * entry.getValue());

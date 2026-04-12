@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import net.davidrobles.axon.QPair;
+import net.davidrobles.axon.StateActionPair;
 import net.davidrobles.axon.valuefunctions.QFunction;
 
 /**
@@ -28,7 +28,7 @@ public class UCBPolicy<S, A> implements Policy<S, A> {
     private final QFunction<S, A> qFunc;
     private final double c;
     private final Map<S, Integer> stateCounts = new HashMap<>();
-    private final Map<QPair<S, A>, Integer> actionCounts = new HashMap<>();
+    private final Map<StateActionPair<S, A>, Integer> actionCounts = new HashMap<>();
 
     /**
      * @param qFunc the Q-function used for action value estimates
@@ -44,7 +44,7 @@ public class UCBPolicy<S, A> implements Policy<S, A> {
     public A selectAction(S state, List<A> actions) {
         // Prioritize any unvisited action (implicit UCB score of +∞)
         for (A action : actions) {
-            if (actionCounts.getOrDefault(new QPair<>(state, action), 0) == 0) {
+            if (actionCounts.getOrDefault(new StateActionPair<>(state, action), 0) == 0) {
                 updateCounts(state, action);
                 return action;
             }
@@ -57,7 +57,7 @@ public class UCBPolicy<S, A> implements Policy<S, A> {
         double bestScore = Double.NEGATIVE_INFINITY;
 
         for (A action : actions) {
-            int na = actionCounts.get(new QPair<>(state, action));
+            int na = actionCounts.get(new StateActionPair<>(state, action));
             double score = qFunc.getValue(state, action) + c * Math.sqrt(logN / na);
             if (score > bestScore) {
                 bestScore = score;
@@ -71,6 +71,6 @@ public class UCBPolicy<S, A> implements Policy<S, A> {
 
     private void updateCounts(S state, A action) {
         stateCounts.merge(state, 1, Integer::sum);
-        actionCounts.merge(new QPair<>(state, action), 1, Integer::sum);
+        actionCounts.merge(new StateActionPair<>(state, action), 1, Integer::sum);
     }
 }

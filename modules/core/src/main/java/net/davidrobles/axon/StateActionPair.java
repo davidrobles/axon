@@ -6,4 +6,4 @@ package net.davidrobles.axon;
  * @param <S> the type of the states
  * @param <A> the type of the actions
  */
-public record QPair<S, A>(S state, A action) {}
+public record StateActionPair<S, A>(S state, A action) {}

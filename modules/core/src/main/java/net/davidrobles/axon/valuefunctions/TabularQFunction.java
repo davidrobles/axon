@@ -2,12 +2,12 @@ package net.davidrobles.axon.valuefunctions;
 
 import java.util.HashMap;
 import java.util.Map;
-import net.davidrobles.axon.QPair;
+import net.davidrobles.axon.StateActionPair;
 
 /** Tabular (lookup table) implementation of a trainable state-action value function. */
 public class TabularQFunction<S, A> implements TrainableQFunction<S, A> {
     private final double alpha;
-    private Map<QPair<S, A>, Double> actionValues = new HashMap<>();
+    private Map<StateActionPair<S, A>, Double> actionValues = new HashMap<>();
 
     /**
      * @param alpha learning rate in (0, 1]
@@ -19,7 +19,7 @@ public class TabularQFunction<S, A> implements TrainableQFunction<S, A> {
 
     @Override
     public double getValue(S state, A action) {
-        return actionValues.getOrDefault(new QPair<>(state, action), 0.0);
+        return actionValues.getOrDefault(new StateActionPair<>(state, action), 0.0);
     }
 
     @Override
@@ -30,6 +30,6 @@ public class TabularQFunction<S, A> implements TrainableQFunction<S, A> {
 
     /** Directly sets Q(state, action) — for use by planning algorithms and tests. */
     public void setValue(S state, A action, double value) {
-        actionValues.put(new QPair<>(state, action), value);
+        actionValues.put(new StateActionPair<>(state, action), value);
     }
 }

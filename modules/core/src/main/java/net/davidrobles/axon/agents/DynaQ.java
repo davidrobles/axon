@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 import net.davidrobles.axon.Experience;
-import net.davidrobles.axon.QPair;
+import net.davidrobles.axon.StateActionPair;
 import net.davidrobles.axon.policies.Policy;
 import net.davidrobles.axon.valuefunctions.TrainableQFunction;
 
@@ -35,8 +35,8 @@ public class DynaQ<S, A> extends AbstractQAgent<S, A> {
     private final int planningSteps;
     private final Random rng;
     private final TrainableQFunction<S, A> table;
-    private final Map<QPair<S, A>, Experience<S, A>> model = new HashMap<>();
-    private final List<QPair<S, A>> observedPairs = new ArrayList<>();
+    private final Map<StateActionPair<S, A>, Experience<S, A>> model = new HashMap<>();
+    private final List<StateActionPair<S, A>> observedPairs = new ArrayList<>();
 
     /**
      * @param table the Q-function to update (shared with the behavior policy); owns the learning
@@ -68,7 +68,7 @@ public class DynaQ<S, A> extends AbstractQAgent<S, A> {
         qLearningUpdate(exp);
 
         // 2. Update the transition model
-        QPair<S, A> pair = new QPair<>(exp.state(), exp.action());
+        StateActionPair<S, A> pair = new StateActionPair<>(exp.state(), exp.action());
         if (!model.containsKey(pair)) {
             observedPairs.add(pair);
         }
@@ -76,7 +76,7 @@ public class DynaQ<S, A> extends AbstractQAgent<S, A> {
 
         // 3. Planning: simulate planningSteps Q-Learning updates from the model
         for (int i = 0; i < planningSteps; i++) {
-            QPair<S, A> simPair = observedPairs.get(rng.nextInt(observedPairs.size()));
+            StateActionPair<S, A> simPair = observedPairs.get(rng.nextInt(observedPairs.size()));
             qLearningUpdate(model.get(simPair));
         }
     }
