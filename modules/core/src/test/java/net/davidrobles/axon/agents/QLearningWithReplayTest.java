@@ -7,6 +7,7 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 import net.davidrobles.axon.Experience;
 import net.davidrobles.axon.policies.GreedyPolicy;
+import net.davidrobles.axon.replay.ReplayBuffer;
 import net.davidrobles.axon.valuefunctions.QFunction;
 import net.davidrobles.axon.valuefunctions.TabularQFunction;
 import org.junit.Before;

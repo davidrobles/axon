@@ -4,6 +4,7 @@ import java.util.Objects;
 import java.util.Random;
 import net.davidrobles.axon.Experience;
 import net.davidrobles.axon.policies.Policy;
+import net.davidrobles.axon.replay.ReplayBuffer;
 import net.davidrobles.axon.valuefunctions.TrainableQFunction;
 
 /**
