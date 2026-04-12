@@ -3,7 +3,7 @@ package net.davidrobles.axon.agents;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
-import net.davidrobles.axon.StepResult;
+import net.davidrobles.axon.Experience;
 import net.davidrobles.axon.policies.Policy;
 import net.davidrobles.axon.valuefunctions.AbstractQFunctionObservable;
 import net.davidrobles.axon.valuefunctions.QFunction;
@@ -68,15 +68,15 @@ public class DoubleQLearning<S, A> extends AbstractQFunctionObservable<S, A> {
     }
 
     @Override
-    public void update(S state, A action, StepResult<S> result, List<A> nextActions) {
+    public void update(Experience<S, A> exp) {
         if (rng.nextBoolean()) {
             // Heads: update qA, select with qA, evaluate with qB
-            double target = computeTarget(result, nextActions, qA, qB);
-            qA.update(state, action, result.reward() + gamma * target);
+            double target = computeTarget(exp, qA, qB);
+            qA.update(exp.state(), exp.action(), exp.reward() + gamma * target);
         } else {
             // Tails: update qB, select with qB, evaluate with qA
-            double target = computeTarget(result, nextActions, qB, qA);
-            qB.update(state, action, result.reward() + gamma * target);
+            double target = computeTarget(exp, qB, qA);
+            qB.update(exp.state(), exp.action(), exp.reward() + gamma * target);
         }
         notifyQFunctionObservers(composite);
     }
@@ -86,20 +86,17 @@ public class DoubleQLearning<S, A> extends AbstractQFunctionObservable<S, A> {
      * {@code selector} and evaluating it with {@code evaluator}.
      */
     private double computeTarget(
-            StepResult<S> result,
-            List<A> nextActions,
-            QFunction<S, A> selector,
-            QFunction<S, A> evaluator) {
-        if (result.done() || nextActions.isEmpty()) return 0.0;
+            Experience<S, A> exp, QFunction<S, A> selector, QFunction<S, A> evaluator) {
+        if (exp.done() || exp.nextActions().isEmpty()) return 0.0;
         A bestAction = null;
         double bestQ = Double.NEGATIVE_INFINITY;
-        for (A a : nextActions) {
-            double q = selector.getValue(result.nextState(), a);
+        for (A a : exp.nextActions()) {
+            double q = selector.getValue(exp.nextState(), a);
             if (q > bestQ) {
                 bestQ = q;
                 bestAction = a;
             }
         }
-        return evaluator.getValue(result.nextState(), bestAction);
+        return evaluator.getValue(exp.nextState(), bestAction);
     }
 }

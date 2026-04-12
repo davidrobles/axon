@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import net.davidrobles.axon.Experience;
 import net.davidrobles.axon.StepResult;
 import net.davidrobles.axon.policies.RandomPolicy;
 import net.davidrobles.axon.valuefunctions.TabularVFunction;
@@ -69,7 +70,7 @@ public class TD0Test {
     public void updateDelegatesToObserve() {
         table.setValue("s1", 2.0);
         // Same call as observeNonTerminal above but via update()
-        td0.update("s0", "ignored-action", new StepResult<>("s1", 1.0, false), List.of("a0"));
+        td0.update(new Experience<>("s0", "ignored-action", 1.0, "s1", false, List.of("a0")));
         assertEquals(1.4, table.getValue("s0"), EPS);
     }
 

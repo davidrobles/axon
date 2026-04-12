@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import net.davidrobles.axon.Experience;
 import net.davidrobles.axon.StepResult;
 import net.davidrobles.axon.policies.RandomPolicy;
 import net.davidrobles.axon.valuefunctions.TabularVFunction;
@@ -144,7 +145,7 @@ public class NStepTDTest {
 
     @Test
     public void updateDelegatesToObserve() {
-        agent(1).update("s0", "a0", new StepResult<>("s1", 3.0, true), List.of());
+        agent(1).update(new Experience<>("s0", "a0", 3.0, "s1", true, List.of()));
         assertEquals(3.0, table.getValue("s0"), EPS);
     }
 

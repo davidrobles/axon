@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import net.davidrobles.axon.Experience;
 import net.davidrobles.axon.StepResult;
 import net.davidrobles.axon.policies.RandomPolicy;
 import net.davidrobles.axon.valuefunctions.TabularVFunction;
@@ -109,7 +110,7 @@ public class MCPredictionTest {
     @Test
     public void updateDelegatesToObserve() {
         // Same as singleStepEpisodeUpdatesWithReward but via update()
-        agent.update("s0", "a0", new StepResult<>("s1", 2.0, true), List.of());
+        agent.update(new Experience<>("s0", "a0", 2.0, "s1", true, List.of()));
         assertEquals(1.0, table.getValue("s0"), EPS);
     }
 

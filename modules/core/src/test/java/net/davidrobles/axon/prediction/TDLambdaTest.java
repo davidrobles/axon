@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import net.davidrobles.axon.Experience;
 import net.davidrobles.axon.StepResult;
 import net.davidrobles.axon.policies.RandomPolicy;
 import net.davidrobles.axon.valuefunctions.TabularVFunction;
@@ -93,7 +94,7 @@ public class TDLambdaTest {
 
     @Test
     public void updateDelegatesToObserve() {
-        tdl.update("s0", "any-action", new StepResult<>("s1", 1.0, true), List.of());
+        tdl.update(new Experience<>("s0", "any-action", 1.0, "s1", true, List.of()));
         assertEquals(1.0, table.getValue("s0"), EPS);
     }
 

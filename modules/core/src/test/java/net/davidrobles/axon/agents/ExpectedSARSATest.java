@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
-import net.davidrobles.axon.StepResult;
+import net.davidrobles.axon.Experience;
 import net.davidrobles.axon.policies.EpsilonGreedy;
 import net.davidrobles.axon.policies.RandomPolicy;
 import net.davidrobles.axon.valuefunctions.QFunction;
@@ -38,7 +38,7 @@ public class ExpectedSARSATest {
         // RandomPolicy: π(a0|s1)=0.5, π(a1|s1)=0.5
         // expected = 0.5*2 + 0.5*4 = 3.0
         // target = 0 + 0.9*3.0 = 2.7; new Q = 0 + 0.5*(2.7-0) = 1.35
-        agent.update("s0", "a0", new StepResult<>("s1", 0.0, false), List.of("a0", "a1"));
+        agent.update(new Experience<>("s0", "a0", 0.0, "s1", false, List.of("a0", "a1")));
         assertEquals(1.35, table.getValue("s0", "a0"), EPS);
     }
 
@@ -46,7 +46,7 @@ public class ExpectedSARSATest {
     public void updateTerminalIgnoresFutureReward() {
         table.setValue("s1", "a0", 100.0); // should be ignored
         // target = 1.0; new Q = 0 + 0.5*1.0 = 0.5
-        agent.update("s0", "a0", new StepResult<>("s1", 1.0, true), List.of());
+        agent.update(new Experience<>("s0", "a0", 1.0, "s1", true, List.of()));
         assertEquals(0.5, table.getValue("s0", "a0"), EPS);
     }
 
@@ -60,7 +60,7 @@ public class ExpectedSARSATest {
         ExpectedSARSA<String, String> greedyAgent =
                 new ExpectedSARSA<>(t, new EpsilonGreedy<>(t, 0.0, new Random(0)), 1.0);
         // expected = 5.0; target = 0 + 1.0*5.0 = 5.0; new Q = 0 + 0.5*5.0 = 2.5
-        greedyAgent.update("s0", "a0", new StepResult<>("s1", 0.0, false), List.of("a0", "a1"));
+        greedyAgent.update(new Experience<>("s0", "a0", 0.0, "s1", false, List.of("a0", "a1")));
         assertEquals(2.5, t.getValue("s0", "a0"), EPS);
     }
 
@@ -70,7 +70,7 @@ public class ExpectedSARSATest {
                 new ExpectedSARSA<>(table, new RandomPolicy<>(new Random(0)), 0.0);
         table.setValue("s1", "a0", 999.0);
         // target = 2.0 + 0 = 2.0; new Q = 0 + 0.5*2.0 = 1.0
-        noDiscount.update("s0", "a0", new StepResult<>("s1", 2.0, false), List.of("a0"));
+        noDiscount.update(new Experience<>("s0", "a0", 2.0, "s1", false, List.of("a0")));
         assertEquals(1.0, table.getValue("s0", "a0"), EPS);
     }
 
@@ -78,18 +78,18 @@ public class ExpectedSARSATest {
     public void updateDoesNotChangeOtherQValues() {
         table.setValue("s0", "a1", 7.0);
         table.setValue("s1", "a0", 2.0);
-        agent.update("s0", "a0", new StepResult<>("s1", 0.0, false), List.of("a0"));
+        agent.update(new Experience<>("s0", "a0", 0.0, "s1", false, List.of("a0")));
         assertEquals(7.0, table.getValue("s0", "a1"), EPS);
     }
 
     @Test
     public void consecutiveUpdatesAccumulate() {
         // Step 1: target=2.0; Q(s0,a0) = 0 + 0.5*(2-0) = 1.0
-        agent.update("s0", "a0", new StepResult<>("s1", 2.0, true), List.of());
+        agent.update(new Experience<>("s0", "a0", 2.0, "s1", true, List.of()));
         assertEquals(1.0, table.getValue("s0", "a0"), EPS);
 
         // Step 2: target=4.0; Q(s0,a0) = 1.0 + 0.5*(4-1.0) = 2.5
-        agent.update("s0", "a0", new StepResult<>("s1", 4.0, true), List.of());
+        agent.update(new Experience<>("s0", "a0", 4.0, "s1", true, List.of()));
         assertEquals(2.5, table.getValue("s0", "a0"), EPS);
     }
 
@@ -115,8 +115,8 @@ public class ExpectedSARSATest {
         AtomicInteger count = new AtomicInteger();
         agent.addQFunctionObserver(qf -> count.incrementAndGet());
 
-        agent.update("s0", "a0", new StepResult<>("s1", 1.0, true), List.of());
-        agent.update("s0", "a0", new StepResult<>("s1", 1.0, true), List.of());
+        agent.update(new Experience<>("s0", "a0", 1.0, "s1", true, List.of()));
+        agent.update(new Experience<>("s0", "a0", 1.0, "s1", true, List.of()));
         assertEquals(2, count.get());
     }
 
@@ -125,7 +125,7 @@ public class ExpectedSARSATest {
         QFunction<String, String>[] captured = new QFunction[1];
         agent.addQFunctionObserver(qf -> captured[0] = qf);
 
-        agent.update("s0", "a0", new StepResult<>("s1", 2.0, true), List.of());
+        agent.update(new Experience<>("s0", "a0", 2.0, "s1", true, List.of()));
 
         assertNotNull(captured[0]);
         assertEquals(1.0, captured[0].getValue("s0", "a0"), EPS); // 0 + 0.5*2 = 1.0
@@ -139,7 +139,7 @@ public class ExpectedSARSATest {
         agent.addQFunctionObserver(o);
         agent.addQFunctionObserver(o);
 
-        agent.update("s0", "a0", new StepResult<>("s1", 1.0, true), List.of());
+        agent.update(new Experience<>("s0", "a0", 1.0, "s1", true, List.of()));
         assertEquals(1, count.get());
     }
 

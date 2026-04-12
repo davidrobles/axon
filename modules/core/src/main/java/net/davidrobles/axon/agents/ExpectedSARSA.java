@@ -2,7 +2,7 @@ package net.davidrobles.axon.agents;
 
 import java.util.List;
 import java.util.Objects;
-import net.davidrobles.axon.StepResult;
+import net.davidrobles.axon.Experience;
 import net.davidrobles.axon.policies.StochasticPolicy;
 import net.davidrobles.axon.valuefunctions.AbstractQFunctionObservable;
 import net.davidrobles.axon.valuefunctions.TrainableQFunction;
@@ -47,17 +47,17 @@ public class ExpectedSARSA<S, A> extends AbstractQFunctionObservable<S, A> {
     }
 
     @Override
-    public void update(S state, A action, StepResult<S> result, List<A> nextActions) {
+    public void update(Experience<S, A> exp) {
         double expectedNextQ = 0.0;
 
-        if (!result.done() && !nextActions.isEmpty()) {
-            for (A nextAction : nextActions) {
-                double prob = policy.probability(result.nextState(), nextAction, nextActions);
-                expectedNextQ += prob * table.getValue(result.nextState(), nextAction);
+        if (!exp.done() && !exp.nextActions().isEmpty()) {
+            for (A nextAction : exp.nextActions()) {
+                double prob = policy.probability(exp.nextState(), nextAction, exp.nextActions());
+                expectedNextQ += prob * table.getValue(exp.nextState(), nextAction);
             }
         }
 
-        table.update(state, action, result.reward() + gamma * expectedNextQ);
+        table.update(exp.state(), exp.action(), exp.reward() + gamma * expectedNextQ);
         notifyQFunctionObservers(table);
     }
 }

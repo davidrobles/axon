@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import net.davidrobles.axon.StepResult;
+import net.davidrobles.axon.Experience;
 import net.davidrobles.axon.policies.GreedyPolicy;
 import net.davidrobles.axon.valuefunctions.TabularQFunction;
 import org.junit.Before;
@@ -34,14 +34,14 @@ public class SARSALambdaTest {
         // new Q(s0,a0) = 0 + 1*(0+1*1-0) = 0+1*(1)=1...
         // Wait: table.update(s0,a0, currentQ+tdError*trace) = table.update(s0,a0, 0+1*1=1)
         // update internals: Q = 0 + 1*(1-0) = 1.0
-        agent.update("s0", "a0", new StepResult<>("s1", 1.0, true), List.of());
+        agent.update(new Experience<>("s0", "a0", 1.0, "s1", true, List.of()));
         assertEquals(1.0, table.getValue("s0", "a0"), EPS);
     }
 
     @Test
     public void nonTerminalStepWithZeroRewardAndZeroNextQ() {
         // Q(s1,a1)=0, r=0 → tdError=0 → no change in Q
-        agent.update("s0", "a0", new StepResult<>("s1", 0.0, false), List.of("a1"));
+        agent.update(new Experience<>("s0", "a0", 0.0, "s1", false, List.of("a1")));
         assertEquals(0.0, table.getValue("s0", "a0"), EPS);
     }
 
@@ -63,8 +63,8 @@ public class SARSALambdaTest {
 
     @Test
     public void tracesPropagateRewardBackwards() {
-        agent.update("s0", "a0", new StepResult<>("s1", 0.0, false), List.of("a1"));
-        agent.update("s1", "a1", new StepResult<>("s2", 1.0, true), List.of());
+        agent.update(new Experience<>("s0", "a0", 0.0, "s1", false, List.of("a1")));
+        agent.update(new Experience<>("s1", "a1", 1.0, "s2", true, List.of()));
 
         assertEquals(0.5, table.getValue("s0", "a0"), EPS);
         assertEquals(1.0, table.getValue("s1", "a1"), EPS);
@@ -82,9 +82,9 @@ public class SARSALambdaTest {
         //   Actually: step 3 updates e(s0,a0) from 0.75 to 1.75, then Q update
         //   Q(s0,a0) = 0 + 1*1*1.75 = 1.75
         // This uses a self-loop: nextActions=[a0], so greedy picks a0
-        agent.update("s0", "a0", new StepResult<>("s0", 0.0, false), List.of("a0"));
-        agent.update("s0", "a0", new StepResult<>("s0", 0.0, false), List.of("a0"));
-        agent.update("s0", "a0", new StepResult<>("s1", 1.0, true), List.of());
+        agent.update(new Experience<>("s0", "a0", 0.0, "s0", false, List.of("a0")));
+        agent.update(new Experience<>("s0", "a0", 0.0, "s0", false, List.of("a0")));
+        agent.update(new Experience<>("s0", "a0", 1.0, "s1", true, List.of()));
 
         // e after step1: 1→0.5; after step2: (0.5+1)→1.5→0.75; after step3: (0.75+1)→1.75
         // Q(s0,a0) = 0 + 1*(1.75) = 1.75
@@ -93,12 +93,12 @@ public class SARSALambdaTest {
 
     @Test
     public void tracesAreClearedAfterTerminalStep() {
-        agent.update("s0", "a0", new StepResult<>("s1", 0.0, false), List.of("a1"));
-        agent.update("s1", "a1", new StepResult<>("s2", 1.0, true), List.of());
+        agent.update(new Experience<>("s0", "a0", 0.0, "s1", false, List.of("a1")));
+        agent.update(new Experience<>("s1", "a1", 1.0, "s2", true, List.of()));
         // Traces are now cleared. Starting a new episode:
         // A fresh step from s0,a0 with r=1, done should give Q(s0,a0) += 1*(1) = 1.0 more
         // Currently Q(s0,a0)=0.5; after: 0.5 + 1*(1-0.5) = 1.0
-        agent.update("s0", "a0", new StepResult<>("s3", 1.0, true), List.of());
+        agent.update(new Experience<>("s0", "a0", 1.0, "s3", true, List.of()));
         assertEquals(1.0, table.getValue("s0", "a0"), EPS);
     }
 
@@ -111,8 +111,8 @@ public class SARSALambdaTest {
         AtomicInteger count = new AtomicInteger();
         agent.addQFunctionObserver(qf -> count.incrementAndGet());
 
-        agent.update("s0", "a0", new StepResult<>("s1", 1.0, true), List.of());
-        agent.update("s0", "a0", new StepResult<>("s1", 1.0, true), List.of());
+        agent.update(new Experience<>("s0", "a0", 1.0, "s1", true, List.of()));
+        agent.update(new Experience<>("s0", "a0", 1.0, "s1", true, List.of()));
         assertEquals(2, count.get());
     }
 
@@ -124,7 +124,7 @@ public class SARSALambdaTest {
         agent.addQFunctionObserver(o);
         agent.addQFunctionObserver(o);
 
-        agent.update("s0", "a0", new StepResult<>("s1", 1.0, true), List.of());
+        agent.update(new Experience<>("s0", "a0", 1.0, "s1", true, List.of()));
         assertEquals(1, count.get());
     }
 

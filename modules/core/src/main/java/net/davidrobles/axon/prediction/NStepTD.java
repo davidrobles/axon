@@ -5,6 +5,7 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Objects;
 import net.davidrobles.axon.Agent;
+import net.davidrobles.axon.Experience;
 import net.davidrobles.axon.StepResult;
 import net.davidrobles.axon.policies.Policy;
 import net.davidrobles.axon.valuefunctions.AbstractVFunctionObservable;
@@ -56,8 +57,8 @@ public class NStepTD<S, A> extends AbstractVFunctionObservable<S> implements Age
     }
 
     @Override
-    public void update(S state, A action, StepResult<S> result, List<A> nextActions) {
-        observe(state, result);
+    public void update(Experience<S, A> exp) {
+        observe(exp.state(), new StepResult<>(exp.nextState(), exp.reward(), exp.done()));
     }
 
     public void observe(S state, StepResult<S> result) {

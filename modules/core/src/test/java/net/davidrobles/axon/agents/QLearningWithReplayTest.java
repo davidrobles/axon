@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
-import net.davidrobles.axon.StepResult;
+import net.davidrobles.axon.Experience;
 import net.davidrobles.axon.policies.GreedyPolicy;
 import net.davidrobles.axon.valuefunctions.QFunction;
 import net.davidrobles.axon.valuefunctions.TabularQFunction;
@@ -40,8 +40,8 @@ public class QLearningWithReplayTest {
     @Test
     public void noUpdateBeforeBufferReachesBatchSize() {
         QLearningWithReplay<String, String> a = agent(10, 3);
-        a.update("s0", "a0", new StepResult<>("s1", 5.0, true), List.of());
-        a.update("s1", "a0", new StepResult<>("s2", 5.0, true), List.of());
+        a.update(new Experience<>("s0", "a0", 5.0, "s1", true, List.of()));
+        a.update(new Experience<>("s1", "a0", 5.0, "s2", true, List.of()));
         // only 2 transitions stored, batchSize=3 → no update yet
         assertEquals(0.0, table.getValue("s0", "a0"), EPS);
         assertEquals(0.0, table.getValue("s1", "a0"), EPS);
@@ -50,10 +50,10 @@ public class QLearningWithReplayTest {
     @Test
     public void updatesBeginOnceBatchSizeReached() {
         QLearningWithReplay<String, String> a = agent(10, 2);
-        a.update("s0", "a0", new StepResult<>("s1", 1.0, true), List.of());
+        a.update(new Experience<>("s0", "a0", 1.0, "s1", true, List.of()));
         assertEquals(0.0, table.getValue("s0", "a0"), EPS); // not yet
 
-        a.update("s1", "a0", new StepResult<>("s2", 1.0, true), List.of());
+        a.update(new Experience<>("s1", "a0", 1.0, "s2", true, List.of()));
         // now 2 transitions, batchSize=2 → updates fired
         assertTrue(table.getValue("s0", "a0") > 0.0 || table.getValue("s1", "a0") > 0.0);
     }
@@ -66,7 +66,7 @@ public class QLearningWithReplayTest {
     public void terminalTransitionUpdatesWithRewardOnly() {
         // batchSize=1 so each step triggers exactly one update from the buffer
         QLearningWithReplay<String, String> a = agent(10, 1);
-        a.update("s0", "a0", new StepResult<>("s1", 2.0, true), List.of());
+        a.update(new Experience<>("s0", "a0", 2.0, "s1", true, List.of()));
         // target = 2.0; Q(s0,a0) = 0 + 0.5*(2-0) = 1.0
         assertEquals(1.0, table.getValue("s0", "a0"), EPS);
     }
@@ -76,7 +76,7 @@ public class QLearningWithReplayTest {
         table.setValue("s1", "a0", 4.0);
         QLearningWithReplay<String, String> a = agent(10, 1);
         // target = 0.5 + 0.9*4.0 = 4.1; Q = 0 + 0.5*4.1 = 2.05
-        a.update("s0", "a0", new StepResult<>("s1", 0.5, false), List.of("a0"));
+        a.update(new Experience<>("s0", "a0", 0.5, "s1", false, List.of("a0")));
         assertEquals(2.05, table.getValue("s0", "a0"), EPS);
     }
 
@@ -88,10 +88,10 @@ public class QLearningWithReplayTest {
     public void bufferEvictsOldTransitionsWhenFull() {
         // capacity=1: only the latest transition is ever in the buffer
         QLearningWithReplay<String, String> a = agent(1, 1);
-        a.update("s0", "a0", new StepResult<>("s1", 10.0, true), List.of());
+        a.update(new Experience<>("s0", "a0", 10.0, "s1", true, List.of()));
         double after1 = table.getValue("s0", "a0");
 
-        a.update("s1", "a0", new StepResult<>("s2", 2.0, true), List.of());
+        a.update(new Experience<>("s1", "a0", 2.0, "s2", true, List.of()));
         double s1After = table.getValue("s1", "a0");
         // s1 was the only thing in the buffer → it was sampled
         assertTrue(s1After > 0.0);
@@ -116,8 +116,8 @@ public class QLearningWithReplayTest {
         AtomicInteger count = new AtomicInteger();
         QLearningWithReplay<String, String> a = agent(10, 3);
         a.addQFunctionObserver(qf -> count.incrementAndGet());
-        a.update("s0", "a0", new StepResult<>("s1", 1.0, true), List.of());
-        a.update("s1", "a0", new StepResult<>("s2", 1.0, true), List.of());
+        a.update(new Experience<>("s0", "a0", 1.0, "s1", true, List.of()));
+        a.update(new Experience<>("s1", "a0", 1.0, "s2", true, List.of()));
         assertEquals(0, count.get());
     }
 
@@ -128,13 +128,13 @@ public class QLearningWithReplayTest {
         a.addQFunctionObserver(qf -> count.incrementAndGet());
 
         // Fill buffer to batchSize=3 → first batch update fires 3 notifications
-        a.update("s0", "a0", new StepResult<>("s1", 1.0, true), List.of());
-        a.update("s1", "a0", new StepResult<>("s2", 1.0, true), List.of());
-        a.update("s2", "a0", new StepResult<>("s3", 1.0, true), List.of());
+        a.update(new Experience<>("s0", "a0", 1.0, "s1", true, List.of()));
+        a.update(new Experience<>("s1", "a0", 1.0, "s2", true, List.of()));
+        a.update(new Experience<>("s2", "a0", 1.0, "s3", true, List.of()));
         assertEquals(3, count.get());
 
         // Each subsequent step also fires a batch of 3
-        a.update("s3", "a0", new StepResult<>("s4", 1.0, true), List.of());
+        a.update(new Experience<>("s3", "a0", 1.0, "s4", true, List.of()));
         assertEquals(6, count.get());
     }
 
@@ -143,7 +143,7 @@ public class QLearningWithReplayTest {
         QFunction<String, String>[] captured = new QFunction[1];
         QLearningWithReplay<String, String> a = agent(10, 1);
         a.addQFunctionObserver(qf -> captured[0] = qf);
-        a.update("s0", "a0", new StepResult<>("s1", 2.0, true), List.of());
+        a.update(new Experience<>("s0", "a0", 2.0, "s1", true, List.of()));
         assertNotNull(captured[0]);
         assertEquals(1.0, captured[0].getValue("s0", "a0"), EPS);
     }
@@ -156,7 +156,7 @@ public class QLearningWithReplayTest {
         QLearningWithReplay<String, String> a = agent(10, 1);
         a.addQFunctionObserver(o);
         a.addQFunctionObserver(o);
-        a.update("s0", "a0", new StepResult<>("s1", 1.0, true), List.of());
+        a.update(new Experience<>("s0", "a0", 1.0, "s1", true, List.of()));
         assertEquals(1, count.get());
     }
 

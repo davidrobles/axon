@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import net.davidrobles.axon.StepResult;
+import net.davidrobles.axon.Experience;
 import net.davidrobles.axon.policies.GreedyPolicy;
 import net.davidrobles.axon.valuefunctions.QFunction;
 import net.davidrobles.axon.valuefunctions.TabularQFunction;
@@ -32,7 +32,7 @@ public class QLearningTest {
     public void updateNonTerminal() {
         table.setValue("s1", "a1", 2.0);
         // target = 0.5 + 0.9*2.0 = 2.3;  new Q = 0 + 0.5*(2.3-0) = 1.15
-        agent.update("s0", "a0", new StepResult<>("s1", 0.5, false), List.of("a1"));
+        agent.update(new Experience<>("s0", "a0", 0.5, "s1", false, List.of("a1")));
         assertEquals(1.15, table.getValue("s0", "a0"), EPS);
     }
 
@@ -40,7 +40,7 @@ public class QLearningTest {
     public void updateTerminalIgnoresFutureReward() {
         table.setValue("s1", "a1", 100.0); // should be ignored
         // target = 1.0 + 0 = 1.0;  new Q = 0 + 0.5*1.0 = 0.5
-        agent.update("s0", "a0", new StepResult<>("s1", 1.0, true), List.of());
+        agent.update(new Experience<>("s0", "a0", 1.0, "s1", true, List.of()));
         assertEquals(0.5, table.getValue("s0", "a0"), EPS);
     }
 
@@ -50,7 +50,7 @@ public class QLearningTest {
         table.setValue("s1", "a2", 5.0); // max
         table.setValue("s1", "a3", 3.0);
         // target = 0 + 0.9*5.0 = 4.5;  new Q = 0 + 0.5*4.5 = 2.25
-        agent.update("s0", "a0", new StepResult<>("s1", 0.0, false), List.of("a1", "a2", "a3"));
+        agent.update(new Experience<>("s0", "a0", 0.0, "s1", false, List.of("a1", "a2", "a3")));
         assertEquals(2.25, table.getValue("s0", "a0"), EPS);
     }
 
@@ -60,7 +60,7 @@ public class QLearningTest {
                 new QLearning<>(table, new GreedyPolicy<>(table), 0.0);
         table.setValue("s1", "a1", 999.0);
         // target = 2.0 + 0*999 = 2.0;  new Q = 0 + 0.5*2.0 = 1.0
-        noDiscount.update("s0", "a0", new StepResult<>("s1", 2.0, false), List.of("a1"));
+        noDiscount.update(new Experience<>("s0", "a0", 2.0, "s1", false, List.of("a1")));
         assertEquals(1.0, table.getValue("s0", "a0"), EPS);
     }
 
@@ -69,7 +69,7 @@ public class QLearningTest {
         QLearning<String, String> fullDiscount =
                 new QLearning<>(table, new GreedyPolicy<>(table), 1.0);
         // target = 3.0;  new Q = 0 + 0.5*3.0 = 1.5
-        fullDiscount.update("s0", "a0", new StepResult<>("s1", 3.0, true), List.of());
+        fullDiscount.update(new Experience<>("s0", "a0", 3.0, "s1", true, List.of()));
         assertEquals(1.5, table.getValue("s0", "a0"), EPS);
     }
 
@@ -77,7 +77,7 @@ public class QLearningTest {
     public void updateDoesNotChangeOtherQValues() {
         table.setValue("s0", "a1", 7.0);
         table.setValue("s1", "a1", 2.0);
-        agent.update("s0", "a0", new StepResult<>("s1", 1.0, false), List.of("a1"));
+        agent.update(new Experience<>("s0", "a0", 1.0, "s1", false, List.of("a1")));
         assertEquals(7.0, table.getValue("s0", "a1"), EPS);
     }
 
@@ -85,11 +85,11 @@ public class QLearningTest {
     public void consecutiveUpdatesAccumulate() {
         // Two steps from s0,a0: first with target 2, then with target 4
         // After step 1: Q(s0,a0) = 0 + 0.5*(2-0) = 1.0
-        agent.update("s0", "a0", new StepResult<>("s1", 2.0, true), List.of());
+        agent.update(new Experience<>("s0", "a0", 2.0, "s1", true, List.of()));
         assertEquals(1.0, table.getValue("s0", "a0"), EPS);
 
         // After step 2: Q(s0,a0) = 1 + 0.5*(4-1) = 2.5
-        agent.update("s0", "a0", new StepResult<>("s1", 4.0, true), List.of());
+        agent.update(new Experience<>("s0", "a0", 4.0, "s1", true, List.of()));
         assertEquals(2.5, table.getValue("s0", "a0"), EPS);
     }
 
@@ -112,8 +112,8 @@ public class QLearningTest {
         AtomicInteger count = new AtomicInteger();
         agent.addQFunctionObserver(qf -> count.incrementAndGet());
 
-        agent.update("s0", "a0", new StepResult<>("s1", 1.0, true), List.of());
-        agent.update("s0", "a0", new StepResult<>("s1", 1.0, true), List.of());
+        agent.update(new Experience<>("s0", "a0", 1.0, "s1", true, List.of()));
+        agent.update(new Experience<>("s0", "a0", 1.0, "s1", true, List.of()));
         assertEquals(2, count.get());
     }
 
@@ -122,7 +122,7 @@ public class QLearningTest {
         QFunction<String, String>[] captured = new QFunction[1];
         agent.addQFunctionObserver(qf -> captured[0] = qf);
 
-        agent.update("s0", "a0", new StepResult<>("s1", 2.0, true), List.of());
+        agent.update(new Experience<>("s0", "a0", 2.0, "s1", true, List.of()));
 
         assertNotNull(captured[0]);
         assertEquals(1.0, captured[0].getValue("s0", "a0"), EPS); // 0 + 0.5*2 = 1.0
@@ -137,7 +137,7 @@ public class QLearningTest {
         agent.addQFunctionObserver(o);
         agent.addQFunctionObserver(o);
 
-        agent.update("s0", "a0", new StepResult<>("s1", 1.0, true), List.of());
+        agent.update(new Experience<>("s0", "a0", 1.0, "s1", true, List.of()));
         assertEquals(1, count.get());
     }
 

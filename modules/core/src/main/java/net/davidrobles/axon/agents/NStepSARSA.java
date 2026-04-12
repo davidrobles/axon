@@ -4,7 +4,7 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
 import java.util.Objects;
-import net.davidrobles.axon.StepResult;
+import net.davidrobles.axon.Experience;
 import net.davidrobles.axon.policies.Policy;
 import net.davidrobles.axon.valuefunctions.AbstractQFunctionObservable;
 import net.davidrobles.axon.valuefunctions.TrainableQFunction;
@@ -56,14 +56,14 @@ public class NStepSARSA<S, A> extends AbstractQFunctionObservable<S, A> {
     }
 
     @Override
-    public void update(S state, A action, StepResult<S> result, List<A> nextActions) {
-        buffer.addLast(new Entry<>(state, action, result.reward()));
+    public void update(Experience<S, A> exp) {
+        buffer.addLast(new Entry<>(exp.state(), exp.action(), exp.reward()));
 
         if (buffer.size() == n) {
-            updateOldest(result.nextState(), nextActions, result.done());
+            updateOldest(exp.nextState(), exp.nextActions(), exp.done());
         }
 
-        if (result.done()) {
+        if (exp.done()) {
             flush();
         }
     }

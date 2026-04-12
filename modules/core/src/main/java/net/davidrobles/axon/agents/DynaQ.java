@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
+import net.davidrobles.axon.Experience;
 import net.davidrobles.axon.QPair;
-import net.davidrobles.axon.StepResult;
 import net.davidrobles.axon.policies.Policy;
 import net.davidrobles.axon.valuefunctions.AbstractQFunctionObservable;
 import net.davidrobles.axon.valuefunctions.TrainableQFunction;
@@ -32,14 +32,12 @@ import net.davidrobles.axon.valuefunctions.TrainableQFunction;
  * @param <A> the type of the actions
  */
 public class DynaQ<S, A> extends AbstractQFunctionObservable<S, A> {
-    private record ModelEntry<S, A>(StepResult<S> result, List<A> nextActions) {}
-
     private final Policy<S, A> policy;
     private final double gamma;
     private final int planningSteps;
     private final Random rng;
     private final TrainableQFunction<S, A> table;
-    private final Map<QPair<S, A>, ModelEntry<S, A>> model = new HashMap<>();
+    private final Map<QPair<S, A>, Experience<S, A>> model = new HashMap<>();
     private final List<QPair<S, A>> observedPairs = new ArrayList<>();
 
     /**
@@ -72,35 +70,34 @@ public class DynaQ<S, A> extends AbstractQFunctionObservable<S, A> {
     }
 
     @Override
-    public void update(S state, A action, StepResult<S> result, List<A> nextActions) {
+    public void update(Experience<S, A> exp) {
         // 1. Q-Learning update from real experience
-        qLearningUpdate(state, action, result, nextActions);
+        qLearningUpdate(exp);
 
         // 2. Update the transition model
-        QPair<S, A> pair = new QPair<>(state, action);
+        QPair<S, A> pair = new QPair<>(exp.state(), exp.action());
         if (!model.containsKey(pair)) {
             observedPairs.add(pair);
         }
-        model.put(pair, new ModelEntry<>(result, nextActions));
+        model.put(pair, exp);
 
         // 3. Planning: simulate planningSteps Q-Learning updates from the model
         for (int i = 0; i < planningSteps; i++) {
             QPair<S, A> simPair = observedPairs.get(rng.nextInt(observedPairs.size()));
-            ModelEntry<S, A> entry = model.get(simPair);
-            qLearningUpdate(simPair.state(), simPair.action(), entry.result(), entry.nextActions());
+            qLearningUpdate(model.get(simPair));
         }
     }
 
-    private void qLearningUpdate(S state, A action, StepResult<S> result, List<A> nextActions) {
+    private void qLearningUpdate(Experience<S, A> exp) {
         double maxNextQ = 0.0;
-        if (!result.done() && !nextActions.isEmpty()) {
+        if (!exp.done() && !exp.nextActions().isEmpty()) {
             maxNextQ = Double.NEGATIVE_INFINITY;
-            for (A a : nextActions) {
-                double v = table.getValue(result.nextState(), a);
+            for (A a : exp.nextActions()) {
+                double v = table.getValue(exp.nextState(), a);
                 if (v > maxNextQ) maxNextQ = v;
             }
         }
-        table.update(state, action, result.reward() + gamma * maxNextQ);
+        table.update(exp.state(), exp.action(), exp.reward() + gamma * maxNextQ);
         notifyQFunctionObservers(table);
     }
 }

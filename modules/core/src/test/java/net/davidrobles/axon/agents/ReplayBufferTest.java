@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import net.davidrobles.axon.StepResult;
+import net.davidrobles.axon.Experience;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -14,8 +14,8 @@ public class ReplayBufferTest {
 
     private ReplayBuffer<String, String> buffer;
 
-    private static Transition<String, String> t(String state) {
-        return new Transition<>(state, "a0", new StepResult<>("s_next", 0.0, false), List.of("a0"));
+    private static Experience<String, String> t(String state) {
+        return new Experience<>(state, "a0", 0.0, "s_next", false, List.of("a0"));
     }
 
     @Before
@@ -60,10 +60,10 @@ public class ReplayBufferTest {
     @Test
     public void oldestTransitionOverwrittenWhenFull() {
         ReplayBuffer<String, String> buf = new ReplayBuffer<>(3);
-        Transition<String, String> t0 = t("s0");
-        Transition<String, String> t1 = t("s1");
-        Transition<String, String> t2 = t("s2");
-        Transition<String, String> t3 = t("s3"); // should overwrite t0
+        Experience<String, String> t0 = t("s0");
+        Experience<String, String> t1 = t("s1");
+        Experience<String, String> t2 = t("s2");
+        Experience<String, String> t3 = t("s3"); // should overwrite t0
 
         buf.add(t0);
         buf.add(t1);
@@ -71,9 +71,9 @@ public class ReplayBufferTest {
         buf.add(t3);
 
         // capacity=3, so only t1, t2, t3 remain
-        List<Transition<String, String>> all = buf.sample(3, new Random(0));
+        List<Experience<String, String>> all = buf.sample(3, new Random(0));
         Set<String> states = new HashSet<>();
-        for (Transition<String, String> t : all) states.add(t.state());
+        for (Experience<String, String> e : all) states.add(e.state());
 
         assertFalse(states.contains("s0"));
         assertTrue(states.contains("s1"));
@@ -94,9 +94,9 @@ public class ReplayBufferTest {
     @Test
     public void sampleWithoutReplacement() {
         for (int i = 0; i < 5; i++) buffer.add(t("s" + i));
-        List<Transition<String, String>> batch = buffer.sample(5, new Random(0));
+        List<Experience<String, String>> batch = buffer.sample(5, new Random(0));
         Set<String> states = new HashSet<>();
-        for (Transition<String, String> t : batch) states.add(t.state());
+        for (Experience<String, String> e : batch) states.add(e.state());
         assertEquals(5, states.size()); // all distinct
     }
 

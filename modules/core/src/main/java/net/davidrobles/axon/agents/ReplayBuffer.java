@@ -4,11 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
+import net.davidrobles.axon.Experience;
 
 /**
- * A fixed-capacity circular replay buffer for storing and sampling environment transitions.
+ * A fixed-capacity circular replay buffer for storing and sampling experiences.
  *
- * <p>New transitions are added in O(1). When the buffer is full, the oldest transition is
+ * <p>New experiences are added in O(1). When the buffer is full, the oldest experience is
  * overwritten. Random sampling without replacement is supported for mini-batch updates.
  *
  * @param <S> the state type
@@ -16,12 +17,12 @@ import java.util.Random;
  */
 public class ReplayBuffer<S, A> {
     private final int capacity;
-    private final List<Transition<S, A>> buffer;
+    private final List<Experience<S, A>> buffer;
     private int writeIndex = 0;
     private int size = 0;
 
     /**
-     * @param capacity maximum number of transitions to store; must be >= 1
+     * @param capacity maximum number of experiences to store; must be >= 1
      */
     public ReplayBuffer(int capacity) {
         if (capacity < 1)
@@ -31,37 +32,38 @@ public class ReplayBuffer<S, A> {
     }
 
     /**
-     * Adds a transition to the buffer. If the buffer is full, the oldest transition is overwritten.
+     * Adds an experience to the buffer. If the buffer is full, the oldest experience is
+     * overwritten.
      *
-     * @param transition the transition to store
+     * @param experience the experience to store
      */
-    public void add(Transition<S, A> transition) {
-        Objects.requireNonNull(transition, "transition must not be null");
+    public void add(Experience<S, A> experience) {
+        Objects.requireNonNull(experience, "experience must not be null");
         if (size < capacity) {
-            buffer.add(transition);
+            buffer.add(experience);
             size++;
         } else {
-            buffer.set(writeIndex, transition);
+            buffer.set(writeIndex, experience);
         }
         writeIndex = (writeIndex + 1) % capacity;
     }
 
     /**
-     * Returns a random sample of {@code batchSize} transitions without replacement.
+     * Returns a random sample of {@code batchSize} experiences without replacement.
      *
-     * @param batchSize number of transitions to sample; must be <= {@link #size()}
+     * @param batchSize number of experiences to sample; must be <= {@link #size()}
      * @param rng random number generator
-     * @return an unordered list of sampled transitions
+     * @return an unordered list of sampled experiences
      * @throws IllegalArgumentException if {@code batchSize} exceeds the current buffer size
      */
-    public List<Transition<S, A>> sample(int batchSize, Random rng) {
+    public List<Experience<S, A>> sample(int batchSize, Random rng) {
         if (batchSize > size)
             throw new IllegalArgumentException(
                     "batchSize (" + batchSize + ") exceeds buffer size (" + size + ")");
         // Fisher-Yates partial shuffle to select batchSize indices without replacement
         List<Integer> indices = new ArrayList<>(size);
         for (int i = 0; i < size; i++) indices.add(i);
-        List<Transition<S, A>> batch = new ArrayList<>(batchSize);
+        List<Experience<S, A>> batch = new ArrayList<>(batchSize);
         for (int i = 0; i < batchSize; i++) {
             int j = i + rng.nextInt(size - i);
             int tmp = indices.get(i);
@@ -72,7 +74,7 @@ public class ReplayBuffer<S, A> {
         return batch;
     }
 
-    /** Returns the number of transitions currently stored. */
+    /** Returns the number of experiences currently stored. */
     public int size() {
         return size;
     }

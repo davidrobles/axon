@@ -2,7 +2,7 @@ package net.davidrobles.axon.agents;
 
 import java.util.List;
 import java.util.Objects;
-import net.davidrobles.axon.StepResult;
+import net.davidrobles.axon.Experience;
 import net.davidrobles.axon.policies.Policy;
 import net.davidrobles.axon.valuefunctions.AbstractQFunctionObservable;
 import net.davidrobles.axon.valuefunctions.TrainableQFunction;
@@ -49,18 +49,18 @@ public class SARSA<S, A> extends AbstractQFunctionObservable<S, A> {
     }
 
     @Override
-    public void update(S state, A action, StepResult<S> result, List<A> nextActions) {
+    public void update(Experience<S, A> exp) {
         double nextQ;
 
-        if (result.done() || nextActions.isEmpty()) {
+        if (exp.done() || exp.nextActions().isEmpty()) {
             nextQ = 0.0;
             nextAction = null;
         } else {
-            nextAction = policy.selectAction(result.nextState(), nextActions);
-            nextQ = table.getValue(result.nextState(), nextAction);
+            nextAction = policy.selectAction(exp.nextState(), exp.nextActions());
+            nextQ = table.getValue(exp.nextState(), nextAction);
         }
 
-        table.update(state, action, result.reward() + gamma * nextQ);
+        table.update(exp.state(), exp.action(), exp.reward() + gamma * nextQ);
         notifyQFunctionObservers(table);
     }
 }

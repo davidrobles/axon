@@ -2,7 +2,7 @@ package net.davidrobles.axon.agents;
 
 import java.util.List;
 import java.util.Objects;
-import net.davidrobles.axon.StepResult;
+import net.davidrobles.axon.Experience;
 import net.davidrobles.axon.policies.Policy;
 import net.davidrobles.axon.valuefunctions.AbstractQFunctionObservable;
 import net.davidrobles.axon.valuefunctions.TrainableQFunction;
@@ -41,18 +41,18 @@ public class QLearning<S, A> extends AbstractQFunctionObservable<S, A> {
     }
 
     @Override
-    public void update(S state, A action, StepResult<S> result, List<A> nextActions) {
+    public void update(Experience<S, A> exp) {
         double maxNextQ = 0.0;
 
-        if (!result.done() && !nextActions.isEmpty()) {
+        if (!exp.done() && !exp.nextActions().isEmpty()) {
             maxNextQ = Double.NEGATIVE_INFINITY;
-            for (A nextAction : nextActions) {
-                double v = table.getValue(result.nextState(), nextAction);
+            for (A nextAction : exp.nextActions()) {
+                double v = table.getValue(exp.nextState(), nextAction);
                 if (v > maxNextQ) maxNextQ = v;
             }
         }
 
-        table.update(state, action, result.reward() + gamma * maxNextQ);
+        table.update(exp.state(), exp.action(), exp.reward() + gamma * maxNextQ);
         notifyQFunctionObservers(table);
     }
 }

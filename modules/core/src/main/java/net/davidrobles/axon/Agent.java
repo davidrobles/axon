@@ -21,12 +21,9 @@ public interface Agent<S, A> {
     A selectAction(S state, List<A> actions);
 
     /**
-     * Updates the agent's internal state (e.g. value function) after one transition.
+     * Updates the agent's internal state (e.g. value function) from one transition.
      *
-     * @param state the state before the action
-     * @param action the action taken
-     * @param result the step result from the environment
-     * @param nextActions available actions in the next state; empty if the episode is done
+     * @param experience the full transition experienced during this step
      */
-    void update(S state, A action, StepResult<S> result, List<A> nextActions);
+    void update(Experience<S, A> experience);
 }

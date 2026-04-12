@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import net.davidrobles.axon.Experience;
 import net.davidrobles.axon.QPair;
-import net.davidrobles.axon.StepResult;
 import net.davidrobles.axon.policies.Policy;
 import net.davidrobles.axon.valuefunctions.AbstractQFunctionObservable;
 import net.davidrobles.axon.valuefunctions.TrainableQFunction;
@@ -57,21 +57,21 @@ public class SARSALambda<S, A> extends AbstractQFunctionObservable<S, A> {
     }
 
     @Override
-    public void update(S state, A action, StepResult<S> result, List<A> nextActions) {
+    public void update(Experience<S, A> exp) {
         double nextQ;
 
-        if (result.done() || nextActions.isEmpty()) {
+        if (exp.done() || exp.nextActions().isEmpty()) {
             nextQ = 0.0;
             nextAction = null;
         } else {
-            nextAction = policy.selectAction(result.nextState(), nextActions);
-            nextQ = table.getValue(result.nextState(), nextAction);
+            nextAction = policy.selectAction(exp.nextState(), exp.nextActions());
+            nextQ = table.getValue(exp.nextState(), nextAction);
         }
 
-        double tdError = result.reward() + gamma * nextQ - table.getValue(state, action);
+        double tdError = exp.reward() + gamma * nextQ - table.getValue(exp.state(), exp.action());
 
         // Accumulating trace: e(s,a) += 1
-        traces.merge(new QPair<>(state, action), 1.0, Double::sum);
+        traces.merge(new QPair<>(exp.state(), exp.action()), 1.0, Double::sum);
 
         for (Map.Entry<QPair<S, A>, Double> entry : traces.entrySet()) {
             QPair<S, A> key = entry.getKey();
@@ -80,7 +80,7 @@ public class SARSALambda<S, A> extends AbstractQFunctionObservable<S, A> {
             entry.setValue(gamma * lambda * entry.getValue());
         }
 
-        if (result.done()) traces.clear();
+        if (exp.done()) traces.clear();
         notifyQFunctionObservers(table);
     }
 }

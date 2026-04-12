@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import net.davidrobles.axon.StepResult;
+import net.davidrobles.axon.Experience;
 import net.davidrobles.axon.policies.GreedyPolicy;
 import net.davidrobles.axon.valuefunctions.TabularQFunction;
 import org.junit.Before;
@@ -33,7 +33,7 @@ public class SARSATest {
         // Greedy picks a1 (only option in nextActions)
         table.setValue("s1", "a1", 2.0);
         // target = 0.5 + 0.9*2.0 = 2.3;  new Q = 0 + 0.5*2.3 = 1.15
-        agent.update("s0", "a0", new StepResult<>("s1", 0.5, false), List.of("a1"));
+        agent.update(new Experience<>("s0", "a0", 0.5, "s1", false, List.of("a1")));
         assertEquals(1.15, table.getValue("s0", "a0"), EPS);
     }
 
@@ -41,7 +41,7 @@ public class SARSATest {
     public void updateTerminalSetsNextQToZero() {
         table.setValue("s1", "a1", 100.0); // ignored when done
         // target = 1.0;  new Q = 0 + 0.5*1.0 = 0.5
-        agent.update("s0", "a0", new StepResult<>("s1", 1.0, true), List.of());
+        agent.update(new Experience<>("s0", "a0", 1.0, "s1", true, List.of()));
         assertEquals(0.5, table.getValue("s0", "a0"), EPS);
     }
 
@@ -51,7 +51,7 @@ public class SARSATest {
         // With GreedyPolicy, greedy also picks a2. So target = 0 + 0.9*5.0 = 4.5
         table.setValue("s1", "a1", 2.0);
         table.setValue("s1", "a2", 5.0);
-        agent.update("s0", "a0", new StepResult<>("s1", 0.0, false), List.of("a1", "a2"));
+        agent.update(new Experience<>("s0", "a0", 0.0, "s1", false, List.of("a1", "a2")));
         // new Q = 0 + 0.5*4.5 = 2.25
         assertEquals(2.25, table.getValue("s0", "a0"), EPS);
     }
@@ -67,7 +67,7 @@ public class SARSATest {
         table.setValue("s1", "a1", 1.0);
         table.setValue("s1", "a2", 9.0);
 
-        agent.update("s0", "a0", new StepResult<>("s1", 0.0, false), List.of("a1", "a2"));
+        agent.update(new Experience<>("s0", "a0", 0.0, "s1", false, List.of("a1", "a2")));
 
         // The pre-selected action must be returned (a2, greedy choice)
         assertEquals("a2", agent.selectAction("s1", List.of("a1", "a2")));
@@ -78,7 +78,7 @@ public class SARSATest {
         table.setValue("s1", "a2", 9.0); // greedy at s1 = a2
         table.setValue("s2", "a0", 5.0); // greedy at s2 = a0
 
-        agent.update("s0", "a0", new StepResult<>("s1", 0.0, false), List.of("a1", "a2"));
+        agent.update(new Experience<>("s0", "a0", 0.0, "s1", false, List.of("a1", "a2")));
 
         // First call consumes pre-selected action
         assertEquals("a2", agent.selectAction("s1", List.of("a1", "a2")));
@@ -90,7 +90,7 @@ public class SARSATest {
     public void terminalStepClearsPreSelectedAction() {
         table.setValue("s1", "a2", 9.0);
         // Terminal step: nextAction should be cleared
-        agent.update("s0", "a0", new StepResult<>("s1", 1.0, true), List.of());
+        agent.update(new Experience<>("s0", "a0", 1.0, "s1", true, List.of()));
 
         // Next selectAction consults policy (greedy at s0 → a0 since Q(s0,a0) is highest)
         table.setValue("s0", "a1", 3.0);
@@ -106,8 +106,8 @@ public class SARSATest {
         AtomicInteger count = new AtomicInteger();
         agent.addQFunctionObserver(qf -> count.incrementAndGet());
 
-        agent.update("s0", "a0", new StepResult<>("s1", 1.0, true), List.of());
-        agent.update("s0", "a0", new StepResult<>("s1", 1.0, true), List.of());
+        agent.update(new Experience<>("s0", "a0", 1.0, "s1", true, List.of()));
+        agent.update(new Experience<>("s0", "a0", 1.0, "s1", true, List.of()));
         assertEquals(2, count.get());
     }
 
@@ -119,7 +119,7 @@ public class SARSATest {
         agent.addQFunctionObserver(o);
         agent.addQFunctionObserver(o);
 
-        agent.update("s0", "a0", new StepResult<>("s1", 1.0, true), List.of());
+        agent.update(new Experience<>("s0", "a0", 1.0, "s1", true, List.of()));
         assertEquals(1, count.get());
     }
 

@@ -5,8 +5,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import net.davidrobles.axon.Experience;
 import net.davidrobles.axon.QPair;
-import net.davidrobles.axon.StepResult;
 import net.davidrobles.axon.policies.Policy;
 import net.davidrobles.axon.valuefunctions.AbstractQFunctionObservable;
 import net.davidrobles.axon.valuefunctions.TrainableQFunction;
@@ -48,12 +48,12 @@ public class MCControl<S, A> extends AbstractQFunctionObservable<S, A> {
     }
 
     @Override
-    public void update(S state, A action, StepResult<S> result, List<A> nextActions) {
-        states.add(state);
-        actions.add(action);
-        rewards.add(result.reward());
+    public void update(Experience<S, A> exp) {
+        states.add(exp.state());
+        actions.add(exp.action());
+        rewards.add(exp.reward());
 
-        if (result.done()) {
+        if (exp.done()) {
             flush();
         }
     }

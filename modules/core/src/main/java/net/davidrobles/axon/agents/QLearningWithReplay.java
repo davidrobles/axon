@@ -3,7 +3,7 @@ package net.davidrobles.axon.agents;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
-import net.davidrobles.axon.StepResult;
+import net.davidrobles.axon.Experience;
 import net.davidrobles.axon.policies.Policy;
 import net.davidrobles.axon.valuefunctions.AbstractQFunctionObservable;
 import net.davidrobles.axon.valuefunctions.TrainableQFunction;
@@ -63,26 +63,26 @@ public class QLearningWithReplay<S, A> extends AbstractQFunctionObservable<S, A>
     }
 
     @Override
-    public void update(S state, A action, StepResult<S> result, List<A> nextActions) {
-        buffer.add(new Transition<>(state, action, result, nextActions));
+    public void update(Experience<S, A> exp) {
+        buffer.add(exp);
 
         if (buffer.size() < batchSize) return;
 
-        for (Transition<S, A> t : buffer.sample(batchSize, rng)) {
-            qLearningUpdate(t.state(), t.action(), t.result(), t.nextActions());
+        for (Experience<S, A> t : buffer.sample(batchSize, rng)) {
+            qLearningUpdate(t);
         }
     }
 
-    private void qLearningUpdate(S state, A action, StepResult<S> result, List<A> nextActions) {
+    private void qLearningUpdate(Experience<S, A> exp) {
         double maxNextQ = 0.0;
-        if (!result.done() && !nextActions.isEmpty()) {
+        if (!exp.done() && !exp.nextActions().isEmpty()) {
             maxNextQ = Double.NEGATIVE_INFINITY;
-            for (A a : nextActions) {
-                double v = table.getValue(result.nextState(), a);
+            for (A a : exp.nextActions()) {
+                double v = table.getValue(exp.nextState(), a);
                 if (v > maxNextQ) maxNextQ = v;
             }
         }
-        table.update(state, action, result.reward() + gamma * maxNextQ);
+        table.update(exp.state(), exp.action(), exp.reward() + gamma * maxNextQ);
         notifyQFunctionObservers(table);
     }
 }

@@ -27,12 +27,8 @@ public class RLLoopTest {
         }
 
         @Override
-        public void update(
-                Integer state,
-                String action,
-                StepResult<Integer> result,
-                List<String> nextActions) {
-            actionsSeen.add(action);
+        public void update(Experience<Integer, String> exp) {
+            actionsSeen.add(exp.action());
             updateCount++;
         }
     }
@@ -152,9 +148,8 @@ public class RLLoopTest {
                     }
 
                     @Override
-                    public void update(
-                            Integer s, String a, StepResult<Integer> r, List<String> next) {
-                        nextActionsList.add(next);
+                    public void update(Experience<Integer, String> exp) {
+                        nextActionsList.add(exp.nextActions());
                     }
                 };
 
@@ -174,9 +169,8 @@ public class RLLoopTest {
                     }
 
                     @Override
-                    public void update(
-                            Integer s, String a, StepResult<Integer> r, List<String> next) {
-                        nextActionsList.add(next);
+                    public void update(Experience<Integer, String> exp) {
+                        nextActionsList.add(exp.nextActions());
                     }
                 };
 

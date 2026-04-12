@@ -51,7 +51,14 @@ public class RLLoop {
                         result.done()
                                 ? Collections.emptyList()
                                 : env.getActions(result.nextState());
-                agent.update(state, action, result, nextActions);
+                agent.update(
+                        new Experience<>(
+                                state,
+                                action,
+                                result.reward(),
+                                result.nextState(),
+                                result.done(),
+                                nextActions));
                 policy.onStep(++totalSteps);
 
                 if (result.done()) break;

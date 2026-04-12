@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
-import net.davidrobles.axon.StepResult;
+import net.davidrobles.axon.Experience;
 import net.davidrobles.axon.policies.GreedyPolicy;
 import net.davidrobles.axon.valuefunctions.QFunction;
 import net.davidrobles.axon.valuefunctions.TabularQFunction;
@@ -35,7 +35,7 @@ public class DynaQTest {
     public void planningStepsZeroMatchesQLearning() {
         table.setValue("s1", "a1", 2.0);
         // target = 0.5 + 0.9*2.0 = 2.3; new Q = 0 + 0.5*(2.3-0) = 1.15
-        agent(0).update("s0", "a0", new StepResult<>("s1", 0.5, false), List.of("a1"));
+        agent(0).update(new Experience<>("s0", "a0", 0.5, "s1", false, List.of("a1")));
         assertEquals(1.15, table.getValue("s0", "a0"), EPS);
     }
 
@@ -43,7 +43,7 @@ public class DynaQTest {
     public void terminalStepIgnoresFutureReward() {
         table.setValue("s1", "a1", 100.0); // should be ignored
         // target = 1.0; new Q = 0 + 0.5*1.0 = 0.5
-        agent(0).update("s0", "a0", new StepResult<>("s1", 1.0, true), List.of());
+        agent(0).update(new Experience<>("s0", "a0", 1.0, "s1", true, List.of()));
         assertEquals(0.5, table.getValue("s0", "a0"), EPS);
     }
 
@@ -63,9 +63,9 @@ public class DynaQTest {
         DynaQ<String, String> withPlanning =
                 new DynaQ<>(tableWith, new GreedyPolicy<>(tableWith), 0.9, 10, new Random(0));
 
-        StepResult<String> result = new StepResult<>("s1", 1.0, true);
-        noPlanning.update("s0", "a0", result, List.of());
-        withPlanning.update("s0", "a0", result, List.of());
+        Experience<String, String> exp = new Experience<>("s0", "a0", 1.0, "s1", true, List.of());
+        noPlanning.update(exp);
+        withPlanning.update(exp);
 
         // Both start at 0; terminal reward=1.
         // No-planning: Q(s0,a0) = 0.5 after one update.
@@ -79,10 +79,10 @@ public class DynaQTest {
         // Step 2: real step (s1,a0) → (s2, r=0, done). planningSteps=1 replays a random past.
         // Both (s0,a0) and (s1,a0) should have non-zero Q values.
         DynaQ<String, String> a = agent(1);
-        a.update("s0", "a0", new StepResult<>("s1", 1.0, true), List.of());
+        a.update(new Experience<>("s0", "a0", 1.0, "s1", true, List.of()));
         double qAfterStep1 = table.getValue("s0", "a0");
 
-        a.update("s1", "a0", new StepResult<>("s2", 0.0, true), List.of());
+        a.update(new Experience<>("s1", "a0", 0.0, "s2", true, List.of()));
         // s0,a0 may have been replayed during planning
         double qAfterStep2 = table.getValue("s0", "a0");
 
@@ -97,10 +97,10 @@ public class DynaQTest {
     public void modelUpdatedWithLatestTransition() {
         // Observe (s0,a0) twice with different rewards. Model should store the latest.
         DynaQ<String, String> a = agent(0);
-        a.update("s0", "a0", new StepResult<>("s1", 1.0, true), List.of());
+        a.update(new Experience<>("s0", "a0", 1.0, "s1", true, List.of()));
         double first = table.getValue("s0", "a0");
 
-        a.update("s0", "a0", new StepResult<>("s1", 4.0, true), List.of());
+        a.update(new Experience<>("s0", "a0", 4.0, "s1", true, List.of()));
         double second = table.getValue("s0", "a0");
 
         // second update should reflect reward=4 applied to the current Q value
@@ -128,7 +128,7 @@ public class DynaQTest {
         a.addQFunctionObserver(qf -> count.incrementAndGet());
 
         // 1 real update + 5 planning updates = 6 total notifications
-        a.update("s0", "a0", new StepResult<>("s1", 1.0, true), List.of());
+        a.update(new Experience<>("s0", "a0", 1.0, "s1", true, List.of()));
         assertEquals(6, count.get());
     }
 
@@ -138,7 +138,7 @@ public class DynaQTest {
         DynaQ<String, String> a = agent(0);
         a.addQFunctionObserver(qf -> captured[0] = qf);
 
-        a.update("s0", "a0", new StepResult<>("s1", 2.0, true), List.of());
+        a.update(new Experience<>("s0", "a0", 2.0, "s1", true, List.of()));
 
         assertNotNull(captured[0]);
         assertEquals(1.0, captured[0].getValue("s0", "a0"), EPS); // 0 + 0.5*2 = 1.0
@@ -153,7 +153,7 @@ public class DynaQTest {
         a.addQFunctionObserver(o);
         a.addQFunctionObserver(o);
 
-        a.update("s0", "a0", new StepResult<>("s1", 1.0, true), List.of());
+        a.update(new Experience<>("s0", "a0", 1.0, "s1", true, List.of()));
         assertEquals(1, count.get());
     }
 

@@ -4,7 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import net.davidrobles.axon.StepResult;
+import net.davidrobles.axon.Experience;
 import net.davidrobles.axon.policies.GreedyPolicy;
 import net.davidrobles.axon.valuefunctions.QFunction;
 import net.davidrobles.axon.valuefunctions.TabularQFunction;
@@ -32,13 +32,13 @@ public class MCControlTest {
     public void singleStepEpisodeUpdatesWithReward() {
         // Episode: (s0,a0) -r=2-> done; G = 2.0
         // new Q(s0,a0) = 0 + 0.5*(2.0-0) = 1.0
-        agent.update("s0", "a0", new StepResult<>("s1", 2.0, true), List.of());
+        agent.update(new Experience<>("s0", "a0", 2.0, "s1", true, List.of()));
         assertEquals(1.0, table.getValue("s0", "a0"), EPS);
     }
 
     @Test
     public void noUpdateBeforeEpisodeEnds() {
-        agent.update("s0", "a0", new StepResult<>("s1", 5.0, false), List.of("a0"));
+        agent.update(new Experience<>("s0", "a0", 5.0, "s1", false, List.of("a0")));
         assertEquals(0.0, table.getValue("s0", "a0"), EPS);
     }
 
@@ -47,9 +47,9 @@ public class MCControlTest {
         // Episode: (s0,a0) -r=0-> (s1,a0) -r=0-> (s2,a0) -r=1-> done; gamma=1
         // G(s2,a0)=1, G(s1,a0)=1, G(s0,a0)=1
         // new Q = 0 + 0.5*1 = 0.5 for all
-        agent.update("s0", "a0", new StepResult<>("s1", 0.0, false), List.of("a0"));
-        agent.update("s1", "a0", new StepResult<>("s2", 0.0, false), List.of("a0"));
-        agent.update("s2", "a0", new StepResult<>("s3", 1.0, true), List.of());
+        agent.update(new Experience<>("s0", "a0", 0.0, "s1", false, List.of("a0")));
+        agent.update(new Experience<>("s1", "a0", 0.0, "s2", false, List.of("a0")));
+        agent.update(new Experience<>("s2", "a0", 1.0, "s3", true, List.of()));
         assertEquals(0.5, table.getValue("s0", "a0"), EPS);
         assertEquals(0.5, table.getValue("s1", "a0"), EPS);
         assertEquals(0.5, table.getValue("s2", "a0"), EPS);
@@ -63,8 +63,8 @@ public class MCControlTest {
         // G(s1,a0)=4, G(s0,a0)=0+0.5*4=2
         // new Q(s1,a0) = 0 + 0.5*4 = 2.0
         // new Q(s0,a0) = 0 + 0.5*2 = 1.0
-        discounted.update("s0", "a0", new StepResult<>("s1", 0.0, false), List.of("a0"));
-        discounted.update("s1", "a0", new StepResult<>("s2", 4.0, true), List.of());
+        discounted.update(new Experience<>("s0", "a0", 0.0, "s1", false, List.of("a0")));
+        discounted.update(new Experience<>("s1", "a0", 4.0, "s2", true, List.of()));
         assertEquals(1.0, table.getValue("s0", "a0"), EPS);
         assertEquals(2.0, table.getValue("s1", "a0"), EPS);
     }
@@ -78,17 +78,17 @@ public class MCControlTest {
         // Episode: (s0,a0) -r=0-> (s1,a0) -r=0-> (s0,a0) -r=4-> done; gamma=1
         // Returns: G(t=2)=4, G(t=1)=4, G(t=0)=4
         // First visit to (s0,a0) is t=0 with G=4 → new Q = 0.5*4 = 2.0
-        agent.update("s0", "a0", new StepResult<>("s1", 0.0, false), List.of("a0"));
-        agent.update("s1", "a0", new StepResult<>("s0", 0.0, false), List.of("a0"));
-        agent.update("s0", "a0", new StepResult<>("s3", 4.0, true), List.of());
+        agent.update(new Experience<>("s0", "a0", 0.0, "s1", false, List.of("a0")));
+        agent.update(new Experience<>("s1", "a0", 0.0, "s0", false, List.of("a0")));
+        agent.update(new Experience<>("s0", "a0", 4.0, "s3", true, List.of()));
         assertEquals(2.0, table.getValue("s0", "a0"), EPS);
     }
 
     @Test
     public void differentActionsAtSameStateAreTrackedSeparately() {
         // (s0,a0) and (s0,a1) are different pairs — both should be updated
-        agent.update("s0", "a0", new StepResult<>("s1", 0.0, false), List.of("a1"));
-        agent.update("s0", "a1", new StepResult<>("s2", 2.0, true), List.of());
+        agent.update(new Experience<>("s0", "a0", 0.0, "s1", false, List.of("a1")));
+        agent.update(new Experience<>("s0", "a1", 2.0, "s2", true, List.of()));
         // G(s0,a1)=2, G(s0,a0)=2
         assertEquals(1.0, table.getValue("s0", "a0"), EPS);
         assertEquals(1.0, table.getValue("s0", "a1"), EPS);
@@ -101,11 +101,11 @@ public class MCControlTest {
     @Test
     public void bufferClearedBetweenEpisodes() {
         // Episode 1: Q(s0,a0) = 1.0
-        agent.update("s0", "a0", new StepResult<>("s1", 2.0, true), List.of());
+        agent.update(new Experience<>("s0", "a0", 2.0, "s1", true, List.of()));
         assertEquals(1.0, table.getValue("s0", "a0"), EPS);
 
         // Episode 2: update from 1.0: 1.0 + 0.5*(4-1.0) = 2.5
-        agent.update("s0", "a0", new StepResult<>("s1", 4.0, true), List.of());
+        agent.update(new Experience<>("s0", "a0", 4.0, "s1", true, List.of()));
         assertEquals(2.5, table.getValue("s0", "a0"), EPS);
     }
 
@@ -129,8 +129,8 @@ public class MCControlTest {
         agent.addQFunctionObserver(qf -> count.incrementAndGet());
 
         // 2-step episode with 2 distinct (s,a) pairs → 2 notifications
-        agent.update("s0", "a0", new StepResult<>("s1", 0.0, false), List.of("a0"));
-        agent.update("s1", "a0", new StepResult<>("s2", 1.0, true), List.of());
+        agent.update(new Experience<>("s0", "a0", 0.0, "s1", false, List.of("a0")));
+        agent.update(new Experience<>("s1", "a0", 1.0, "s2", true, List.of()));
         assertEquals(2, count.get());
     }
 
@@ -139,7 +139,7 @@ public class MCControlTest {
         AtomicInteger count = new AtomicInteger();
         agent.addQFunctionObserver(qf -> count.incrementAndGet());
 
-        agent.update("s0", "a0", new StepResult<>("s1", 1.0, false), List.of("a0"));
+        agent.update(new Experience<>("s0", "a0", 1.0, "s1", false, List.of("a0")));
         assertEquals(0, count.get());
     }
 
@@ -148,7 +148,7 @@ public class MCControlTest {
         QFunction<String, String>[] captured = new QFunction[1];
         agent.addQFunctionObserver(qf -> captured[0] = qf);
 
-        agent.update("s0", "a0", new StepResult<>("s1", 2.0, true), List.of());
+        agent.update(new Experience<>("s0", "a0", 2.0, "s1", true, List.of()));
 
         assertNotNull(captured[0]);
         assertEquals(1.0, captured[0].getValue("s0", "a0"), EPS);
@@ -162,7 +162,7 @@ public class MCControlTest {
         agent.addQFunctionObserver(o);
         agent.addQFunctionObserver(o);
 
-        agent.update("s0", "a0", new StepResult<>("s1", 1.0, true), List.of());
+        agent.update(new Experience<>("s0", "a0", 1.0, "s1", true, List.of()));
         assertEquals(1, count.get());
     }
 
