@@ -18,11 +18,6 @@ import net.davidrobles.axon.valuefunctions.QFunction;
  * is built in when the policy is also registered as an {@link LoopListener}. Override {@link
  * #onEpisodeEnd(int)} for a custom schedule, or call {@link #setEpsilon(double)} directly.
  *
- * <h3>Evaluation mode</h3>
- *
- * Call {@link #setTrainingMode(boolean) setTrainingMode(false)} to disable exploration entirely
- * (acts greedily). Useful for evaluating a trained agent without rebuilding the policy.
- *
  * @param <S> the type of the states
  * @param <A> the type of the actions
  */
@@ -31,7 +26,6 @@ public class EpsilonGreedy<S, A> implements StochasticPolicy<S, A>, LoopListener
     private final double epsilonStart;
     private final double epsilonEnd;
     private final int decayEpisodes;
-    private boolean training = true;
     private final QFunction<S, A> qFunc;
     private final Random rng;
 
@@ -71,7 +65,7 @@ public class EpsilonGreedy<S, A> implements StochasticPolicy<S, A>, LoopListener
 
     @Override
     public A selectAction(S state, List<A> actions) {
-        if (training && rng.nextDouble() < epsilon) {
+        if (rng.nextDouble() < epsilon) {
             return actions.get(rng.nextInt(actions.size()));
         }
 
@@ -93,12 +87,6 @@ public class EpsilonGreedy<S, A> implements StochasticPolicy<S, A>, LoopListener
         if (decayEpisodes <= 1) return;
         double t = Math.min(1.0, (double) (episode + 1) / decayEpisodes);
         epsilon = epsilonStart + t * (epsilonEnd - epsilonStart);
-    }
-
-    /** Enables exploration when {@code training=true}, acts fully greedy when {@code false}. */
-    @Override
-    public void setTrainingMode(boolean training) {
-        this.training = training;
     }
 
     /**

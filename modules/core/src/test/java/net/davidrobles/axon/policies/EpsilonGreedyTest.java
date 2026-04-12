@@ -43,27 +43,6 @@ public class EpsilonGreedyTest {
         }
     }
 
-    @Test
-    public void epsilonZeroInTrainingModeIsStillGreedy() {
-        EpsilonGreedy<String, String> policy = new EpsilonGreedy<>(q, 0.0, new Random(0));
-        policy.setTrainingMode(true);
-        assertEquals("a1", policy.selectAction("s0", List.of("a0", "a1")));
-    }
-
-    // -------------------------------------------------------------------------
-    // Training mode toggle
-    // -------------------------------------------------------------------------
-
-    @Test
-    public void setTrainingModeFalseDisablesExploration() {
-        // epsilon=1 normally means always random; with training=false it should be greedy
-        EpsilonGreedy<String, String> policy = new EpsilonGreedy<>(q, 1.0, new Random(0));
-        policy.setTrainingMode(false);
-        for (int i = 0; i < 20; i++) {
-            assertEquals("a1", policy.selectAction("s0", List.of("a0", "a1")));
-        }
-    }
-
     // -------------------------------------------------------------------------
     // getEpsilon / setEpsilon
     // -------------------------------------------------------------------------

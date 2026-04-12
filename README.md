@@ -104,6 +104,8 @@ RLLoop.run(environment, policy, predictor, numEpisodes);
 | `TabularPolicy` | Deterministic state→action map (used by planners) |
 
 Policies only choose actions. Loop lifecycle callbacks live on `LoopListener`.
+Use separate policy instances for training and evaluation when you want different behavior, e.g.
+`EpsilonGreedy` for training and `GreedyPolicy` for evaluation.
 
 ### Value Functions
 
