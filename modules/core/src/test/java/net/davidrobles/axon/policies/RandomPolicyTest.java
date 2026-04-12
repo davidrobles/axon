@@ -64,14 +64,4 @@ public class RandomPolicyTest {
         for (String a : actions) sum += policy.probability("s", a, actions);
         assertEquals(1.0, sum, EPS);
     }
-
-    // Lifecycle hooks are no-ops; verify they don't throw.
-    @Test
-    public void lifecycleHooksDoNotThrow() {
-        RandomPolicy<String, String> policy = new RandomPolicy<>(new Random(0));
-        policy.reset();
-        policy.onStep(1);
-        policy.onEpisodeEnd(0);
-        policy.setTrainingMode(false);
-    }
 }

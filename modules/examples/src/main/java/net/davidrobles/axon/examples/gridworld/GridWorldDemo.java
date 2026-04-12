@@ -76,7 +76,7 @@ public class GridWorldDemo {
         new AppFrame(view, "MC Control");
         MCControl<GWState, GWAction> agent = new MCControl<>(qTable, policy, gamma);
         agent.addQFunctionObserver(view);
-        RLLoop.run(env, agent, policy, numEpisodes);
+        RLLoop.run(env, agent, policy, numEpisodes, policy);
     }
 
     private static void tabularTD0() {
@@ -127,7 +127,7 @@ public class GridWorldDemo {
                 new QLearningWithReplay<>(
                         qTable, policy, gamma, new ReplayBuffer<>(bufferCapacity), batchSize, RNG);
         agent.addQFunctionObserver(view);
-        RLLoop.run(env, agent, policy, numEpisodes);
+        RLLoop.run(env, agent, policy, numEpisodes, policy);
     }
 
     private static void tabularDynaQ() {
@@ -144,7 +144,7 @@ public class GridWorldDemo {
         new AppFrame(view, "Dyna-Q (n=" + planningSteps + ")");
         DynaQ<GWState, GWAction> agent = new DynaQ<>(qTable, policy, gamma, planningSteps, RNG);
         agent.addQFunctionObserver(view);
-        RLLoop.run(env, agent, policy, numEpisodes);
+        RLLoop.run(env, agent, policy, numEpisodes, policy);
     }
 
     private static void tabularNStepTD() {
@@ -177,7 +177,7 @@ public class GridWorldDemo {
         new AppFrame(view, "n-step SARSA (n=" + n + ")");
         NStepSARSA<GWState, GWAction> agent = new NStepSARSA<>(qTable, policy, n, gamma);
         agent.addQFunctionObserver(view);
-        RLLoop.run(env, agent, policy, numEpisodes);
+        RLLoop.run(env, agent, policy, numEpisodes, policy);
     }
 
     private static void tabularExpectedSARSA() {
@@ -193,7 +193,7 @@ public class GridWorldDemo {
         new AppFrame(view, "Expected SARSA");
         ExpectedSARSA<GWState, GWAction> agent = new ExpectedSARSA<>(qTable, policy, gamma);
         agent.addQFunctionObserver(view);
-        RLLoop.run(env, agent, policy, numEpisodes);
+        RLLoop.run(env, agent, policy, numEpisodes, policy);
     }
 
     private static void tabularSARSA() {
@@ -225,7 +225,7 @@ public class GridWorldDemo {
         new AppFrame(view, "Q-Learning");
         QLearning<GWState, GWAction> agent = new QLearning<>(qTable, policy, gamma);
         agent.addQFunctionObserver(view);
-        RLLoop.run(env, agent, policy, numEpisodes);
+        RLLoop.run(env, agent, policy, numEpisodes, policy);
     }
 
     private static void tabularUCB() {
@@ -279,7 +279,7 @@ public class GridWorldDemo {
         DoubleQLearning<GWState, GWAction> agent =
                 new DoubleQLearning<>(qA, qB, policy, gamma, RNG);
         agent.addQFunctionObserver(view);
-        RLLoop.run(env, agent, policy, numEpisodes);
+        RLLoop.run(env, agent, policy, numEpisodes, policy);
     }
 
     private static void tabularSARSALambda() {

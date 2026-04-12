@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.List;
 import java.util.Random;
+import net.davidrobles.axon.LoopListener;
 import net.davidrobles.axon.valuefunctions.TabularQFunction;
 import org.junit.Before;
 import org.junit.Test;
@@ -89,7 +90,7 @@ public class EpsilonGreedyTest {
     @Test
     public void fixedEpsilonConstructorDoesNotDecay() {
         EpsilonGreedy<String, String> policy = new EpsilonGreedy<>(q, 0.5, new Random(0));
-        for (int ep = 0; ep < 10; ep++) policy.onEpisodeEnd(ep);
+        for (int ep = 0; ep < 10; ep++) ((LoopListener) policy).onEpisodeEnd(ep);
         assertEquals(0.5, policy.getEpsilon(), EPS);
     }
 
@@ -99,7 +100,7 @@ public class EpsilonGreedyTest {
         EpsilonGreedy<String, String> policy = new EpsilonGreedy<>(q, 1.0, 0.0, 10, new Random(0));
 
         // After episode 9 (ep=9): t = min(1, 10/10) = 1 → epsilon = 1 + 1*(0-1) = 0
-        policy.onEpisodeEnd(9);
+        ((LoopListener) policy).onEpisodeEnd(9);
         assertEquals(0.0, policy.getEpsilon(), EPS);
     }
 
@@ -108,7 +109,7 @@ public class EpsilonGreedyTest {
         EpsilonGreedy<String, String> policy = new EpsilonGreedy<>(q, 1.0, 0.0, 10, new Random(0));
 
         // After episode 4 (ep=4): t = min(1, 5/10) = 0.5 → epsilon = 1 + 0.5*(0-1) = 0.5
-        policy.onEpisodeEnd(4);
+        ((LoopListener) policy).onEpisodeEnd(4);
         assertEquals(0.5, policy.getEpsilon(), EPS);
     }
 
@@ -116,7 +117,7 @@ public class EpsilonGreedyTest {
     public void decayDoesNotGoBelowEndEpsilon() {
         EpsilonGreedy<String, String> policy = new EpsilonGreedy<>(q, 1.0, 0.1, 5, new Random(0));
         // Run many more episodes than decayEpisodes
-        for (int ep = 0; ep < 100; ep++) policy.onEpisodeEnd(ep);
+        for (int ep = 0; ep < 100; ep++) ((LoopListener) policy).onEpisodeEnd(ep);
         assertEquals(0.1, policy.getEpsilon(), EPS);
     }
 
@@ -124,7 +125,7 @@ public class EpsilonGreedyTest {
     public void singleDecayEpisodeDoesNotDecay() {
         // decayEpisodes=1 → onEpisodeEnd is a no-op (guarded by decayEpisodes <= 1)
         EpsilonGreedy<String, String> policy = new EpsilonGreedy<>(q, 0.9, 0.1, 1, new Random(0));
-        policy.onEpisodeEnd(0);
+        ((LoopListener) policy).onEpisodeEnd(0);
         assertEquals(0.9, policy.getEpsilon(), EPS);
     }
 

@@ -2,6 +2,7 @@ package net.davidrobles.axon.policies;
 
 import java.util.List;
 import java.util.Random;
+import net.davidrobles.axon.LoopListener;
 import net.davidrobles.axon.valuefunctions.QFunction;
 
 /**
@@ -14,8 +15,8 @@ import net.davidrobles.axon.valuefunctions.QFunction;
  * <h3>Epsilon decay</h3>
  *
  * Linear decay from {@code epsilonStart} to {@code epsilonEnd} over {@code decayEpisodes} episodes
- * is built in. Override {@link #onEpisodeEnd(int)} for a custom schedule, or call {@link
- * #setEpsilon(double)} directly.
+ * is built in when the policy is also registered as an {@link LoopListener}. Override {@link
+ * #onEpisodeEnd(int)} for a custom schedule, or call {@link #setEpsilon(double)} directly.
  *
  * <h3>Evaluation mode</h3>
  *
@@ -25,7 +26,7 @@ import net.davidrobles.axon.valuefunctions.QFunction;
  * @param <S> the type of the states
  * @param <A> the type of the actions
  */
-public class EpsilonGreedy<S, A> implements StochasticPolicy<S, A> {
+public class EpsilonGreedy<S, A> implements StochasticPolicy<S, A>, LoopListener {
     private double epsilon;
     private final double epsilonStart;
     private final double epsilonEnd;

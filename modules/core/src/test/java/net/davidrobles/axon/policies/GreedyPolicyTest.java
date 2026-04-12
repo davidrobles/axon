@@ -55,13 +55,4 @@ public class GreedyPolicyTest {
         q.setValue("s0", "a1", -1.0);
         assertEquals("a1", policy.selectAction("s0", List.of("a0", "a1")));
     }
-
-    // Lifecycle hooks are no-ops by default; verify they don't throw.
-    @Test
-    public void lifecycleHooksDoNotThrow() {
-        policy.reset();
-        policy.onStep(1);
-        policy.onEpisodeEnd(0);
-        policy.setTrainingMode(false);
-    }
 }

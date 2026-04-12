@@ -80,6 +80,12 @@ RLLoop.run(environment, agent, policy, numEpisodes);
 
 Handles reset → select → step → update for each episode.
 
+Scheduling and other training-loop concerns are supplied separately via `LoopListener`s:
+
+```java
+RLLoop.run(environment, agent, policy, numEpisodes, listener);
+```
+
 Prediction algorithms use the predictor overload:
 
 ```java
@@ -97,7 +103,7 @@ RLLoop.run(environment, policy, predictor, numEpisodes);
 | `RandomPolicy` | Uniform random selection |
 | `TabularPolicy` | Deterministic state→action map (used by planners) |
 
-Policies implement lifecycle hooks (`reset()`, `onStep()`, `onEpisodeEnd()`) for scheduling.
+Policies only choose actions. Loop lifecycle callbacks live on `LoopListener`.
 
 ### Value Functions
 
@@ -126,7 +132,7 @@ var qFunc = new TabularQFunction<GWState, GWAction>(0.1);   // α = 0.1
 var policy = new EpsilonGreedy<>(qFunc, 0.1, rng);
 var agent = new QLearning<>(qFunc, policy, 0.99);           // γ = 0.99
 
-RLLoop.run(env, agent, policy, 1000);
+RLLoop.run(env, agent, policy, 1000, policy);
 ```
 
 **Value Iteration on GridWorld:**

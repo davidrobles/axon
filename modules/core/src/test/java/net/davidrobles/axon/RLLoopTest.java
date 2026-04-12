@@ -33,20 +33,15 @@ public class RLLoopTest {
         }
     }
 
-    /** Counts every Policy lifecycle call. */
-    private static class CountingPolicy implements Policy<Integer, String> {
-        int resetCount = 0;
+    /** Counts every loop lifecycle call. */
+    private static class CountingListener implements LoopListener {
+        final List<Integer> onEpisodeStartArgs = new ArrayList<>();
         final List<Integer> onStepArgs = new ArrayList<>();
         final List<Integer> onEpisodeEndArgs = new ArrayList<>();
 
         @Override
-        public String selectAction(Integer state, List<String> actions) {
-            return actions.get(0);
-        }
-
-        @Override
-        public void reset() {
-            resetCount++;
+        public void onEpisodeStart(int episode) {
+            onEpisodeStartArgs.add(episode);
         }
 
         @Override
@@ -62,13 +57,15 @@ public class RLLoopTest {
 
     private TestEnvironment env;
     private CountingAgent agent;
-    private CountingPolicy policy;
+    private Policy<Integer, String> policy;
+    private CountingListener listener;
 
     @Before
     public void setUp() {
         env = new TestEnvironment();
         agent = new CountingAgent();
-        policy = new CountingPolicy();
+        policy = (state, actions) -> actions.get(0);
+        listener = new CountingListener();
     }
 
     private static class CountingPredictor implements Predictor<Integer> {
@@ -92,7 +89,7 @@ public class RLLoopTest {
     public void zeroEpisodesRunsNoSteps() {
         RLLoop.run(env, agent, policy, 0);
         assertEquals(0, agent.updateCount);
-        assertEquals(0, policy.resetCount);
+        assertTrue(listener.onEpisodeStartArgs.isEmpty());
     }
 
     @Test
@@ -114,28 +111,28 @@ public class RLLoopTest {
 
     @Test
     public void resetCalledOncePerEpisode() {
-        RLLoop.run(env, agent, policy, 3);
-        assertEquals(3, policy.resetCount);
+        RLLoop.run(env, agent, policy, 3, listener);
+        assertEquals(List.of(0, 1, 2), listener.onEpisodeStartArgs);
     }
 
     @Test
     public void onEpisodeEndCalledOncePerEpisodeWithCorrectIndex() {
-        RLLoop.run(env, agent, policy, 3);
-        assertEquals(List.of(0, 1, 2), policy.onEpisodeEndArgs);
+        RLLoop.run(env, agent, policy, 3, listener);
+        assertEquals(List.of(0, 1, 2), listener.onEpisodeEndArgs);
     }
 
     @Test
     public void onStepCalledWithMonotonicallyIncreasingTotalSteps() {
-        RLLoop.run(env, agent, policy, 2);
+        RLLoop.run(env, agent, policy, 2, listener);
         // 2 episodes × 2 steps each = 4 total steps, numbered 1..4
-        assertEquals(List.of(1, 2, 3, 4), policy.onStepArgs);
+        assertEquals(List.of(1, 2, 3, 4), listener.onStepArgs);
     }
 
     @Test
     public void totalStepCountContinuesAcrossEpisodes() {
-        RLLoop.run(env, agent, policy, 3);
+        RLLoop.run(env, agent, policy, 3, listener);
         // 6 steps total, numbered 1..6
-        assertEquals(List.of(1, 2, 3, 4, 5, 6), policy.onStepArgs);
+        assertEquals(List.of(1, 2, 3, 4, 5, 6), listener.onStepArgs);
     }
 
     // -------------------------------------------------------------------------
@@ -229,10 +226,10 @@ public class RLLoopTest {
     @Test
     public void predictorLoopInvokesPolicyLifecycleHooks() {
         CountingPredictor predictor = new CountingPredictor();
-        RLLoop.run(env, policy, predictor, 2);
-        assertEquals(2, policy.resetCount);
-        assertEquals(List.of(1, 2, 3, 4), policy.onStepArgs);
-        assertEquals(List.of(0, 1), policy.onEpisodeEndArgs);
+        RLLoop.run(env, policy, predictor, 2, listener);
+        assertEquals(List.of(0, 1), listener.onEpisodeStartArgs);
+        assertEquals(List.of(1, 2, 3, 4), listener.onStepArgs);
+        assertEquals(List.of(0, 1), listener.onEpisodeEndArgs);
     }
 
     @Test(expected = IllegalArgumentException.class)
